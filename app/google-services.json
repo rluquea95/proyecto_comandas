@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "488611681859",
+    "project_id": "readytapas-963a7",
+    "storage_bucket": "readytapas-963a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:488611681859:android:6f8332e51a355a706ee6f6",
+        "android_client_info": {
+          "package_name": "com.example.readytapas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkR6oed_NSYnIUh0DE1cK330je35rRPkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,118 @@
+{
+  "name": "title_group",
+  "version": 33,
+  "source-key": {
+    "type": "figma",
+    "file": "ZYnwovRJuO9VyjcKyK7lHS",
+    "node": "3:2150",
+    "version": "2207172437393685765",
+    "component-id": "7a7dfe9340f2ad37b7ffeac1aba1400159222931"
+  },
+  "default": "titleGroup",
+  "documentation": "Nombre de la aplicación",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "vector",
+        "id": "backgroundTitle"
+      },
+      {
+        "type": "text",
+        "id": "title"
+      }
+    ],
+    "modes": {
+      "titleGroup": {
+        "rules": [
+          {
+            "id": "top_level",
+            "is-structured": false,
+            "children": [
+              "backgroundTitle",
+              "title"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "backgroundTitle",
+            "border-radius": 20.0,
+            "alignment": {
+              "horizontal": {
+                "attachment": "center",
+                "offset": 0.0
+              },
+              "vertical": {
+                "attachment": "center",
+                "offset": 0.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 390.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 115.0
+              }
+            },
+            "vector-content": "background_title.svg"
+          },
+          {
+            "id": "title",
+            "alignment": {
+              "horizontal": {
+                "attachment": "center",
+                "offset": -0.0000152587890625
+              },
+              "vertical": {
+                "attachment": "center",
+                "offset": -0.000003814697265625
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 375.0955505371094
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 69.47916412353516
+              }
+            },
+            "font-weight": 800.0,
+            "color": {
+              "alpha": 1.0,
+              "hue": 257.14285714285717,
+              "saturation": 0.23595505617977525,
+              "value": 0.34901960784313724
+            },
+            "text-content": "Ready Tapas",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-size": 50.0,
+            "line-height": 1.210227279663086,
+            "typeface": "Inter"
+          }
+        ]
+      }
+    }
+  },
+  "previews": [
+    {
+      "design": "titleGroup",
+      "size": {
+        "width": 390.0,
+        "height": 115.0
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}
