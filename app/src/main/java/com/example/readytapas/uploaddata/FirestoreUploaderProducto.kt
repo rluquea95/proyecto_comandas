@@ -15,7 +15,7 @@ class FirestoreUploaderProducto(private val context: Context) {
     private var db: FirebaseFirestore = Firebase.firestore
 
     // Función para leer el archivo JSON y subir los datos a Firestore
-    fun uploadJsonData() {
+    fun uploadJsonDataProducto() {
         try {
             // Lee el archivo JSON desde los recursos
             val fileInputStream = context.resources.openRawResource(R.raw.ready_tapas_carta)
