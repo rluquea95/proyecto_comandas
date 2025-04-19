@@ -3,9 +3,12 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
+    // Add the dependency Hilt
+    alias(libs.plugins.hilt)
+    kotlin("kapt")
+
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
-
 }
 
 android {
@@ -68,6 +71,10 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.navigation.compose)
+
+    // Hilt para inyectar dependencias
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
     //Coil para cargar imagenes
     implementation(libs.coil.compose)
