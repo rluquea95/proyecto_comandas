@@ -75,6 +75,8 @@ dependencies {
     // Hilt para inyectar dependencias
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
 
     //Coil para cargar imagenes
     implementation(libs.coil.compose)

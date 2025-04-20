@@ -6,6 +6,7 @@ data class Pedido(
     val mesa: Int = 0,
     val carta: List<ProductoPedido> = emptyList(),
     val state: EstadoPedido = EstadoPedido.PREPARACION,
+    val isClosed: Boolean = false,
     val time: Timestamp = Timestamp.now(),
     val total: Double = 0.0
 )

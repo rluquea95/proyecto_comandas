@@ -8,7 +8,7 @@ import com.example.readytapas.ui.screens.login.LoginScreen
 import com.example.readytapas.ui.screens.mainmenu.MainMenuScreen
 
 @Composable
-fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean) {
+fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutClick: () -> Unit) {
     NavHost(
         navController = navController,
         /*Se almacena la pantalla que se verá cuando la aplicación se inicia
@@ -27,7 +27,7 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean) {
             })
         }
         composable("mainmenu") {
-            MainMenuScreen()
+            MainMenuScreen(onLogoutClick = onLogoutClick)
         }
     }
 }
