@@ -17,6 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.readytapas.R
 import com.example.readytapas.ui.components.TopBarWithMenu
 import com.example.readytapas.ui.theme.BarBeigeClaro
@@ -24,14 +26,17 @@ import com.example.readytapas.ui.theme.BarMarronOscuro
 
 @Composable
 fun MainMenuScreen(
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    navController: NavController
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(BarBeigeClaro)
     ) {
-        Column {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
             TopBarWithMenu(onLogoutClick = onLogoutClick) // Pasamos la acción de logout
             // Se añade espacio entre la barra superior y el contenido
             Spacer(modifier = Modifier.height(20.dp))
@@ -44,34 +49,53 @@ fun MainMenuScreen(
             ) {
                 // Los botones de la pantalla principal
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(28.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     MenuItem(
                         painter = painterResource(id = R.drawable.tomar_notas),
                         text = "Tomar pedido",
-                        onClick = { /* acción */ }
+                        onClick = { navController.navigate("tomarPedido") } // Navegar a la pantalla de tomar pedido
                     )
                     MenuItem(
                         painter = painterResource(id = R.drawable.en_preparacion),
                         text = "En preparación",
-                        onClick = { /* acción */ }
+                        onClick = { navController.navigate("enPreparacion") } // Navegar a la pantalla "En preparación"
                     )
                 }
 
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(28.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     MenuItem(
                         painter = painterResource(id = R.drawable.platos_listos),
                         text = "Platos listos",
-                        onClick = { /* acción */ }
+                        onClick = { navController.navigate("platosListos") } // Navegar a la pantalla de platos listos
                     )
                     MenuItem(
                         painter = painterResource(id = R.drawable.pendiente_cobro),
                         text = "Pendiente de cobro",
-                        onClick = { /* acción */ }
+                        onClick = { navController.navigate("pendienteCobro") } // Navegar a la pantalla de pendiente de cobro
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(28.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    MenuItem(
+                        painter = painterResource(id = R.drawable.carta),
+                        text = "Carta",
+                        onClick = { navController.navigate("carta") } // Navegar a la pantalla de la carta
+                    )
+                    MenuItem(
+                        painter = painterResource(id = R.drawable.reservas),
+                        text = "Reserva",
+                        onClick = { navController.navigate("reservas") } // Navegar a la pantalla de pendiente de cobro
                     )
                 }
             }
@@ -106,5 +130,12 @@ fun MenuItem(
 @Preview
 @Composable
 fun PreviewMainMenuScreen(){
-    MainMenuScreen(onLogoutClick = {})
+    // Creamos un NavController simulado para el Preview
+    val navController = rememberNavController()
+
+    // Llamamos a MainMenuScreen con un onLogoutClick vacío (para la vista previa)
+    MainMenuScreen(
+        onLogoutClick = { /* Acción de logout vacía para el preview */ },
+        navController = navController
+    )
 }
