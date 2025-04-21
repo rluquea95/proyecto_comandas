@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.readytapas.R
 import com.example.readytapas.ui.components.TopBarWithMenu
 import com.example.readytapas.ui.theme.BarBeigeClaro
+import com.example.readytapas.ui.theme.BarBlancoHuesoTexto
 import com.example.readytapas.ui.theme.BarMarronOscuro
 
 @Composable
@@ -32,12 +33,16 @@ fun MainMenuScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BarBeigeClaro)
+            .background(BarBlancoHuesoTexto)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            TopBarWithMenu(onLogoutClick = onLogoutClick) // Pasamos la acción de logout
+            TopBarWithMenu(
+                title = "Ready Tapas",
+                onLogoutClick = onLogoutClick,
+                showBackButton = false
+            )
             // Se añade espacio entre la barra superior y el contenido
             Spacer(modifier = Modifier.height(20.dp))
             Column(

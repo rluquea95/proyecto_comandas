@@ -37,9 +37,9 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
         composable("mainmenu") {
             MainMenuScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
-        /*composable("carta"){
-            CartaScreen(onLogoutClick = onLogoutClick, navController = navController)) // Pasamos el navController
-        }*/
+        composable("carta"){
+            CartaScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
+        }
 
         // Pantallas vacías para cada destino
         composable("tomarPedido") {

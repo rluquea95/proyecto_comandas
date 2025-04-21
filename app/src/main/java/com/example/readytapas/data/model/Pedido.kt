@@ -3,7 +3,7 @@ package com.example.readytapas.data.model
 import com.google.firebase.Timestamp
 
 data class Pedido(
-    val mesa: Int = 0,
+    val mesa: NumeroMesa = NumeroMesa.BARRA,
     val carta: List<ProductoPedido> = emptyList(),
     val state: EstadoPedido = EstadoPedido.ENCURSO,
     val isClosed: Boolean = false,

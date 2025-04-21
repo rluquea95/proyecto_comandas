@@ -7,7 +7,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.readytapas.data.repository.AuthRepository
 import com.example.readytapas.ui.navigation.AppNavHost
 import com.example.readytapas.ui.theme.ReadyTapasTheme
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,7 +33,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             ReadyTapasTheme {
 
@@ -44,7 +42,9 @@ class MainActivity : ComponentActivity() {
                 val onLogoutClick: () -> Unit = {
                     authRepository.logout() // Llamamos a la función logout() del AuthRepository
                     navController.navigate("login") {
-                        popUpTo("mainmenu") { inclusive = true } // Elimina la pantalla principal de la pila de navegación
+                        popUpTo("mainmenu") {
+                            inclusive = true
+                        } // Elimina la pantalla principal de la pila de navegación
                     }
                 }
 

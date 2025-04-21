@@ -3,6 +3,7 @@ package com.example.readytapas.uploaddata
 import android.content.Context
 import com.example.readytapas.R
 import com.example.readytapas.data.model.Mesa
+import com.example.readytapas.data.model.NumeroMesa
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.InputStreamReader
 import org.json.JSONArray
@@ -31,15 +32,16 @@ class FirestoreUploaderMesa(private val context: Context) {
 
                 // Crea el objeto Mesa usando la clase data Mesa
                 val mesa = Mesa(
-                    id = jsonObject.getInt("id"),
+                    name = NumeroMesa.valueOf(jsonObject.getString("name")),
                     isOccupied = jsonObject.getBoolean("isOccupied"),
                     isReserved = jsonObject.getBoolean("isReserved")
                 )
 
-                // Guardamos la mesa en la colección "Mesas" usando el id como ID del documento
-                db.collection("Mesas").document(mesa.id.toString()).set(mesa)
+                // Guardamos la mesa en la colección "Mesas" usando name como ID del documento
+                // Usamos mesa.name.name para que guarde el string "MESA_X" en vez de "NumeroMesa.MESA_X"
+                db.collection("Mesas").document(mesa.name.name).set(mesa)
                     .addOnSuccessListener {
-                        println("Mesa añadida con ID: ${mesa.id}")
+                        println("Mesa añadida con ID: ${mesa.name}")
                     }
                     .addOnFailureListener { e ->
                         println("Error al añadir mesa: $e")

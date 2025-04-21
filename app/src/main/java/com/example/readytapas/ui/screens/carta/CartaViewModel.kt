@@ -21,6 +21,9 @@ class CartaViewModel @Inject constructor(
     private val _selectedCategoria = MutableStateFlow<CategoryProducto?>(null) // null == TODOS
     val selectedCategoria: StateFlow<CategoryProducto?> = _selectedCategoria
 
+    private val _ordenarPorPrecio = MutableStateFlow(false)
+    val ordenarPorPrecio: StateFlow<Boolean> = _ordenarPorPrecio
+
     init {
         cargarProductos()
     }
@@ -35,11 +38,23 @@ class CartaViewModel @Inject constructor(
         _selectedCategoria.value = categoria
     }
 
-    val productosFiltrados: StateFlow<List<Producto>> = combine(productos, selectedCategoria) { productos, categoria ->
-        if (categoria == null) {
+    fun alternarOrdenPrecio() {
+        _ordenarPorPrecio.value = !_ordenarPorPrecio.value
+    }
+
+    val productosFiltrados: StateFlow<List<Producto>> = combine(
+        productos, selectedCategoria, ordenarPorPrecio
+    ) { productos, categoria, ordenar ->
+        val filtrados = if (categoria == null) {
             productos // Mostrar todos
         } else {
             productos.filter { it.category == categoria }
+        }
+        if (ordenar){
+            filtrados.sortedBy { it.price }
+        }
+        else{
+            filtrados
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 }
