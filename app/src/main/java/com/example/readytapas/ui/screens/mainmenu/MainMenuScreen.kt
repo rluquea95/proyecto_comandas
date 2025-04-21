@@ -95,7 +95,7 @@ fun MainMenuScreen(
                     MenuItem(
                         painter = painterResource(id = R.drawable.reservas),
                         text = "Reserva",
-                        onClick = { navController.navigate("reservas") } // Navegar a la pantalla de pendiente de cobro
+                        onClick = { navController.navigate("reservas") } // Navegar a la pantalla de reservas
                     )
                 }
             }

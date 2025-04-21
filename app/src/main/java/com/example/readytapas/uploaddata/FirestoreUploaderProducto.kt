@@ -1,7 +1,9 @@
+
 package com.example.readytapas.uploaddata
 
 import android.content.Context
 import com.example.readytapas.R
+import com.example.readytapas.data.model.CategoryProducto
 import com.example.readytapas.data.model.Producto
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.InputStreamReader
@@ -32,7 +34,7 @@ class FirestoreUploaderProducto(private val context: Context) {
                 // Crea el objeto Producto usando la clase data Producto
                 val producto = Producto(
                     name = jsonObject.getString("name"),
-                    category = jsonObject.getString("category"),
+                    category = CategoryProducto.valueOf(jsonObject.getString("category").uppercase()),
                     description = jsonObject.getString("description"),
                     price = jsonObject.getDouble("price"),
                     imageUrl = jsonObject.getString("imageUrl")
@@ -56,3 +58,4 @@ class FirestoreUploaderProducto(private val context: Context) {
         }
     }
 }
+

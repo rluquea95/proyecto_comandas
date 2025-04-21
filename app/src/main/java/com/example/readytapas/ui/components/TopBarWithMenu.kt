@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,7 +19,9 @@ import com.example.readytapas.ui.theme.BarMarronOscuro
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBarWithMenu(
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    showBackButton: Boolean = false,
+    onBackClick: (() -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -26,6 +30,18 @@ fun TopBarWithMenu(
             containerColor = BarMarronOscuro,
             titleContentColor = BarBlancoHuesoTexto,
         ),
+        navigationIcon = {
+            // Mostrar el botón de retroceso solo si `showBackButton` es true
+            if (showBackButton && onBackClick != null) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Atrás",
+                        tint = BarBlancoHuesoTexto
+                    )
+                }
+            }
+        },
         title = { Text("ReadyTapas", color = BarBlancoHuesoTexto, fontSize = 24.sp) },
         actions = {
             IconButton(onClick = { expanded = true }) {
@@ -56,5 +72,5 @@ fun TopBarWithMenu(
 @Preview
 @Composable
 fun PreviewTopBar() {
-    TopBarWithMenu(onLogoutClick = {})
+    TopBarWithMenu(onLogoutClick = {}, showBackButton = true, onBackClick = { /* Acción de retroceso */ })
 }

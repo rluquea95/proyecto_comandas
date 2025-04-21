@@ -7,8 +7,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.readytapas.data.repository.AuthRepository
 import com.example.readytapas.ui.navigation.AppNavHost
 import com.example.readytapas.ui.theme.ReadyTapasTheme
-import com.example.readytapas.uploaddata.FirestoreUploaderMesa
-import com.example.readytapas.uploaddata.FirestoreUploaderProducto
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
