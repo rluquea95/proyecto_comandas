@@ -4,6 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -137,6 +140,13 @@ fun LoginScreenContent(
                                 color = BarGrisMedio
                             )
                         },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Icono Email",
+                                tint = BarGrisMedio
+                            )
+                        },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -148,6 +158,13 @@ fun LoginScreenContent(
                         onValueChange = onPasswordChange,
                         label = { Text("Contraseña", color = BarGrisMedio) },
                         placeholder = { Text("Introduce tu contraseña", color = BarGrisMedio) },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = "Icono Password",
+                                tint = BarGrisMedio
+                            )
+                        },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         modifier = Modifier.fillMaxWidth()
