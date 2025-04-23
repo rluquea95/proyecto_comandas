@@ -35,74 +35,71 @@ fun MainMenuScreen(
             .fillMaxSize()
             .background(BarBlancoHuesoTexto)
     ) {
+        TopBarWithMenu(
+            title = "Ready Tapas",
+            onLogoutClick = onLogoutClick,
+            showBackButton = false
+        )
+
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopBarWithMenu(
-                title = "Ready Tapas",
-                onLogoutClick = onLogoutClick,
-                showBackButton = false
-            )
-            // Se añade espacio entre la barra superior y el contenido
-            Spacer(modifier = Modifier.height(20.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(28.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            // Los botones de la pantalla principal
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(28.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Los botones de la pantalla principal
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(28.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    MenuItem(
-                        painter = painterResource(id = R.drawable.tomar_notas),
-                        text = "Tomar pedido",
-                        onClick = { navController.navigate("tomarPedido") } // Navegar a la pantalla de tomar pedido
-                    )
-                    MenuItem(
-                        painter = painterResource(id = R.drawable.en_preparacion),
-                        text = "En preparación",
-                        onClick = { navController.navigate("enPreparacion") } // Navegar a la pantalla "En preparación"
-                    )
-                }
+                MenuItem(
+                    painter = painterResource(id = R.drawable.tomar_notas),
+                    text = "Tomar pedido",
+                    onClick = { navController.navigate("tomarPedido") } // Navegar a la pantalla de tomar pedido
+                )
+                MenuItem(
+                    painter = painterResource(id = R.drawable.en_preparacion),
+                    text = "En preparación",
+                    onClick = { navController.navigate("enPreparacion") } // Navegar a la pantalla "En preparación"
+                )
+            }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(28.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    MenuItem(
-                        painter = painterResource(id = R.drawable.platos_listos),
-                        text = "Platos listos",
-                        onClick = { navController.navigate("platosListos") } // Navegar a la pantalla de platos listos
-                    )
-                    MenuItem(
-                        painter = painterResource(id = R.drawable.pendiente_cobro),
-                        text = "Pendiente de cobro",
-                        onClick = { navController.navigate("pendienteCobro") } // Navegar a la pantalla de pendiente de cobro
-                    )
-                }
+            Spacer(modifier = Modifier.height(25.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(28.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    MenuItem(
-                        painter = painterResource(id = R.drawable.carta),
-                        text = "Carta",
-                        onClick = { navController.navigate("carta") } // Navegar a la pantalla de la carta
-                    )
-                    MenuItem(
-                        painter = painterResource(id = R.drawable.reservas),
-                        text = "Reserva",
-                        onClick = { navController.navigate("reservas") } // Navegar a la pantalla de reservas
-                    )
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(28.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                MenuItem(
+                    painter = painterResource(id = R.drawable.platos_listos),
+                    text = "Platos listos",
+                    onClick = { navController.navigate("platosListos") } // Navegar a la pantalla de platos listos
+                )
+                MenuItem(
+                    painter = painterResource(id = R.drawable.pendiente_cobro),
+                    text = "Pendiente de cobro",
+                    onClick = { navController.navigate("pendienteCobro") } // Navegar a la pantalla de pendiente de cobro
+                )
+            }
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(28.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                MenuItem(
+                    painter = painterResource(id = R.drawable.carta),
+                    text = "Carta",
+                    onClick = { navController.navigate("carta") } // Navegar a la pantalla de la carta
+                )
+                MenuItem(
+                    painter = painterResource(id = R.drawable.reservas),
+                    text = "Reserva",
+                    onClick = { navController.navigate("reservas") } // Navegar a la pantalla de reservas
+                )
             }
         }
     }
@@ -117,24 +114,29 @@ fun MenuItem(
     Column(
         modifier = Modifier
             .clickable { onClick() }
-            .padding(14.dp)
-            .width(130.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(14.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
             painter = painter,
             contentDescription = text,
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier.size(120.dp),
             colorFilter = ColorFilter.tint(BarMarronOscuro)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text, fontSize = 24.sp, color = BarMarronOscuro, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+        Text(
+            text,
+            fontSize = 24.sp,
+            color = BarMarronOscuro,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
 @Preview
 @Composable
-fun PreviewMainMenuScreen(){
+fun PreviewMainMenuScreen() {
     // Creamos un NavController simulado para el Preview
     val navController = rememberNavController()
 

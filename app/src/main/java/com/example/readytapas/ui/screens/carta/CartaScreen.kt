@@ -1,7 +1,11 @@
 package com.example.readytapas.ui.screens.carta
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,19 +19,28 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -57,7 +71,7 @@ fun CartaScreen(
     val productos by viewModel.productosFiltrados.collectAsState()
     val selectedCategoria by viewModel.selectedCategoria.collectAsState()
     val ordenarPorPrecio by viewModel.ordenarPorPrecio.collectAsState()
-
+    val imagenProductoSeleccionada by viewModel.imagenProductoSeleccionada.collectAsState()
     val categorias = listOf<CategoryProducto?>(null) + CategoryProducto.entries
 
     Column {
@@ -70,7 +84,7 @@ fun CartaScreen(
         )
         // Chips de categoría
         CategoriaChips(
-            categorias = listOf(null) + CategoryProducto.entries,
+            categorias = categorias,
             selectedCategoria = selectedCategoria,
             ordenarPorPrecio = ordenarPorPrecio,
             onCategoriaSeleccionada = viewModel::seleccionarCategoria,
@@ -83,42 +97,83 @@ fun CartaScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(productos) { producto ->
-                ProductoCard(producto)
+                ProductoCard(
+                    producto = producto,
+                    onImageClick = { viewModel.seleccionarImagenProducto(producto) }
+                )
+            }
+        }
+
+        if (imagenProductoSeleccionada != null) {
+            Dialog(onDismissRequest = { viewModel.cerrarImagenProducto() }) {
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(BarBeigeClaro)
+                        .padding(16.dp)
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        AsyncImage(
+                            model = imagenProductoSeleccionada!!.imageUrl,
+                            contentDescription = imagenProductoSeleccionada!!.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            imagenProductoSeleccionada!!.name,
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Text(
+                            imagenProductoSeleccionada!!.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = { viewModel.cerrarImagenProducto() }) {
+                            Text("Cerrar")
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun ProductoCard(producto: Producto) {
+fun ProductoCard(
+    producto: Producto,
+    onImageClick: () -> Unit
+) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier = Modifier.fillMaxSize(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = BarMarronMedioAcento),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
-            // Imagen (si tienes Coil o Glide Compose)
-            AsyncImage(
-                model = producto.imageUrl,
-                contentDescription = producto.name,
-                modifier = Modifier
-                    .size(84.dp)
-                    .clip(RoundedCornerShape(12.dp))
-            )
+            Column(modifier = Modifier.wrapContentWidth()) {
+                // Imagen (si tienes Coil o Glide Compose)
+                AsyncImage(
+                    model = producto.imageUrl,
+                    contentDescription = producto.name,
+                    modifier = Modifier
+                        .size(84.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onImageClick() }
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            ) {
+            Column(modifier = Modifier.wrapContentWidth()) {
                 Text(
                     producto.name,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.width(180.dp)
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -126,22 +181,27 @@ fun ProductoCard(producto: Producto) {
                 Text(
                     producto.description,
                     maxLines = 4,
-                    overflow = TextOverflow.Ellipsis,
+                    //overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.widthIn(max = 180.dp) // Limita el ancho para que salte de línea
+                    modifier = Modifier.width(160.dp)
                 )
             }
+
+            Spacer(modifier = Modifier.width(6.dp))
+
             // Precio centrado verticalmente
-            Column(
-                modifier = Modifier
-                    .width(70.dp)
-                    .align(Alignment.CenterVertically), // 🔹 Esto centra verticalmente la columna completa en el Row
-                horizontalAlignment = Alignment.CenterHorizontally
+            Column(modifier = Modifier.align(alignment = Alignment.CenterVertically)
             ) {
+                Text(
+                    "${producto.category.name}",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    textAlign = TextAlign.Right,
+                )
+                Spacer(modifier = Modifier.height(25.dp))
                 Text(
                     "${producto.price} €",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -187,14 +247,14 @@ fun CategoriaChips(
             )
         }
 
-        if (ordenarPorPrecio != null && onOrdenarClick != null) {
+        ordenarPorPrecio?.let {
             FilterChip(
-                selected = ordenarPorPrecio,
-                onClick = onOrdenarClick,
+                selected = it,
+                onClick = { onOrdenarClick?.invoke() },
                 label = {
                     Text(
                         "PRECIO",
-                        color = if (ordenarPorPrecio) BarBlancoHuesoTexto else BarMarronMedioAcento
+                        color = if (it) BarBlancoHuesoTexto else BarMarronMedioAcento
                     )
                 },
                 modifier = Modifier.padding(end = 8.dp),
@@ -225,7 +285,7 @@ fun CartaScreenPreview() {
             name = "Cerveza",
             description = "Caña bien fría",
             category = CategoryProducto.BEBIDA,
-            price = 2.0,
+            price = 12.0,
             imageUrl = ""
         )
     )
@@ -251,7 +311,10 @@ fun CartaScreenPreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(productosMock) { producto ->
-                ProductoCard(producto)
+                ProductoCard(
+                    producto = producto,
+                    onImageClick = {} // Necesario ahora con nueva firma
+                )
             }
         }
     }

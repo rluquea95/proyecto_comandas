@@ -24,22 +24,11 @@ class CartaViewModel @Inject constructor(
     private val _ordenarPorPrecio = MutableStateFlow(false)
     val ordenarPorPrecio: StateFlow<Boolean> = _ordenarPorPrecio
 
+    private val _imagenProductoSeleccionada = MutableStateFlow<Producto?>(null)
+    val imagenProductoSeleccionada: StateFlow<Producto?> = _imagenProductoSeleccionada
+
     init {
         cargarProductos()
-    }
-
-    fun cargarProductos() {
-        viewModelScope.launch {
-            _productos.value = firestoreRepository.getCarta()
-        }
-    }
-
-    fun seleccionarCategoria(categoria: CategoryProducto?) {
-        _selectedCategoria.value = categoria
-    }
-
-    fun alternarOrdenPrecio() {
-        _ordenarPorPrecio.value = !_ordenarPorPrecio.value
     }
 
     val productosFiltrados: StateFlow<List<Producto>> = combine(
@@ -57,4 +46,27 @@ class CartaViewModel @Inject constructor(
             filtrados
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    fun cargarProductos() {
+        viewModelScope.launch {
+            _productos.value = firestoreRepository.getCarta()
+        }
+    }
+
+    fun seleccionarCategoria(categoria: CategoryProducto?) {
+        _selectedCategoria.value = categoria
+    }
+
+    fun alternarOrdenPrecio() {
+        _ordenarPorPrecio.value = !_ordenarPorPrecio.value
+    }
+
+    fun seleccionarImagenProducto(producto: Producto) {
+        _imagenProductoSeleccionada.value = producto
+    }
+
+    fun cerrarImagenProducto() {
+        _imagenProductoSeleccionada.value = null
+    }
+
 }
