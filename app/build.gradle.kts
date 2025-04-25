@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended.android)
 
     // ViewModel para Jetpack Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -74,6 +75,7 @@ dependencies {
 
     // Hilt para inyectar dependencias
     implementation(libs.hilt.android)
+    implementation(libs.androidx.animation.core.lint)
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 

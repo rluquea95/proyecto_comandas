@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +15,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import com.example.readytapas.ui.theme.BarGrisMedio
 import com.example.readytapas.ui.theme.BarMarronMedioAcento
 import com.example.readytapas.ui.theme.BarMarronOscuro
 import com.example.readytapas.ui.theme.Purple40
+
 
 @Composable
 fun LoginScreen(
@@ -50,7 +53,7 @@ fun LoginScreen(
     )
 }
 
-//Variante de LoginScreen para poder cargar la Preview ya que necesita recibir parámetros
+//Esta función hace de intermediaria entre LoginScreen y LoginViewModel
 @Composable
 fun LoginScreenContent(
     email: String,
@@ -63,21 +66,24 @@ fun LoginScreenContent(
     onLoginClick: () -> Unit = {},
     onResetPasswordClick: () -> Unit = {},
 ) {
+    //Almacena si el usuario pulsa el botón de mostrar contraseña
+    var passwordVisible by remember { mutableStateOf(false) }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        //Imagen de fondo
+        // Imagen de fodo y capa de color translúcido encima
         Image(
             painter = painterResource(id = R.drawable.background_login),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        // Capa de color translúcido encima
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BarBeigeClaro.copy(alpha = 0.4f))
         )
 
+        // Ordena todos los componentes de la pantalla centrados horizontalmente
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,6 +91,7 @@ fun LoginScreenContent(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            //Box para el título
             Box(
                 modifier = Modifier
                     .wrapContentWidth()
@@ -106,7 +113,7 @@ fun LoginScreenContent(
 
             Spacer(modifier = Modifier.height(80.dp))
 
-            // Caja del login
+            // Box que contiene el login
             Box(
                 modifier = Modifier
                     .wrapContentHeight()
@@ -158,15 +165,18 @@ fun LoginScreenContent(
                         onValueChange = onPasswordChange,
                         label = { Text("Contraseña", color = BarGrisMedio) },
                         placeholder = { Text("Introduce tu contraseña", color = BarGrisMedio) },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Lock,
-                                contentDescription = "Icono Password",
-                                tint = BarGrisMedio
-                            )
-                        },
                         singleLine = true,
-                        visualTransformation = PasswordVisualTransformation(),
+                        //Si el usuario pulsa el botón de mostrar contraseña, muestra la contraseña
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Icon(
+                                    imageVector = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                                    contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña",
+                                    tint = BarGrisMedio
+                                )
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -192,6 +202,7 @@ fun LoginScreenContent(
                         Text("Entrar")
                     }
 
+                    //Formato para los mensajes de error
                     if (messageError != null){
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
@@ -203,6 +214,7 @@ fun LoginScreenContent(
                         )
                     }
 
+                    //Formato para los mensajes informativos
                     if (messageInfo != null){
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(

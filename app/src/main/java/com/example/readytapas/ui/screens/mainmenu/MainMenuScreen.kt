@@ -25,86 +25,113 @@ import com.example.readytapas.ui.theme.BarBeigeClaro
 import com.example.readytapas.ui.theme.BarBlancoHuesoTexto
 import com.example.readytapas.ui.theme.BarMarronOscuro
 
+
+private val rowVerticalSpacing = 50.dp // Espacio vertical entre las filas
+private val menuItemSpacing = 40.dp // Espacio horizontal entre los elementos del menú
+
 @Composable
 fun MainMenuScreen(
     onLogoutClick: () -> Unit,
     navController: NavController
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BarBlancoHuesoTexto)
-    ) {
-        TopBarWithMenu(
-            title = "Ready Tapas",
-            onLogoutClick = onLogoutClick,
-            showBackButton = false
-        )
-
+    //Con Scaffold podemos evitar que el contenido se solape con la barra superior (TopBarWithMenu)
+    //Definimos el color de fondo de la pantalla
+    Scaffold(
+        topBar = {
+            TopBarWithMenu(
+                title = "Ready Tapas",
+                onLogoutClick = onLogoutClick,
+                showBackButton = false
+            )
+        },
+        containerColor = BarBlancoHuesoTexto
+    ) { innerPadding ->
+        //Contenedor principal de los iconos del menú
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding), // Aplicar el padding definido en Scaffold
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Los botones de la pantalla principal
+            Spacer(modifier = Modifier.height(22.dp))
+
+            // Fila 1
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(28.dp),
+                horizontalArrangement = Arrangement.Center, //Los centrará horizontalmente
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                //Icono de tomar pedido
                 MenuItem(
                     painter = painterResource(id = R.drawable.tomar_notas),
                     text = "Tomar pedido",
-                    onClick = { navController.navigate("tomarPedido") } // Navegar a la pantalla de tomar pedido
+                    onClick = { navController.navigate("tomarPedido") }
                 )
+
+                Spacer(modifier = Modifier.width(menuItemSpacing))
+
+                //Icono de en preparación
                 MenuItem(
                     painter = painterResource(id = R.drawable.en_preparacion),
                     text = "En preparación",
-                    onClick = { navController.navigate("enPreparacion") } // Navegar a la pantalla "En preparación"
+                    onClick = { navController.navigate("enPreparacion") }
                 )
             }
 
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.height(rowVerticalSpacing))
 
+            // Fila 2
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(28.dp),
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                //Icono de platos listos
                 MenuItem(
                     painter = painterResource(id = R.drawable.platos_listos),
                     text = "Platos listos",
-                    onClick = { navController.navigate("platosListos") } // Navegar a la pantalla de platos listos
+                    onClick = { navController.navigate("platosListos") }
                 )
-                MenuItem(
-                    painter = painterResource(id = R.drawable.pendiente_cobro),
-                    text = "Pendiente de cobro",
-                    onClick = { navController.navigate("pendienteCobro") } // Navegar a la pantalla de pendiente de cobro
-                )
-            }
 
-            Spacer(modifier = Modifier.height(25.dp))
+                Spacer(modifier = Modifier.width(menuItemSpacing))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(28.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+                //Icono de carta
                 MenuItem(
                     painter = painterResource(id = R.drawable.carta),
                     text = "Carta",
-                    onClick = { navController.navigate("carta") } // Navegar a la pantalla de la carta
+                    onClick = { navController.navigate("carta") }
                 )
+            }
+
+            Spacer(modifier = Modifier.height(rowVerticalSpacing))
+
+            // Fila 3
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                //Icono de pendiente de cobro
+                MenuItem(
+                    painter = painterResource(id = R.drawable.pendiente_cobro),
+                    text = "Pendiente de cobro",
+                    onClick = { navController.navigate("pendienteCobro") }
+                )
+
+                Spacer(modifier = Modifier.width(menuItemSpacing))
+
+                //Icono de reservas
                 MenuItem(
                     painter = painterResource(id = R.drawable.reservas),
                     text = "Reserva",
-                    onClick = { navController.navigate("reservas") } // Navegar a la pantalla de reservas
+                    onClick = { navController.navigate("reservas") }
                 )
             }
         }
     }
 }
 
+// Composable para cada elemento del menú
 @Composable
 fun MenuItem(
     painter: Painter,
@@ -114,22 +141,26 @@ fun MenuItem(
     Column(
         modifier = Modifier
             .clickable { onClick() }
-            .padding(14.dp),
+            .padding(horizontal = 14.dp, vertical = 14.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+
         Image(
             painter = painter,
             contentDescription = text,
-            modifier = Modifier.size(120.dp),
-            colorFilter = ColorFilter.tint(BarMarronOscuro)
+            modifier = Modifier.size(100.dp),
+            colorFilter = ColorFilter.tint(BarMarronOscuro) //Aplica el color al icono
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         Text(
             text,
-            fontSize = 24.sp,
+            modifier = Modifier.width(120.dp),
+            fontSize = 22.sp,
             color = BarMarronOscuro,
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }
@@ -137,10 +168,10 @@ fun MenuItem(
 @Preview
 @Composable
 fun PreviewMainMenuScreen() {
-    // Creamos un NavController simulado para el Preview
+    // Creamos un NavController simulado para la vista previa (Preview)
     val navController = rememberNavController()
 
-    // Llamamos a MainMenuScreen con un onLogoutClick vacío (para la vista previa)
+    // Llamamos a MainMenuScreen con onLogoutClick vacío (para la vista previa)
     MainMenuScreen(
         onLogoutClick = { /* Acción de logout vacía para el preview */ },
         navController = navController

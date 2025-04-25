@@ -1,6 +1,5 @@
 package com.example.readytapas.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -8,7 +7,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +17,12 @@ import androidx.compose.ui.unit.sp
 import com.example.readytapas.ui.theme.BarBlancoHuesoTexto
 import com.example.readytapas.ui.theme.BarGrisMedio
 import com.example.readytapas.ui.theme.BarMarronOscuro
+
+/*
+* Para usar TopAppBar debemos añadir esta anotación, ya que no es una función
+* que esté en su versión final, por lo que pueden surgir errores inesperados
+* o incluso que ciertas funcionalidades sean descartadas en futuras versiones.
+*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +41,7 @@ fun TopBarWithMenu(
             titleContentColor = BarBlancoHuesoTexto,
         ),
         navigationIcon = {
-            // Mostrar el botón de retroceso solo si `showBackButton` es true
+            // Mostrar el botón de retroceso solo si `showBackButton` es true y onBackClick no es null
             if (showBackButton && onBackClick != null) {
                 IconButton(onClick = onBackClick) {
                     Icon(
@@ -49,9 +53,16 @@ fun TopBarWithMenu(
             }
         },
         title = {
+            //Usamos Box para controlar la alineación del texto
             Box(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     title,
+                    /*
+                    * Se evalua el valor de titleAlignment para determinar como se alinea el texto:
+                    * TextAlign.Center -> centro.
+                    * TextAlign.End -> derecha.
+                    * Sino, izquierda.
+                    */
                     modifier = Modifier.align(
                         when (titleAlignment) {
                             TextAlign.Center -> Alignment.Center
@@ -76,7 +87,7 @@ fun TopBarWithMenu(
             DropdownMenu(
                 expanded = expanded,
                 containerColor = BarGrisMedio,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false } // Cierra el menú al hacer clic fuera de él
             ) {
                 DropdownMenuItem(
                     text = { Text("Cerrar sesión", color = BarBlancoHuesoTexto, fontSize = 20.sp) },
@@ -97,5 +108,6 @@ fun PreviewTopBar() {
         title = "Ready Tapas",
         onLogoutClick = {},
         showBackButton = true,
-        onBackClick = { /* Acción de retroceso */ })
+        onBackClick = {}
+    )
 }

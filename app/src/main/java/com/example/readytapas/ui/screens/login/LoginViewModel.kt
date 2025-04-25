@@ -1,5 +1,6 @@
 package com.example.readytapas.ui.screens.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readytapas.data.repository.AuthRepository
@@ -52,7 +53,8 @@ class LoginViewModel @Inject constructor(
                 showMessageAndHide("¡Login exitoso!", isError = false)
                 onSuccess()
             }.onFailure { e ->
-                showMessageAndHide("Introduce un email y contraseña válidos. ${e.message}", isError = true)
+                showMessageAndHide("Introduce un email y contraseña válidos.", isError = true)
+                Log.e("Login", "Error al iniciar sesión:", e)
             }
         }
     }
@@ -74,7 +76,8 @@ class LoginViewModel @Inject constructor(
             result.onSuccess {
                 showMessageAndHide("Revisa tu correo para reestablecer la contraseña.", isError = false)
             }.onFailure { e ->
-                showMessageAndHide("Error al reestablecer la contraseña. ${e.message}", isError = true)
+                showMessageAndHide("Error al reestablecer la contraseña.", isError = true)
+                Log.e("Login", "Error al reestablecer la contraseña:", e)
             }
         }
     }
@@ -104,6 +107,5 @@ data class LoginUiState(
     val password: String = "",
     val isLoading: Boolean = false,
     val messageError: String? = null,
-    val messageInfo: String? = null,
-    val resetPasswordEmailSent: Boolean = false
+    val messageInfo: String? = null
 )
