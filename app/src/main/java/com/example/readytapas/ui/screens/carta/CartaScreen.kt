@@ -1,6 +1,8 @@
 package com.example.readytapas.ui.screens.carta
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -44,6 +46,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,6 +58,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.readytapas.R
 import com.example.readytapas.data.model.CategoryProducto
 import com.example.readytapas.data.model.Producto
 import com.example.readytapas.ui.components.TopBarWithMenu
@@ -114,8 +120,8 @@ fun CartaScreen(
                         .padding(16.dp)
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        AsyncImage(
-                            model = imagenProductoSeleccionada!!.imageUrl,
+                        Image(
+                            painter = loadLocalDrawableStrict(imagenProductoSeleccionada!!.imageUrl),
                             contentDescription = imagenProductoSeleccionada!!.name,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -143,6 +149,16 @@ fun CartaScreen(
     }
 }
 
+@SuppressLint("DiscouragedApi")
+@Composable
+fun loadLocalDrawableStrict(name: String): Painter {
+    val context = LocalContext.current
+    val resId = remember(name) {
+        context.resources.getIdentifier(name, "drawable", context.packageName)
+    }
+    return painterResource(id = resId)
+}
+
 @Composable
 fun ProductoCard(
     producto: Producto,
@@ -156,9 +172,8 @@ fun ProductoCard(
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             Column(modifier = Modifier.wrapContentWidth()) {
-                // Imagen (si tienes Coil o Glide Compose)
-                AsyncImage(
-                    model = producto.imageUrl,
+                Image(
+                    painter = loadLocalDrawableStrict(producto.imageUrl),
                     contentDescription = producto.name,
                     modifier = Modifier
                         .size(84.dp)
@@ -279,14 +294,14 @@ fun CartaScreenPreview() {
             description = "Clásica tortilla española con cebolla",
             category = CategoryProducto.PLATO,
             price = 8.50,
-            imageUrl = ""
+            imageUrl = "plato_tortilla"
         ),
         Producto(
             name = "Cerveza",
             description = "Caña bien fría",
             category = CategoryProducto.BEBIDA,
             price = 12.0,
-            imageUrl = ""
+            imageUrl = "bebida_cerveza"
         )
     )
 

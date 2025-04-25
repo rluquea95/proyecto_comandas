@@ -4,384 +4,384 @@
     "description": "Botella de agua pequeña",
     "category": "BEBIDA",
     "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1PPZbulevMvqzSlOdGuos6uFBoirxan11"
+    "imageUrl": "bebida_agua"
   },
   {
     "name": "Agua 1.5L",
     "description": "Botella de agua grande",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1PPZbulevMvqzSlOdGuos6uFBoirxan11"
+    "imageUrl": "bebida_agua"
   },
   {
     "name": "Batido de chocolate",
     "description": "Batido sabor chocolate",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=18P-bL6GDZrRNdfwA39xA78JxhS8jPSpm"
+    "imageUrl": "bebida_batido_chocolate"
   },
   {
     "name": "Batido de vainilla",
     "description": "Batido sabor vainilla",
     "category": "BEBIDA",
     "price": 1.5,
-    "imageUrl": "https://drive.google.com/uc?id=1EcWGyV8EhbnBKCyHb2UAra4gFR2OX0Dk"
+    "imageUrl": "bebida_batido_vainilla"
   },
   {
     "name": "Café",
     "description": "Taza de café de máquina con leche",
     "category": "BEBIDA",
     "price": 1.2,
-    "imageUrl": "https://drive.google.com/uc?id=1qwO45_6ouOsp29DhDK1iOY6gHWIuFVKy"
+    "imageUrl": "bebida_cafe"
   },
   {
     "name": "Cerveza",
     "description": "Cerveza fría, con espuma",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1AHjx_FPGDv2o7aZU4pVliM7j47WxggQp"
+    "imageUrl": "bebida_cerveza"
   },
   {
     "name": "Coca cola",
     "description": "Refresco sabor cola, burbujeante y refrescante.",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1mLYLU15aiJUJCih5Dn3Bpqdp8SMDfQt7"
+    "imageUrl": "bebida_coca_cola"
   },
   {
     "name": "Cola Cao",
     "description": "Taza con leche y cola cao soluble",
     "category": "BEBIDA",
     "price": 1.5,
-    "imageUrl": "https://drive.google.com/uc?id=1DpsvscjcP1fT_5rreJFtlGtSyJsAr60W"
+    "imageUrl": "bebida_cola_cao"
   },
   {
     "name": "Descafeinado",
     "description": "Taza de descafeinado de máquina con leche",
     "category": "BEBIDA",
     "price": 1.2,
-    "imageUrl": "https://drive.google.com/uc?id=1qwO45_6ouOsp29DhDK1iOY6gHWIuFVKy"
+    "imageUrl": "bebida_cafe"
   },
   {
     "name": "Descafeinado de sobre",
     "description": "Taza con leche y descafeinado soluble",
     "category": "BEBIDA",
     "price": 1.5,
-    "imageUrl": "https://drive.google.com/uc?id=1qwO45_6ouOsp29DhDK1iOY6gHWIuFVKy"
+    "imageUrl": "bebida_cafe"
   },
   {
     "name": "Fanta de limón",
     "description": "Refresco sabor limón, burbujeante y refrescante.",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1ZNttz6HtnLOfIDwg6IgtCK1X7E4jSQIM"
+    "imageUrl": "bebida_fanta_limon"
   },
   {
     "name": "Fanta de naranja",
     "description": "Refresco sabor naranja, burbujeante y refrescante.",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1fBM8O34kE04XWZm3tQ6W1nRVGng9wrhP"
+    "imageUrl": "bebida_fanta_naranja"
   },
   {
     "name": "Fuze tea",
     "description": "Refresco de té negro y limón",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1QFKMAPu7xSyBGb_nElJbb-bUhnEWZBmt"
+    "imageUrl": "bebida_te"
   },
   {
     "name": "Kas de limón",
     "description": "Refresco sabor limón, burbujeante y refrescante.",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1ZNttz6HtnLOfIDwg6IgtCK1X7E4jSQIM"
+    "imageUrl": "bebida_fanta_limon"
   },
   {
     "name": "Kas de naranja",
     "description": "Refresco sabor naranja, burbujeante y refrescante.",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1fBM8O34kE04XWZm3tQ6W1nRVGng9wrhP"
+    "imageUrl": "bebida_fanta_naranja"
   },
   {
     "name": "Nestea",
     "description": "Refresco de té negro y limón",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1QFKMAPu7xSyBGb_nElJbb-bUhnEWZBmt"
+    "imageUrl": "bebida_te"
   },
   {
     "name": "Pepsi",
     "description": "Refresco sabor cola, burbujeante y refrescante.",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1mLYLU15aiJUJCih5Dn3Bpqdp8SMDfQt7"
+    "imageUrl": "bebida_coca_cola"
   },
   {
     "name": "Zumo de melocotón",
     "description": "Zumo de melocotón",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1w2IW-ca3LLrODiV7lGOguq2LgOq0MeY_"
+    "imageUrl": "bebida_zumo"
   },
   {
     "name": "Zumo de piña",
     "description": "Zumo de piña",
     "category": "BEBIDA",
     "price": 1.8,
-    "imageUrl": "https://drive.google.com/uc?id=1w2IW-ca3LLrODiV7lGOguq2LgOq0MeY_"
+    "imageUrl": "bebida_zumo"
   },
   {
     "name": "Coquinas",
     "description": "Pequeñas almejas salteadas con ajo y perejil",
     "category": "PLATO",
     "price": 14,
-    "imageUrl": "https://drive.google.com/uc?id=1qyCwPsWbXSXgAFlfrwk7ey0Yw6rv-OWZ"
+    "imageUrl": "plato_coquinas"
   },
   {
     "name": "Croquetas de jamón",
     "description": "Bechamel cremosa con jamón serrano",
     "category": "PLATO",
     "price": 9,
-    "imageUrl": "https://drive.google.com/uc?id=1QeRMIjYtDi1_yoVrh4naBZKj4IUkVKrM"
+    "imageUrl": "plato_croquetas"
   },
   {
     "name": "Croquetas de pollo",
     "description": "Bechamel cremosa con pollo",
     "category": "PLATO",
     "price": 9,
-    "imageUrl": "https://drive.google.com/uc?id=1QeRMIjYtDi1_yoVrh4naBZKj4IUkVKrM"
+    "imageUrl": "plato_croquetas"
   },
   {
     "name": "Ensaladilla",
     "description": "Patata, atún, mayonesa y verduras",
     "category": "PLATO",
     "price": 8,
-    "imageUrl": "https://drive.google.com/uc?id=1qOjZvXd9LTHZLVEHx4DQYXEfIxF7-VHv"
+    "imageUrl": "plato_ensaladilla"
   },
   {
     "name": "Filete de lomo plancha",
     "description": "Filete de cerdo a la plancha",
     "category": "PLATO",
     "price": 9,
-    "imageUrl": "https://drive.google.com/uc?id=1-weJ5Jj14hnx2jXzVZD99KjJ2zDcoWqZ"
+    "imageUrl": "plato_filete_lomo"
   },
   {
     "name": "Filete de pollo plancha",
     "description": "Pechuga de pollo a la plancha",
     "category": "PLATO",
     "price": 9,
-    "imageUrl": "https://drive.google.com/uc?id=1lolnnCp0LNo8V9BKy-BwO8ddagKE0tDT"
+    "imageUrl": "plato_filete_pollo"
   },
   {
     "name": "Gambas al ajillo",
     "description": "Gambas salteadas con ajo y guindilla.",
     "category": "PLATO",
     "price": 10,
-    "imageUrl": "https://drive.google.com/uc?id=1BuxR9zPz4agfrBjmWzU0PehhlWPc62Oe"
+    "imageUrl": "plato_gambas_ajillo"
   },
   {
     "name": "Gambas plancha",
     "description": "Gambas frescas a la plancha con sal gorda",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "https://drive.google.com/uc?id=1oxXvx8uhKHWqGOgaWN-kRw4xBJInwSHa"
+    "imageUrl": "plato_gambas"
   },
   {
     "name": "Mejillones plancha",
     "description": "Mejillones abiertos a la plancha con toque de limón",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "https://drive.google.com/uc?id=1xk-Qsat4p8rwXAQu4eLacMeU_UPaILlV"
+    "imageUrl": "plato_mejillones"
   },
   {
     "name": "Montaditos variados",
-    "description": "Surtido de 10 montaditos",
+    "description": "Surtido de 8 montaditos",
     "category": "PLATO",
     "price": 10,
-    "imageUrl": "https://drive.google.com/uc?id=1u5R65hvzpKgJQj9QDmLmbIqIvhsJII0v"
+    "imageUrl": "tapa_montadito"
   },
   {
     "name": "Navajas plancha",
     "description": "Navajas a la plancha con aceite y perejil",
     "category": "PLATO",
     "price": 14,
-    "imageUrl": "https://drive.google.com/uc?id=1xk-Qsat4p8rwXAQu4eLacMeU_UPaILlV"
+    "imageUrl": "plato_mejillones"
   },
   {
     "name": "Sardinas plancha",
     "description": "Sardinas enteras a la plancha, con sal",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "https://drive.google.com/uc?id=1m0DA5DwO8I9aDAcCfopQjry41BUFKI6c"
+    "imageUrl": "plato_sardinas"
   },
   {
     "name": "Solomillo a la pimienta",
     "description": "Solomillo con salsa cremosa de pimienta negra",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "https://drive.google.com/uc?id=1baCTgR2welmfCAisxTgAi2NNLjsGkNnY"
+    "imageUrl": "plato_solomillo"
   },
   {
     "name": "Solomillo al roquefort",
     "description": "Solomillo con salsa cremosa de queso roquefort",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "https://drive.google.com/uc?id=1baCTgR2welmfCAisxTgAi2NNLjsGkNnY"
+    "imageUrl": "plato_solomillo"
   },
   {
     "name": "Solomillo al whisky",
     "description": "Solomillo con salsa cremosa con toque a whisky",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "https://drive.google.com/uc?id=1baCTgR2welmfCAisxTgAi2NNLjsGkNnY"
+    "imageUrl": "plato_solomillo"
   },
   {
     "name": "Tempura de verduras",
     "description": "Verduras frescas rebozadas en tempura ligera y crujiente",
     "category": "PLATO",
     "price": 10,
-    "imageUrl": "https://drive.google.com/uc?id=1IJ4VrtWIkRz8rvjRUM_9Xi-oze6-ACfs"
+    "imageUrl": "plato_tempura"
   },
   {
     "name": "Tortilla de patatas",
     "description": "Clásica tortilla española con patata",
     "category": "PLATO",
     "price": 8,
-    "imageUrl": "https://drive.google.com/uc?id=1mPZHXevFOBZP_EATtERtrWR-sNmmtnoj"
+    "imageUrl": "plato_tortilla"
   },
   {
     "name": "Tortillitas de camarones",
     "description": "Finas y crujientes tortas de camarones",
     "category": "PLATO",
     "price": 9,
-    "imageUrl": "https://drive.google.com/uc?id=175NiY9cqwl8roCNCJ5N-v6JuoXmudPPO"
+    "imageUrl": "plato_tortillitas_camarones"
   },
   {
     "name": "Bacaladilla",
     "description": "1 Bacaladilla frita",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1m0DA5DwO8I9aDAcCfopQjry41BUFKI6c"
+    "price": 1.5,
+    "imageUrl": "plato_sardinas"
   },
   {
     "name": "Boquerones",
     "description": "2 Boquerones fritos",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1m0DA5DwO8I9aDAcCfopQjry41BUFKI6c"
+    "price": 1.5,
+    "imageUrl": "plato_sardinas"
   },
   {
     "name": "Cogollo y anchoa",
     "description": "Cogollo fresco con anchoa y aceite de oliva",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1f8XOP0ul119ZF6ooZ5kTMfVm-Cwc7GQc"
+    "price": 1.5,
+    "imageUrl": "tapa_cogollos"
   },
   {
     "name": "Cuña de tortilla de patatas",
     "description": "Porción de tortilla de patatas",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1mPZHXevFOBZP_EATtERtrWR-sNmmtnoj"
+    "price": 1.5,
+    "imageUrl": "plato_tortilla"
   },
   {
     "name": "Gambas",
     "description": "2 Gambas frescas",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1oxXvx8uhKHWqGOgaWN-kRw4xBJInwSHa"
+    "price": 1.5,
+    "imageUrl": "plato_gambas"
   },
   {
     "name": "Montadito de atún",
     "description": "Montadito redondo con atún en aceite y una rodaja de tomate",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1Qvb1pDgEGaACKEre8BECZqrWOvyIFv3O"
+    "price": 1.5,
+    "imageUrl": "tapa_montadito_atun"
   },
   {
     "name": "Montadito de butifarra",
     "description": "Butifarra a la plancha sobre pan rústico",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1vgKQrpmoHD44AXPsD8wlddqDqiSh0Fch"
+    "price": 1.5,
+    "imageUrl": "tapa_morcilla"
   },
   {
     "name": "Montadito de chistorra",
     "description": "Chistorra a la plancha sobre pan rústico",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1vgKQrpmoHD44AXPsD8wlddqDqiSh0Fch"
+    "price": 1.5,
+    "imageUrl": "tapa_morcilla"
   },
   {
     "name": "Montadito de filete",
     "description": "Filete de pollo plancha sobre pan rústico",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1x06kmC6eE_LvfkKNvQm-_VtcYIA8QAs2"
+    "price": 1.5,
+    "imageUrl": "tapa_filete"
   },
   {
     "name": "Montadito de hamburguesa",
     "description": "Montadito redondo con hamburguesita",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1u5R65hvzpKgJQj9QDmLmbIqIvhsJII0v"
+    "price": 1.5,
+    "imageUrl": "tapa_montadito"
   },
   {
     "name": "Montadito de huevo y chorizo",
     "description": "Montadito redondo con chorizo y huevo de codorniz",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1u5R65hvzpKgJQj9QDmLmbIqIvhsJII0v"
+    "price": 1.5,
+    "imageUrl": "tapa_montadito"
   },
   {
     "name": "Montadito de morcilla",
     "description": "Montadito redondo con morcilla y una rodaja de tomate",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1vgKQrpmoHD44AXPsD8wlddqDqiSh0Fch"
+    "price": 1.5,
+    "imageUrl": "tapa_morcilla"
   },
   {
     "name": "Montadito de panceta",
     "description": "Panceta plancha sobre pan rústico",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1u5R65hvzpKgJQj9QDmLmbIqIvhsJII0v"
+    "price": 1.5,
+    "imageUrl": "tapa_montadito"
   },
   {
     "name": "Montadito de roquefort",
     "description": "Untable de roquefort sobre pan rústico",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1x06kmC6eE_LvfkKNvQm-_VtcYIA8QAs2"
+    "price": 1.5,
+    "imageUrl": "tapa_filete"
   },
   {
     "name": "Montadito de salchicha",
     "description": "Montadito redondo con salchicha y huevo de codorniz",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1u5R65hvzpKgJQj9QDmLmbIqIvhsJII0v"
+    "price": 1.5,
+    "imageUrl": "tapa_montadito"
   },
   {
     "name": "Montadito de sobrasada",
     "description": "Untable de sobrasada sobre pan rústico",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1vgKQrpmoHD44AXPsD8wlddqDqiSh0Fch"
+    "price": 1.5,
+    "imageUrl": "tapa_morcilla"
   },
   {
     "name": "Queso",
     "description": "Tapa de queso curado",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1bJC0bZdMH4nOzQodTJuCQmqr4vxA8odu"
+    "price": 1.5,
+    "imageUrl": "tapa_queso"
   },
   {
     "name": "Sardina",
     "description": "1 Sardina plancha",
     "category": "TAPA",
-    "price": 1,
-    "imageUrl": "https://drive.google.com/uc?id=1m0DA5DwO8I9aDAcCfopQjry41BUFKI6c"
+    "price": 1.5,
+    "imageUrl": "plato_sardinas"
   }
 ]
