@@ -1,7 +1,6 @@
 package com.example.readytapas.ui.screens.mainmenu
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,8 +19,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.readytapas.R
 import com.example.readytapas.ui.components.TopBarWithMenu
-import com.example.readytapas.ui.theme.BarBeigeClaro
-import com.example.readytapas.ui.theme.BarBlancoHuesoTexto
+import com.example.readytapas.ui.theme.BarBlancoHueso
 import com.example.readytapas.ui.theme.BarMarronOscuro
 
 
@@ -44,7 +41,7 @@ fun MainMenuScreen(
                 showBackButton = false
             )
         },
-        containerColor = BarBlancoHuesoTexto
+        containerColor = BarBlancoHueso
     ) { innerPadding ->
         //Contenedor principal de los iconos del menú
         Column(

@@ -1,7 +1,7 @@
 package com.example.readytapas.ui.screens.carta
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.animateContentSize
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,58 +12,50 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.example.readytapas.R
 import com.example.readytapas.data.model.CategoryProducto
 import com.example.readytapas.data.model.Producto
 import com.example.readytapas.ui.components.TopBarWithMenu
 import com.example.readytapas.ui.theme.BarBeigeClaro
-import com.example.readytapas.ui.theme.BarBlancoHuesoTexto
+import com.example.readytapas.ui.theme.BarBlancoHueso
+import com.example.readytapas.ui.theme.BarGrisMedio
 import com.example.readytapas.ui.theme.BarMarronMedioAcento
 import com.example.readytapas.ui.theme.BarMarronOscuro
 import java.util.Locale
@@ -111,37 +103,60 @@ fun CartaScreen(
         }
 
         if (imagenProductoSeleccionada != null) {
-            Dialog(onDismissRequest = { viewModel.cerrarImagenProducto() }) {
-                Box(
+            ImagenProductoDialog(
+                producto = imagenProductoSeleccionada!!,
+                onDismiss = { viewModel.cerrarImagenProducto() }
+            )
+        }
+    }
+}
+
+@Composable
+fun ImagenProductoDialog(
+    producto: Producto,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(BarBeigeClaro)
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = loadLocalDrawableStrict(producto.imageUrl),
+                    contentDescription = producto.name,
                     modifier = Modifier
-                        .padding(16.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(BarBeigeClaro)
-                        .padding(16.dp)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Image(
-                            painter = loadLocalDrawableStrict(imagenProductoSeleccionada!!.imageUrl),
-                            contentDescription = imagenProductoSeleccionada!!.name,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(300.dp)
-                                .clip(RoundedCornerShape(12.dp))
+                        .fillMaxWidth()
+                        .height(300.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    producto.name,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = BarMarronOscuro
+                )
+                Text(
+                    producto.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = BarGrisMedio
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Box(modifier = Modifier.padding(8.dp))
+                {
+                    Button(
+                        onClick = onDismiss,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = BarMarronOscuro,
+                            contentColor = BarBlancoHueso,
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            imagenProductoSeleccionada!!.name,
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                        )
-                        Text(
-                            imagenProductoSeleccionada!!.description,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.cerrarImagenProducto() }) {
-                            Text("Cerrar")
-                        }
+                    ) {
+                        Text("Cerrar")
                     }
                 }
             }
@@ -153,10 +168,16 @@ fun CartaScreen(
 @Composable
 fun loadLocalDrawableStrict(name: String): Painter {
     val context = LocalContext.current
+
     val resId = remember(name) {
         context.resources.getIdentifier(name, "drawable", context.packageName)
     }
-    return painterResource(id = resId)
+    return if (resId != 0) {
+        painterResource(id = resId)
+    } else {
+        Log.e("LoadLocalDrawable", "Imagen '$name' no encontrada en res/drawable")
+        painterResource(id = R.drawable.placeholder_carta) // Imagen de error
+    }
 }
 
 @Composable
@@ -188,6 +209,7 @@ fun ProductoCard(
                 Text(
                     producto.name,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = BarMarronOscuro,
                     modifier = Modifier.width(180.dp)
                 )
 
@@ -195,10 +217,11 @@ fun ProductoCard(
 
                 Text(
                     producto.description,
+                    color = BarMarronOscuro,
                     maxLines = 4,
                     //overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.width(160.dp)
+                    modifier = Modifier.width(170.dp)
                 )
             }
 
@@ -207,17 +230,41 @@ fun ProductoCard(
             // Precio centrado verticalmente
             Column(modifier = Modifier.align(alignment = Alignment.CenterVertically)
             ) {
-                Text(
-                    "${producto.category.name}",
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    textAlign = TextAlign.Right,
-                )
-                Spacer(modifier = Modifier.height(25.dp))
-                Text(
-                    "${producto.price} €",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    textAlign = TextAlign.Center,
-                )
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 10.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(BarMarronMedioAcento),
+                    contentAlignment = Alignment.Center,
+                ){
+                    Text(
+                        producto.category.name,
+                        color = BarBlancoHueso,
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.width(250.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(BarBlancoHueso),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        if (producto.price == producto.price.toInt().toDouble()) {
+                            "${producto.price.toInt()} €"
+                        } else {
+                            "${String.format(Locale.getDefault(), "%.2f", producto.price)} €"
+                        },
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = BarGrisMedio,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         }
     }
@@ -249,7 +296,7 @@ fun CategoriaChips(
                         nombre.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
                         },
-                        color = if (esSeleccionada) BarBlancoHuesoTexto else BarMarronMedioAcento
+                        color = if (esSeleccionada) BarBlancoHueso else BarMarronMedioAcento
                     )
                 },
                 modifier = Modifier.padding(end = 8.dp),
@@ -257,7 +304,7 @@ fun CategoriaChips(
                     containerColor = BarBeigeClaro,
                     selectedContainerColor = BarMarronMedioAcento,
                     labelColor = BarMarronOscuro,
-                    selectedLabelColor = BarBlancoHuesoTexto
+                    selectedLabelColor = BarBlancoHueso
                 )
             )
         }
@@ -269,7 +316,7 @@ fun CategoriaChips(
                 label = {
                     Text(
                         "PRECIO",
-                        color = if (it) BarBlancoHuesoTexto else BarMarronMedioAcento
+                        color = if (it) BarBlancoHueso else BarMarronMedioAcento
                     )
                 },
                 modifier = Modifier.padding(end = 8.dp),
@@ -277,7 +324,7 @@ fun CategoriaChips(
                     containerColor = BarBeigeClaro,
                     selectedContainerColor = BarMarronMedioAcento,
                     labelColor = BarMarronOscuro,
-                    selectedLabelColor = BarBlancoHuesoTexto
+                    selectedLabelColor = BarBlancoHueso
                 )
             )
         }
@@ -334,4 +381,22 @@ fun CartaScreenPreview() {
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun ImagenProductoDialogPreview() {
+    val productoMock = Producto(
+        name = "Tortilla de Patatas",
+        description = "Deliciosa tortilla española con cebolla",
+        category = CategoryProducto.PLATO,
+        price = 8.50,
+        imageUrl = "plato_tortilla" // Asegurate de tener esta imagen en tu drawable
+    )
+
+    ImagenProductoDialog(
+        producto = productoMock,
+        onDismiss = {} // No hace falta hacer nada en la preview
+    )
+}
+
 

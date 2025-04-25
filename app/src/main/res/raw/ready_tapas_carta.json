@@ -186,7 +186,7 @@
     "description": "Gambas frescas a la plancha con sal gorda",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "plato_gambas"
+    "imageUrl": "plato_gambas_plancha"
   },
   {
     "name": "Mejillones plancha",
@@ -305,14 +305,14 @@
     "description": "Butifarra a la plancha sobre pan rústico",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_morcilla"
+    "imageUrl": "tapa_butifarra"
   },
   {
     "name": "Montadito de chistorra",
     "description": "Chistorra a la plancha sobre pan rústico",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_morcilla"
+    "imageUrl": "tapa_butifarra"
   },
   {
     "name": "Montadito de filete",
@@ -368,7 +368,7 @@
     "description": "Untable de sobrasada sobre pan rústico",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_morcilla"
+    "imageUrl": "tapa_butifarra"
   },
   {
     "name": "Queso",

@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readytapas.ui.theme.BarBlancoHuesoTexto
+import com.example.readytapas.ui.theme.BarBlancoHueso
 import com.example.readytapas.ui.theme.BarGrisMedio
 import com.example.readytapas.ui.theme.BarMarronOscuro
 
@@ -38,7 +38,7 @@ fun TopBarWithMenu(
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = BarMarronOscuro,
-            titleContentColor = BarBlancoHuesoTexto,
+            titleContentColor = BarBlancoHueso,
         ),
         navigationIcon = {
             // Mostrar el botón de retroceso solo si `showBackButton` es true y onBackClick no es null
@@ -47,7 +47,7 @@ fun TopBarWithMenu(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Atrás",
-                        tint = BarBlancoHuesoTexto
+                        tint = BarBlancoHueso
                     )
                 }
             }
@@ -70,7 +70,7 @@ fun TopBarWithMenu(
                             else -> Alignment.CenterStart
                         }
                     ),
-                    color = BarBlancoHuesoTexto,
+                    color = BarBlancoHueso,
                     fontSize = 24.sp
                 )
             }
@@ -81,7 +81,7 @@ fun TopBarWithMenu(
                     Icons.Default.AccountCircle,
                     contentDescription = "Usuario",
                     modifier = Modifier.size(34.dp),
-                    tint = BarBlancoHuesoTexto
+                    tint = BarBlancoHueso
                 )
             }
             DropdownMenu(
@@ -90,7 +90,7 @@ fun TopBarWithMenu(
                 onDismissRequest = { expanded = false } // Cierra el menú al hacer clic fuera de él
             ) {
                 DropdownMenuItem(
-                    text = { Text("Cerrar sesión", color = BarBlancoHuesoTexto, fontSize = 20.sp) },
+                    text = { Text("Cerrar sesión", color = BarBlancoHueso, fontSize = 20.sp) },
                     onClick = {
                         expanded = false
                         onLogoutClick()

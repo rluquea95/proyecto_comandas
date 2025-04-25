@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.readytapas.R
 import com.example.readytapas.ui.theme.BarBeigeClaro
-import com.example.readytapas.ui.theme.BarBlancoHuesoTexto
+import com.example.readytapas.ui.theme.BarBlancoHueso
 import com.example.readytapas.ui.theme.BarGrisMedio
 import com.example.readytapas.ui.theme.BarMarronMedioAcento
 import com.example.readytapas.ui.theme.BarMarronOscuro
@@ -196,7 +196,7 @@ fun LoginScreenContent(
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = BarMarronMedioAcento,
-                            contentColor = BarBlancoHuesoTexto,
+                            contentColor = BarBlancoHueso,
                         )
                     ) {
                         Text("Entrar")
