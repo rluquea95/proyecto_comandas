@@ -76,6 +76,7 @@ dependencies {
     // Hilt para inyectar dependencias
     implementation(libs.hilt.android)
     implementation(libs.androidx.animation.core.lint)
+    implementation(libs.androidx.glance.wear.tiles)
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 

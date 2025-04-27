@@ -207,7 +207,7 @@
     "description": "Navajas a la plancha con aceite y perejil",
     "category": "PLATO",
     "price": 14,
-    "imageUrl": "plato_mejillones"
+    "imageUrl": "plato_navajas"
   },
   {
     "name": "Sardinas plancha",
@@ -221,21 +221,21 @@
     "description": "Solomillo con salsa cremosa de pimienta negra",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "plato_solomillo"
+    "imageUrl": "plato_solomillo_pimienta"
   },
   {
     "name": "Solomillo al roquefort",
     "description": "Solomillo con salsa cremosa de queso roquefort",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "plato_solomillo"
+    "imageUrl": "plato_solomillo_roquefort"
   },
   {
     "name": "Solomillo al whisky",
     "description": "Solomillo con salsa cremosa con toque a whisky",
     "category": "PLATO",
     "price": 12,
-    "imageUrl": "plato_solomillo"
+    "imageUrl": "plato_solomillo_whisky"
   },
   {
     "name": "Tempura de verduras",
@@ -263,14 +263,14 @@
     "description": "1 Bacaladilla frita",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "plato_sardinas"
+    "imageUrl": "plato_bacaladillas"
   },
   {
     "name": "Boquerones",
     "description": "2 Boquerones fritos",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "plato_sardinas"
+    "imageUrl": "plato_boquerones"
   },
   {
     "name": "Cogollo y anchoa",
@@ -312,7 +312,7 @@
     "description": "Chistorra a la plancha sobre pan rústico",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_butifarra"
+    "imageUrl": "tapa_chistorra"
   },
   {
     "name": "Montadito de filete",
@@ -326,14 +326,14 @@
     "description": "Montadito redondo con hamburguesita",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_montadito"
+    "imageUrl": "tapa_hamburguesita"
   },
   {
     "name": "Montadito de huevo y chorizo",
     "description": "Montadito redondo con chorizo y huevo de codorniz",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_montadito"
+    "imageUrl": "tapa_chorizo"
   },
   {
     "name": "Montadito de morcilla",
@@ -347,28 +347,28 @@
     "description": "Panceta plancha sobre pan rústico",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_montadito"
+    "imageUrl": "tapa_panceta"
   },
   {
     "name": "Montadito de roquefort",
     "description": "Untable de roquefort sobre pan rústico",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_filete"
+    "imageUrl": "tapa_roquefort"
   },
   {
     "name": "Montadito de salchicha",
     "description": "Montadito redondo con salchicha y huevo de codorniz",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_montadito"
+    "imageUrl": "tapa_salchicha"
   },
   {
     "name": "Montadito de sobrasada",
     "description": "Untable de sobrasada sobre pan rústico",
     "category": "TAPA",
     "price": 1.5,
-    "imageUrl": "tapa_butifarra"
+    "imageUrl": "tapa_sobrasada"
   },
   {
     "name": "Queso",

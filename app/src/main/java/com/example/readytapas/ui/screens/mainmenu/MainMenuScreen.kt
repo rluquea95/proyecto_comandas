@@ -153,7 +153,7 @@ fun MenuItem(
 
         Text(
             text,
-            modifier = Modifier.width(120.dp),
+            modifier = Modifier.width(140.dp),
             fontSize = 22.sp,
             color = BarMarronOscuro,
             textAlign = TextAlign.Center,

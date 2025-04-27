@@ -31,6 +31,8 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,6 +54,10 @@ import androidx.navigation.NavController
 import com.example.readytapas.R
 import com.example.readytapas.data.model.CategoryProducto
 import com.example.readytapas.data.model.Producto
+import com.example.readytapas.ui.components.CategoriaChips
+import com.example.readytapas.ui.components.ImagenProductoDialog
+import com.example.readytapas.ui.components.ProductoCard
+import com.example.readytapas.ui.components.SearchBar
 import com.example.readytapas.ui.components.TopBarWithMenu
 import com.example.readytapas.ui.theme.BarBeigeClaro
 import com.example.readytapas.ui.theme.BarBlancoHueso
@@ -70,9 +76,12 @@ fun CartaScreen(
     val selectedCategoria by viewModel.selectedCategoria.collectAsState()
     val ordenarPorPrecio by viewModel.ordenarPorPrecio.collectAsState()
     val imagenProductoSeleccionada by viewModel.imagenProductoSeleccionada.collectAsState()
+    val searchText by viewModel.searchText.collectAsState()
     val categorias = listOf<CategoryProducto?>(null) + CategoryProducto.entries
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ){
         TopBarWithMenu(
             title = "Carta",
             titleAlignment = TextAlign.Center,
@@ -88,6 +97,15 @@ fun CartaScreen(
             onCategoriaSeleccionada = viewModel::seleccionarCategoria,
             onOrdenarClick = viewModel::alternarOrdenPrecio
         )
+
+        SearchBar(
+            searchText = searchText,
+            onSearchTextChange = viewModel::actualizarTextoBusqueda,
+            placeholder = "Buscar producto..."
+        )
+
+        Spacer(modifier = Modifier.height(14.dp))
+
         // Lista de productos
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -102,234 +120,15 @@ fun CartaScreen(
             }
         }
 
-        if (imagenProductoSeleccionada != null) {
+        imagenProductoSeleccionada?.let { producto ->
             ImagenProductoDialog(
-                producto = imagenProductoSeleccionada!!,
+                producto = producto,
                 onDismiss = { viewModel.cerrarImagenProducto() }
             )
         }
     }
 }
 
-@Composable
-fun ImagenProductoDialog(
-    producto: Producto,
-    onDismiss: () -> Unit
-) {
-    Dialog(onDismissRequest = onDismiss) {
-        Box(
-            modifier = Modifier
-                .padding(16.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(BarBeigeClaro)
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(
-                    painter = loadLocalDrawableStrict(producto.imageUrl),
-                    contentDescription = producto.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    producto.name,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = BarMarronOscuro
-                )
-                Text(
-                    producto.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp),
-                    color = BarGrisMedio
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Box(modifier = Modifier.padding(8.dp))
-                {
-                    Button(
-                        onClick = onDismiss,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = BarMarronOscuro,
-                            contentColor = BarBlancoHueso,
-                        )
-                    ) {
-                        Text("Cerrar")
-                    }
-                }
-            }
-        }
-    }
-}
-
-@SuppressLint("DiscouragedApi")
-@Composable
-fun loadLocalDrawableStrict(name: String): Painter {
-    val context = LocalContext.current
-
-    val resId = remember(name) {
-        context.resources.getIdentifier(name, "drawable", context.packageName)
-    }
-    return if (resId != 0) {
-        painterResource(id = resId)
-    } else {
-        Log.e("LoadLocalDrawable", "Imagen '$name' no encontrada en res/drawable")
-        painterResource(id = R.drawable.placeholder_carta) // Imagen de error
-    }
-}
-
-@Composable
-fun ProductoCard(
-    producto: Producto,
-    onImageClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxSize(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = BarMarronMedioAcento),
-    ) {
-        Row(modifier = Modifier.padding(8.dp)) {
-            Column(modifier = Modifier.wrapContentWidth()) {
-                Image(
-                    painter = loadLocalDrawableStrict(producto.imageUrl),
-                    contentDescription = producto.name,
-                    modifier = Modifier
-                        .size(84.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable { onImageClick() }
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.wrapContentWidth()) {
-                Text(
-                    producto.name,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = BarMarronOscuro,
-                    modifier = Modifier.width(180.dp)
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    producto.description,
-                    color = BarMarronOscuro,
-                    maxLines = 4,
-                    //overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.width(170.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(6.dp))
-
-            // Precio centrado verticalmente
-            Column(modifier = Modifier.align(alignment = Alignment.CenterVertically)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(vertical = 10.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(BarMarronMedioAcento),
-                    contentAlignment = Alignment.Center,
-                ){
-                    Text(
-                        producto.category.name,
-                        color = BarBlancoHueso,
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.width(250.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(BarBlancoHueso),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        if (producto.price == producto.price.toInt().toDouble()) {
-                            "${producto.price.toInt()} €"
-                        } else {
-                            "${String.format(Locale.getDefault(), "%.2f", producto.price)} €"
-                        },
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = BarGrisMedio,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-        }
-    }
-}
-
-//Composable encargado de dibujar los chips de categoria y precio
-@Composable
-fun CategoriaChips(
-    categorias: List<CategoryProducto?>,
-    selectedCategoria: CategoryProducto?,
-    ordenarPorPrecio: Boolean? = null,
-    onCategoriaSeleccionada: (CategoryProducto?) -> Unit,
-    onOrdenarClick: (() -> Unit)? = null
-) {
-    Row(
-        modifier = Modifier
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 8.dp, vertical = 16.dp)
-    ) {
-        categorias.forEach { categoria ->
-            val esSeleccionada = categoria == selectedCategoria
-            val nombre = categoria?.name ?: "TODOS"
-
-            FilterChip(
-                selected = esSeleccionada,
-                onClick = { onCategoriaSeleccionada(categoria) },
-                label = {
-                    Text(
-                        nombre.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
-                        },
-                        color = if (esSeleccionada) BarBlancoHueso else BarMarronMedioAcento
-                    )
-                },
-                modifier = Modifier.padding(end = 8.dp),
-                colors = FilterChipDefaults.filterChipColors(
-                    containerColor = BarBeigeClaro,
-                    selectedContainerColor = BarMarronMedioAcento,
-                    labelColor = BarMarronOscuro,
-                    selectedLabelColor = BarBlancoHueso
-                )
-            )
-        }
-
-        ordenarPorPrecio?.let {
-            FilterChip(
-                selected = it,
-                onClick = { onOrdenarClick?.invoke() },
-                label = {
-                    Text(
-                        "PRECIO",
-                        color = if (it) BarBlancoHueso else BarMarronMedioAcento
-                    )
-                },
-                modifier = Modifier.padding(end = 8.dp),
-                colors = FilterChipDefaults.filterChipColors(
-                    containerColor = BarBeigeClaro,
-                    selectedContainerColor = BarMarronMedioAcento,
-                    labelColor = BarMarronOscuro,
-                    selectedLabelColor = BarBlancoHueso
-                )
-            )
-        }
-    }
-}
 
 //Preparar la Preview
 @Preview(showBackground = true)
@@ -352,7 +151,9 @@ fun CartaScreenPreview() {
         )
     )
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ){
         TopBarWithMenu(
             title = "Carta",
             titleAlignment = TextAlign.Center,
@@ -367,6 +168,13 @@ fun CartaScreenPreview() {
             ordenarPorPrecio = false,
             onOrdenarClick = {},
         )
+
+        SearchBar(
+            searchText = "",
+            onSearchTextChange = {},
+            placeholder = "Buscar producto..."
+        )
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
@@ -381,22 +189,3 @@ fun CartaScreenPreview() {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ImagenProductoDialogPreview() {
-    val productoMock = Producto(
-        name = "Tortilla de Patatas",
-        description = "Deliciosa tortilla española con cebolla",
-        category = CategoryProducto.PLATO,
-        price = 8.50,
-        imageUrl = "plato_tortilla" // Asegurate de tener esta imagen en tu drawable
-    )
-
-    ImagenProductoDialog(
-        producto = productoMock,
-        onDismiss = {} // No hace falta hacer nada en la preview
-    )
-}
-
-

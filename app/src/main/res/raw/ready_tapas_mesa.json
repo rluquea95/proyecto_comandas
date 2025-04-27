@@ -1,62 +1,67 @@
 [
   {
-    "name": "MESA_0",
-    "isOccupied": false,
-    "isReserved": false
-  },
-  {
     "name": "MESA_1",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_2",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_3",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_4",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_5",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_6",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_7",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_8",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_9",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "MESA_10",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "MESA_11",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "MESA_12",
+    "occupied": false,
+    "reserved": false
   },
   {
     "name": "BARRA",
-    "isOccupied": false,
-    "isReserved": false
+    "occupied": false,
+    "reserved": false
   }
 ]

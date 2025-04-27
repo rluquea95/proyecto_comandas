@@ -13,6 +13,7 @@ import com.example.readytapas.ui.screens.login.LoginScreen
 import com.example.readytapas.ui.screens.mainmenu.MainMenuScreen
 import androidx.compose.ui.Alignment
 import com.example.readytapas.ui.screens.carta.CartaScreen
+import com.example.readytapas.ui.screens.tomarpedido.TomarPedidoScreen
 import com.example.readytapas.ui.theme.BarMarronMedioAcento
 
 @Composable
@@ -43,13 +44,7 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
 
         // Pantallas vacías para cada destino
         composable("tomarPedido") {
-            // Componente vacío para la pantalla "Tomar Pedido"
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(BarMarronMedioAcento)
-            ) {
-                Text("En Preparación", modifier = Modifier.align(Alignment.Center))
-            }
+            TomarPedidoScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
         composable("enPreparacion") {
             // Componente vacío para la pantalla "En preparación"

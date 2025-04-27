@@ -33,8 +33,8 @@ class FirestoreUploaderMesa(private val context: Context) {
                 // Crea el objeto Mesa usando la clase data Mesa
                 val mesa = Mesa(
                     name = NumeroMesa.valueOf(jsonObject.getString("name")),
-                    isOccupied = jsonObject.getBoolean("isOccupied"),
-                    isReserved = jsonObject.getBoolean("isReserved")
+                    occupied = jsonObject.getBoolean("occupied"),
+                    reserved = jsonObject.getBoolean("reserved")
                 )
 
                 // Guardamos la mesa en la colección "Mesas" usando name como ID del documento

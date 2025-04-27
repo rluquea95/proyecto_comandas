@@ -24,6 +24,9 @@ class CartaViewModel @Inject constructor(
     private val _ordenarPorPrecio = MutableStateFlow(false)
     val ordenarPorPrecio: StateFlow<Boolean> = _ordenarPorPrecio
 
+    private val _searchText = MutableStateFlow("")
+    val searchText: StateFlow<String> = _searchText
+
     private val _imagenProductoSeleccionada = MutableStateFlow<Producto?>(null)
     val imagenProductoSeleccionada: StateFlow<Producto?> = _imagenProductoSeleccionada
 
@@ -32,12 +35,17 @@ class CartaViewModel @Inject constructor(
     }
 
     val productosFiltrados: StateFlow<List<Producto>> = combine(
-        productos, selectedCategoria, ordenarPorPrecio
-    ) { productos, categoria, ordenar ->
-        val filtrados = if (categoria == null) {
+        productos, selectedCategoria, ordenarPorPrecio, searchText
+    ) { productos, categoria, ordenar, search ->
+        var filtrados = if (categoria == null) {
             productos // Mostrar todos
         } else {
             productos.filter { it.category == categoria }
+        }
+        if (search.isNotBlank()) {
+            filtrados = filtrados.filter {
+                it.name.contains(search, ignoreCase = true)
+            }
         }
         if (ordenar){
             filtrados.sortedBy { it.price }
@@ -61,6 +69,10 @@ class CartaViewModel @Inject constructor(
         _ordenarPorPrecio.value = !_ordenarPorPrecio.value
     }
 
+    fun actualizarTextoBusqueda(nuevoTexto: String) {
+        _searchText.value = nuevoTexto
+    }
+
     fun seleccionarImagenProducto(producto: Producto) {
         _imagenProductoSeleccionada.value = producto
     }
@@ -68,5 +80,4 @@ class CartaViewModel @Inject constructor(
     fun cerrarImagenProducto() {
         _imagenProductoSeleccionada.value = null
     }
-
 }
