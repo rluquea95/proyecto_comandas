@@ -11,7 +11,6 @@ import com.example.readytapas.data.model.Producto
 import com.example.readytapas.data.model.ProductoPedido
 import com.example.readytapas.data.repository.FirestoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -166,7 +165,6 @@ class TomarPedidoViewModel @Inject constructor(
                     mesa = mesaSeleccionada.name,
                     carta = productos,
                     state = EstadoPedido.ENCURSO,
-                    isClosed = false,
                     total = 0.0
                 )
 

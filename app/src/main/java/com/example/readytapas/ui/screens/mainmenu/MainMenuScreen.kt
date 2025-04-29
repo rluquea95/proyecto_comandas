@@ -24,7 +24,7 @@ import com.example.readytapas.ui.theme.BarMarronOscuro
 
 
 private val rowVerticalSpacing = 50.dp // Espacio vertical entre las filas
-private val menuItemSpacing = 40.dp // Espacio horizontal entre los elementos del menú
+private val menuItemSpacing = 20.dp // Espacio horizontal entre los elementos del menú
 
 @Composable
 fun MainMenuScreen(
@@ -153,7 +153,7 @@ fun MenuItem(
 
         Text(
             text,
-            modifier = Modifier.width(140.dp),
+            modifier = Modifier.width(180.dp),
             fontSize = 22.sp,
             color = BarMarronOscuro,
             textAlign = TextAlign.Center,
