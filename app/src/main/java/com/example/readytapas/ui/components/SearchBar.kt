@@ -1,16 +1,13 @@
 package com.example.readytapas.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -21,14 +18,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.readytapas.ui.theme.BarBeigeClaro
-import com.example.readytapas.ui.theme.BarMarronOscuro
+import com.example.readytapas.ui.theme.BeigeClaro
+import com.example.readytapas.ui.theme.MarronOscuro
 
 @Composable
 fun SearchBar(
+    modifier: Modifier = Modifier,
     searchText: String,
-    onSearchTextChange: (String) -> Unit,
-    placeholder: String = "Buscar..."
+    onSearchTextChange: (String) -> Unit
 ) {
     OutlinedTextField(
         value = searchText,
@@ -37,26 +34,24 @@ fun SearchBar(
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = "Buscar",
-                tint = BarMarronOscuro
+                tint = MarronOscuro
             )
         },
-        placeholder = { Text(placeholder) },
+        placeholder = { Text("Buscar producto ...") },
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedContainerColor = BarBeigeClaro,
-            focusedContainerColor = BarBeigeClaro,
-            unfocusedBorderColor = BarMarronOscuro,
-            focusedBorderColor = BarMarronOscuro,
-            cursorColor = BarMarronOscuro,
-            focusedTextColor = BarMarronOscuro,
-            unfocusedTextColor = BarMarronOscuro,
-            focusedPlaceholderColor = BarMarronOscuro.copy(alpha = 0.5f),
-            unfocusedPlaceholderColor = BarMarronOscuro.copy(alpha = 0.5f),
+            unfocusedContainerColor = BeigeClaro,
+            focusedContainerColor = BeigeClaro,
+            unfocusedBorderColor = MarronOscuro,
+            focusedBorderColor = MarronOscuro,
+            cursorColor = MarronOscuro,
+            focusedTextColor = MarronOscuro,
+            unfocusedTextColor = MarronOscuro,
+            focusedPlaceholderColor = MarronOscuro.copy(alpha = 0.5f),
+            unfocusedPlaceholderColor = MarronOscuro.copy(alpha = 0.5f),
         ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
+        shape = RoundedCornerShape(28.dp),
+        modifier = modifier
     )
 }
 
@@ -65,11 +60,13 @@ fun SearchBar(
 fun SearchBarPreview() {
     var searchText by remember { mutableStateOf("") }
 
-    Surface(color = BarBeigeClaro) { // Fondo igual que tu app
+    Surface(color = BeigeClaro) { // Fondo igual que tu app
         SearchBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
             searchText = searchText,
-            onSearchTextChange = { searchText = it },
-            placeholder = "Buscar producto..."
+            onSearchTextChange = { searchText = it }
         )
     }
 }

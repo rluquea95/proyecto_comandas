@@ -24,11 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.readytapas.R
-import com.example.readytapas.ui.theme.BarBeigeClaro
-import com.example.readytapas.ui.theme.BarBlancoHueso
-import com.example.readytapas.ui.theme.BarGrisMedio
-import com.example.readytapas.ui.theme.BarMarronMedioAcento
-import com.example.readytapas.ui.theme.BarMarronOscuro
+import com.example.readytapas.ui.theme.BeigeClaro
+import com.example.readytapas.ui.theme.BlancoHueso
+import com.example.readytapas.ui.theme.GrisMedio
+import com.example.readytapas.ui.theme.MarronMedioAcento
+import com.example.readytapas.ui.theme.MarronOscuro
 import com.example.readytapas.ui.theme.Purple40
 
 
@@ -80,7 +80,7 @@ fun LoginScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BarBeigeClaro.copy(alpha = 0.4f))
+                .background(BeigeClaro.copy(alpha = 0.4f))
         )
 
         // Ordena todos los componentes de la pantalla centrados horizontalmente
@@ -97,7 +97,7 @@ fun LoginScreenContent(
                     .wrapContentWidth()
                     .height(100.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(BarBeigeClaro.copy(alpha = 0.9f)),
+                    .background(BeigeClaro.copy(alpha = 0.9f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -106,7 +106,7 @@ fun LoginScreenContent(
                     style = MaterialTheme.typography.headlineLarge,
                     fontSize = 48.sp,
                     fontWeight = FontWeight.Bold,
-                    color = BarMarronOscuro,
+                    color = MarronOscuro,
                     textAlign = TextAlign.Center
                 )
             }
@@ -118,7 +118,7 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .wrapContentHeight()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(BarBeigeClaro.copy(alpha = 0.9f))
+                    .background(BeigeClaro.copy(alpha = 0.9f))
             ) {
                 Column(
                     modifier = Modifier
@@ -132,7 +132,7 @@ fun LoginScreenContent(
                         modifier = Modifier.padding(top = 16.dp),
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        color = BarMarronOscuro
+                        color = MarronOscuro
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -140,18 +140,18 @@ fun LoginScreenContent(
                     OutlinedTextField(
                         value = email,
                         onValueChange = onEmailChange,
-                        label = { Text("Email", color = BarGrisMedio) },
+                        label = { Text("Email", color = GrisMedio) },
                         placeholder = {
                             Text(
                                 "Introduce tu correo electrónico",
-                                color = BarGrisMedio
+                                color = GrisMedio
                             )
                         },
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Email,
                                 contentDescription = "Icono Email",
-                                tint = BarGrisMedio
+                                tint = GrisMedio
                             )
                         },
                         singleLine = true,
@@ -163,8 +163,8 @@ fun LoginScreenContent(
                     OutlinedTextField(
                         value = password,
                         onValueChange = onPasswordChange,
-                        label = { Text("Contraseña", color = BarGrisMedio) },
-                        placeholder = { Text("Introduce tu contraseña", color = BarGrisMedio) },
+                        label = { Text("Contraseña", color = GrisMedio) },
+                        placeholder = { Text("Introduce tu contraseña", color = GrisMedio) },
                         singleLine = true,
                         //Si el usuario pulsa el botón de mostrar contraseña, muestra la contraseña
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -173,7 +173,7 @@ fun LoginScreenContent(
                                 Icon(
                                     imageVector = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                                     contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña",
-                                    tint = BarGrisMedio
+                                    tint = GrisMedio
                                 )
                             }
                         },
@@ -183,7 +183,7 @@ fun LoginScreenContent(
                     TextButton(onClick = onResetPasswordClick) {
                         Text(
                             "¿HAS OLVIDADO TU CONTRASEÑA?",
-                            color = BarMarronOscuro,
+                            color = MarronOscuro,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -195,8 +195,8 @@ fun LoginScreenContent(
                         enabled = !isLoading,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = BarMarronMedioAcento,
-                            contentColor = BarBlancoHueso,
+                            containerColor = MarronMedioAcento,
+                            contentColor = BlancoHueso,
                         )
                     ) {
                         Text("Entrar")

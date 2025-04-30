@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.readytapas.ui.theme.BarBlancoHueso
-import com.example.readytapas.ui.theme.BarGrisMedio
-import com.example.readytapas.ui.theme.BarMarronOscuro
+import com.example.readytapas.ui.theme.BlancoHueso
+import com.example.readytapas.ui.theme.GrisMedio
+import com.example.readytapas.ui.theme.MarronOscuro
 
 /*
 * Para usar TopAppBar debemos añadir esta anotación, ya que no es una función
@@ -37,8 +37,8 @@ fun TopBarWithMenu(
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = BarMarronOscuro,
-            titleContentColor = BarBlancoHueso,
+            containerColor = MarronOscuro,
+            titleContentColor = BlancoHueso,
         ),
         navigationIcon = {
             // Mostrar el botón de retroceso solo si `showBackButton` es true y onBackClick no es null
@@ -47,7 +47,7 @@ fun TopBarWithMenu(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Atrás",
-                        tint = BarBlancoHueso
+                        tint = BlancoHueso
                     )
                 }
             }
@@ -70,7 +70,7 @@ fun TopBarWithMenu(
                             else -> Alignment.CenterStart
                         }
                     ),
-                    color = BarBlancoHueso,
+                    color = BlancoHueso,
                     fontSize = 24.sp
                 )
             }
@@ -81,16 +81,16 @@ fun TopBarWithMenu(
                     Icons.Default.AccountCircle,
                     contentDescription = "Usuario",
                     modifier = Modifier.size(34.dp),
-                    tint = BarBlancoHueso
+                    tint = BlancoHueso
                 )
             }
             DropdownMenu(
                 expanded = expanded,
-                containerColor = BarGrisMedio,
+                containerColor = GrisMedio,
                 onDismissRequest = { expanded = false } // Cierra el menú al hacer clic fuera de él
             ) {
                 DropdownMenuItem(
-                    text = { Text("Cerrar sesión", color = BarBlancoHueso, fontSize = 20.sp) },
+                    text = { Text("Cerrar sesión", color = BlancoHueso, fontSize = 20.sp) },
                     onClick = {
                         expanded = false
                         onLogoutClick()

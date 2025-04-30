@@ -38,11 +38,11 @@ import androidx.compose.ui.window.Dialog
 import com.example.readytapas.R
 import com.example.readytapas.data.model.CategoryProducto
 import com.example.readytapas.data.model.Producto
-import com.example.readytapas.ui.theme.BarBeigeClaro
-import com.example.readytapas.ui.theme.BarBlancoHueso
-import com.example.readytapas.ui.theme.BarGrisMedio
-import com.example.readytapas.ui.theme.BarMarronMedioAcento
-import com.example.readytapas.ui.theme.BarMarronOscuro
+import com.example.readytapas.ui.theme.BeigeClaro
+import com.example.readytapas.ui.theme.BlancoHueso
+import com.example.readytapas.ui.theme.GrisMedio
+import com.example.readytapas.ui.theme.MarronMedioAcentoOpacidad
+import com.example.readytapas.ui.theme.MarronOscuro
 import java.util.Locale
 
 
@@ -55,7 +55,7 @@ fun ProductoCard(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = BarMarronMedioAcento),
+        colors = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad),
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             Column(modifier = Modifier.wrapContentWidth()) {
@@ -75,7 +75,7 @@ fun ProductoCard(
                 Text(
                     producto.name,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = BarMarronOscuro,
+                    color = MarronOscuro,
                     modifier = Modifier.width(180.dp)
                 )
 
@@ -83,7 +83,7 @@ fun ProductoCard(
 
                 Text(
                     producto.description,
-                    color = BarMarronOscuro,
+                    color = MarronOscuro,
                     maxLines = 4,
                     //overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium,
@@ -100,12 +100,12 @@ fun ProductoCard(
                     modifier = Modifier
                         .padding(vertical = 10.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(BarMarronMedioAcento),
+                        .background(MarronMedioAcentoOpacidad),
                     contentAlignment = Alignment.Center,
                 ){
                     Text(
                         producto.category.name,
-                        color = BarBlancoHueso,
+                        color = BlancoHueso,
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.width(250.dp)
@@ -117,7 +117,7 @@ fun ProductoCard(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(BarBlancoHueso),
+                        .background(BlancoHueso),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -127,7 +127,7 @@ fun ProductoCard(
                             "${String.format(Locale.getDefault(), "%.2f", producto.price)} €"
                         },
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = BarGrisMedio,
+                        color = GrisMedio,
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -146,7 +146,7 @@ fun ImagenProductoDialog(
             modifier = Modifier
                 .padding(16.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(BarBeigeClaro)
+                .background(BeigeClaro)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
@@ -155,20 +155,20 @@ fun ImagenProductoDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(20.dp))
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     producto.name,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = BarMarronOscuro
+                    color = MarronOscuro
                 )
                 Text(
                     producto.description,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp),
                     textAlign = TextAlign.Center,
-                    color = BarGrisMedio
+                    color = GrisMedio
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -178,8 +178,8 @@ fun ImagenProductoDialog(
                         .fillMaxWidth()
                         .padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = BarMarronOscuro,
-                        contentColor = BarBlancoHueso,
+                        containerColor = MarronOscuro,
+                        contentColor = BlancoHueso,
                     )
                 ) {
                     Text("Cerrar")

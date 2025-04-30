@@ -19,8 +19,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.readytapas.R
 import com.example.readytapas.ui.components.TopBarWithMenu
-import com.example.readytapas.ui.theme.BarBlancoHueso
-import com.example.readytapas.ui.theme.BarMarronOscuro
+import com.example.readytapas.ui.theme.BlancoHueso
+import com.example.readytapas.ui.theme.MarronOscuro
 
 
 private val rowVerticalSpacing = 50.dp // Espacio vertical entre las filas
@@ -41,7 +41,7 @@ fun MainMenuScreen(
                 showBackButton = false
             )
         },
-        containerColor = BarBlancoHueso
+        containerColor = BlancoHueso
     ) { innerPadding ->
         //Contenedor principal de los iconos del menú
         Column(
@@ -146,7 +146,7 @@ fun MenuItem(
             painter = painter,
             contentDescription = text,
             modifier = Modifier.size(100.dp),
-            colorFilter = ColorFilter.tint(BarMarronOscuro) //Aplica el color al icono
+            colorFilter = ColorFilter.tint(MarronOscuro) //Aplica el color al icono
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -155,7 +155,7 @@ fun MenuItem(
             text,
             modifier = Modifier.width(180.dp),
             fontSize = 22.sp,
-            color = BarMarronOscuro,
+            color = MarronOscuro,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
         )

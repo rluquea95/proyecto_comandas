@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.readytapas.data.model.CategoryProducto
-import com.example.readytapas.ui.theme.BarBeigeClaro
-import com.example.readytapas.ui.theme.BarBlancoHueso
-import com.example.readytapas.ui.theme.BarMarronMedioAcento
-import com.example.readytapas.ui.theme.BarMarronOscuro
+import com.example.readytapas.ui.theme.BeigeClaro
+import com.example.readytapas.ui.theme.BlancoHueso
+import com.example.readytapas.ui.theme.MarronMedioAcento
+import com.example.readytapas.ui.theme.MarronOscuro
 import java.util.Locale
 
 //Composable encargado de dibujar los chips de categoria y precio
@@ -44,15 +44,15 @@ fun CategoriaChips(
                         nombre.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
                         },
-                        color = if (esSeleccionada) BarBlancoHueso else BarMarronMedioAcento
+                        color = if (esSeleccionada) BlancoHueso else MarronMedioAcento
                     )
                 },
                 modifier = Modifier.padding(end = 8.dp),
                 colors = FilterChipDefaults.filterChipColors(
-                    containerColor = BarBeigeClaro,
-                    selectedContainerColor = BarMarronMedioAcento,
-                    labelColor = BarMarronOscuro,
-                    selectedLabelColor = BarBlancoHueso
+                    containerColor = BeigeClaro,
+                    selectedContainerColor = MarronMedioAcento,
+                    labelColor = MarronOscuro,
+                    selectedLabelColor = BlancoHueso
                 )
             )
         }
@@ -64,15 +64,15 @@ fun CategoriaChips(
                 label = {
                     Text(
                         "PRECIO",
-                        color = if (it) BarBlancoHueso else BarMarronMedioAcento
+                        color = if (it) BlancoHueso else MarronMedioAcento
                     )
                 },
                 modifier = Modifier.padding(end = 8.dp),
                 colors = FilterChipDefaults.filterChipColors(
-                    containerColor = BarBeigeClaro,
-                    selectedContainerColor = BarMarronMedioAcento,
-                    labelColor = BarMarronOscuro,
-                    selectedLabelColor = BarBlancoHueso
+                    containerColor = BeigeClaro,
+                    selectedContainerColor = MarronMedioAcento,
+                    labelColor = MarronOscuro,
+                    selectedLabelColor = BlancoHueso
                 )
             )
         }

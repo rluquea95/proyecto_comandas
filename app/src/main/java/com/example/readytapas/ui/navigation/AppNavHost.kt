@@ -14,7 +14,7 @@ import com.example.readytapas.ui.screens.mainmenu.MainMenuScreen
 import androidx.compose.ui.Alignment
 import com.example.readytapas.ui.screens.carta.CartaScreen
 import com.example.readytapas.ui.screens.tomarpedido.TomarPedidoScreen
-import com.example.readytapas.ui.theme.BarMarronMedioAcento
+import com.example.readytapas.ui.theme.MarronMedioAcento
 
 @Composable
 fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutClick: () -> Unit) {
@@ -50,7 +50,7 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
             // Componente vacío para la pantalla "En preparación"
             Box(modifier = Modifier
                 .fillMaxSize()
-                .background(BarMarronMedioAcento)
+                .background(MarronMedioAcento)
             ) {
                 Text("En Preparación", modifier = Modifier.align(Alignment.Center))
             }
@@ -59,7 +59,7 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
             // Componente vacío para la pantalla "Platos Listos"
             Box(modifier = Modifier
                 .fillMaxSize()
-                .background(BarMarronMedioAcento)
+                .background(MarronMedioAcento)
             ) {
                 Text("Platos Listos", modifier = Modifier.align(Alignment.Center))
             }
@@ -68,7 +68,7 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
             // Componente vacío para la pantalla "Pendiente de cobro"
             Box(modifier = Modifier
                 .fillMaxSize()
-                .background(BarMarronMedioAcento)
+                .background(MarronMedioAcento)
             ) {
                 Text("Pendiente de cobro", modifier = Modifier.align(Alignment.Center))
             }
