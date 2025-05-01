@@ -24,12 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.readytapas.R
+import com.example.readytapas.ui.snackbar.GlobalSnackbarHost
+import com.example.readytapas.ui.snackbar.SnackbarManager
 import com.example.readytapas.ui.theme.BeigeClaro
 import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.GrisMedio
 import com.example.readytapas.ui.theme.MarronMedioAcento
 import com.example.readytapas.ui.theme.MarronOscuro
-import com.example.readytapas.ui.theme.Purple40
 
 
 @Composable
@@ -39,28 +40,43 @@ fun LoginScreen(
 ) {
     //Almacena el estado actual de LoginViewModel y se actualiza con cada cambio
     val state by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    LoginScreenContent(
-        email = state.email,
-        password = state.password,
-        isLoading = state.isLoading,
-        messageError = state.messageError,
-        messageInfo = state.messageInfo,
-        onEmailChange = viewModel::onEmailChange,
-        onPasswordChange = viewModel::onPasswordChange,
-        onLoginClick = { viewModel.login(onLoginSuccess) },
-        onResetPasswordClick = { viewModel.resetPassword() }
-    )
+    // Escuchar errorMessage desde el ViewModel
+    LaunchedEffect(state.message) {
+        state.message?.let {
+            SnackbarManager.showMessage(this, it, isError = state.isError)
+            viewModel.clearMessage()
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { GlobalSnackbarHost(snackbarHostState = snackbarHostState) }
+    ) { paddingValues ->
+        LoginScreenContent(
+            modifier = Modifier.padding(paddingValues),
+            email = state.email,
+            password = state.password,
+            emailError = state.emailError,
+            passwordError = state.passwordError,
+            isLoading = state.isLoading,
+            onEmailChange = viewModel::onEmailChange,
+            onPasswordChange = viewModel::onPasswordChange,
+            onLoginClick = { viewModel.login(onLoginSuccess) },
+            onResetPasswordClick = { viewModel.resetPassword() }
+        )
+    }
 }
 
 //Esta función hace de intermediaria entre LoginScreen y LoginViewModel
 @Composable
 fun LoginScreenContent(
+    modifier: Modifier = Modifier,
     email: String,
     password: String,
+    emailError: Boolean = false,
+    passwordError: Boolean = false,
     isLoading: Boolean = false,
-    messageError: String? = null,
-    messageInfo: String? = null,
     onEmailChange: (String) -> Unit = {},
     onPasswordChange: (String) -> Unit = {},
     onLoginClick: () -> Unit = {},
@@ -85,7 +101,7 @@ fun LoginScreenContent(
 
         // Ordena todos los componentes de la pantalla centrados horizontalmente
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(24.dp),
             verticalArrangement = Arrangement.Top,
@@ -140,6 +156,7 @@ fun LoginScreenContent(
                     OutlinedTextField(
                         value = email,
                         onValueChange = onEmailChange,
+                        isError = emailError,
                         label = { Text("Email", color = GrisMedio) },
                         placeholder = {
                             Text(
@@ -158,11 +175,23 @@ fun LoginScreenContent(
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    if (emailError) {
+                        Text(
+                            text = "Este campo es obligatorio",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                                .padding(start = 8.dp)
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
                         value = password,
                         onValueChange = onPasswordChange,
+                        isError = passwordError,
                         label = { Text("Contraseña", color = GrisMedio) },
                         placeholder = { Text("Introduce tu contraseña", color = GrisMedio) },
                         singleLine = true,
@@ -179,6 +208,17 @@ fun LoginScreenContent(
                         },
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    if (passwordError) {
+                        Text(
+                            text = "Este campo es obligatorio",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                                .padding(start = 8.dp)
+                        )
+                    }
 
                     TextButton(onClick = onResetPasswordClick) {
                         Text(
@@ -202,30 +242,6 @@ fun LoginScreenContent(
                         Text("Entrar")
                     }
 
-                    //Formato para los mensajes de error
-                    if (messageError != null){
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = messageError,
-                            color = MaterialTheme.colorScheme.error,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-
-                    //Formato para los mensajes informativos
-                    if (messageInfo != null){
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = messageInfo,
-                            color = Purple40,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-
                     if (isLoading) {
                         Spacer(modifier = Modifier.height(12.dp))
                         CircularProgressIndicator()
@@ -244,7 +260,8 @@ fun PreviewLoginScreen() {
         email = "demo@correo.com",
         password = "1234",
         isLoading = false,
-        messageInfo = null,
-        messageError = null,
+        emailError = false,
+        passwordError = false
     )
 }
+

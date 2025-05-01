@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readytapas.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,12 +20,12 @@ class LoginViewModel @Inject constructor(
 
     fun onEmailChange(email: String) {
         //Almacena el email introducido por el usuario
-        _uiState.value = _uiState.value.copy(email = email)
+        _uiState.value = _uiState.value.copy(email = email, emailError = false)
     }
 
     fun onPasswordChange(password: String) {
         //Almacena la contraseña introducida por el usuario
-        _uiState.value = _uiState.value.copy(password = password)
+        _uiState.value = _uiState.value.copy(password = password, passwordError = false)
     }
 
     fun login(onSuccess: () -> Unit) {
@@ -34,7 +33,12 @@ class LoginViewModel @Inject constructor(
         val password = _uiState.value.password.trim()
 
         if (email.isEmpty() || password.isEmpty()) {
-            showMessageAndHide("Por favor, introduce tu email y contraseña.", isError = true)
+            _uiState.value = _uiState.value.copy(
+                emailError = email.isEmpty(),
+                passwordError = password.isEmpty(),
+                message = "Por favor, introduce tu email y contraseña",
+                isError = true,
+            )
             return
         }
         //Lanza una corutina, permitiendo ejecutar código de forma asíncona sin bloquear el hilo principal
@@ -43,17 +47,19 @@ class LoginViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             //Se llama a la función login con los datos del usuario y se almacena el resultado de la operación
-            val result = authRepository.login(_uiState.value.email, _uiState.value.password)
+            val result = authRepository.login(email, password)
 
             //Se elimina el indicador de carga
             _uiState.value = _uiState.value.copy(isLoading = false)
 
             //Se evalua si se ha podido iniciar sesión o no
             result.onSuccess {
-                showMessageAndHide("¡Login exitoso!", isError = false)
                 onSuccess()
             }.onFailure { e ->
-                showMessageAndHide("Introduce un email y contraseña válidos.", isError = true)
+                _uiState.value = _uiState.value.copy(
+                    message = "Email o contraseña inválidos",
+                    isError = true
+                )
                 Log.e("Login", "Error al iniciar sesión:", e)
             }
         }
@@ -62,43 +68,41 @@ class LoginViewModel @Inject constructor(
     fun resetPassword() {
         val email = _uiState.value.email.trim()
         if (email.isEmpty()) {
-            showMessageAndHide("Por favor, introduce tu email para reestablecer la contraseña.", isError = false)
+            _uiState.value = _uiState.value.copy(
+                emailError = true,
+                message = "Introduce tu email para restablecer la contraseña.",
+                isError = true
+            )
             return
         }
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val result = authRepository.resetPassword(_uiState.value.email)
+            val result = authRepository.resetPassword(email)
 
             _uiState.value = _uiState.value.copy(isLoading = false)
 
             result.onSuccess {
-                showMessageAndHide("Revisa tu correo para reestablecer la contraseña.", isError = false)
+                _uiState.value = _uiState.value.copy(
+                    message = "Revisa tu correo para restablecer la contraseña.",
+                    isError = false,
+                )
             }.onFailure { e ->
-                showMessageAndHide("Error al reestablecer la contraseña.", isError = true)
+                _uiState.value = _uiState.value.copy(
+                    message = "Error al restablecer la contraseña.",
+                    isError = true,
+                )
                 Log.e("Login", "Error al reestablecer la contraseña:", e)
             }
         }
     }
 
-    private fun showMessageAndHide(message: String, isError: Boolean, durationMillis: Long = 3000) {
-        // Actualiza el estado del mensaje dependiendo si es de error o de éxito
-        if (isError) {
-            _uiState.value = _uiState.value.copy(messageError = message)
-        } else {
-            _uiState.value = _uiState.value.copy(messageInfo = message)
-        }
-
-        // Lanza un retraso y luego limpia el mensaje después de unos segundos
-        viewModelScope.launch {
-            delay(durationMillis)
-            if (isError) {
-                _uiState.value = _uiState.value.copy(messageError = null)
-            } else {
-                _uiState.value = _uiState.value.copy(messageInfo = null)
-            }
-        }
+    fun clearMessage() {
+        _uiState.value = _uiState.value.copy(
+            message = null,
+            isError = false
+        )
     }
 }
 
@@ -106,6 +110,8 @@ data class LoginUiState(
     val email: String = "",
     val password: String = "",
     val isLoading: Boolean = false,
-    val messageError: String? = null,
-    val messageInfo: String? = null
+    val emailError: Boolean = false,
+    val passwordError: Boolean = false,
+    val message: String? = null,
+    val isError: Boolean = false
 )
