@@ -33,16 +33,10 @@ fun CartaScreen(
     onLogoutClick: () -> Unit,
     viewModel: CartaViewModel = hiltViewModel()
 ) {
+    val state by viewModel.uiState.collectAsState()
     val productos by viewModel.productosFiltrados.collectAsState()
-    val selectedCategoria by viewModel.selectedCategoria.collectAsState()
-    val ordenarPorPrecio by viewModel.ordenarPorPrecio.collectAsState()
-    val imagenProductoSeleccionada by viewModel.imagenProductoSeleccionada.collectAsState()
-    val searchText by viewModel.searchText.collectAsState()
-    val categorias = listOf<CategoryProducto?>(null) + CategoryProducto.entries
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
+    Column(modifier = Modifier.fillMaxSize()) {
         TopBarWithMenu(
             title = "Carta",
             titleAlignment = TextAlign.Center,
@@ -52,19 +46,19 @@ fun CartaScreen(
         )
         // Chips de categoría
         CategoriaChips(
-            categorias = categorias,
-            selectedCategoria = selectedCategoria,
-            ordenarPorPrecio = ordenarPorPrecio,
-            onCategoriaSeleccionada = viewModel::seleccionarCategoria,
-            onOrdenarClick = viewModel::alternarOrdenPrecio
+            categorias = listOf(null) + CategoryProducto.entries,
+            selectedCategoria = state.categoriaSeleccionada,
+            ordenarPorPrecio = state.ordenarPorPrecio,
+            onCategoriaSeleccionada = viewModel::selectCategoria,
+            onOrdenarClick = viewModel::selectOrdenPrecio
         )
 
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 2.dp),
-            searchText = searchText,
-            onSearchTextChange = viewModel::actualizarTextoBusqueda
+            searchText = state.searchText,
+            onSearchTextChange = viewModel::updateSearchText
         )
 
         Spacer(modifier = Modifier.height(14.dp))
@@ -78,45 +72,30 @@ fun CartaScreen(
             items(productos) { producto ->
                 ProductoCard(
                     producto = producto,
-                    onImageClick = { viewModel.seleccionarImagenProducto(producto) }
+                    onImageClick = { viewModel.selectProducto(producto) }
                 )
             }
         }
 
-        imagenProductoSeleccionada?.let { producto ->
+        state.productoSeleccionado?.let { producto ->
             ImagenProductoDialog(
                 producto = producto,
-                onDismiss = { viewModel.cerrarImagenProducto() }
+                onDismiss = { viewModel.clearSelectedProducto() }
             )
         }
     }
 }
 
 
-//Preparar la Preview
-@Preview(showBackground = true)
 @Composable
-fun CartaScreenPreview() {
-    val productosMock = listOf(
-        Producto(
-            name = "Tortilla de patatas",
-            description = "Clásica tortilla española con cebolla",
-            category = CategoryProducto.PLATO,
-            price = 8.0,
-            imageUrl = "plato_tortilla"
-        ),
-        Producto(
-            name = "Cerveza",
-            description = "Caña bien fría",
-            category = CategoryProducto.BEBIDA,
-            price = 1.5,
-            imageUrl = "bebida_cerveza"
-        )
-    )
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ){
+fun CartaScreenContentPreview(
+    productos: List<Producto>,
+    selectedCategoria: CategoryProducto? = null,
+    ordenarPorPrecio: Boolean = false,
+    searchText: String = "",
+    onProductoClick: (Producto) -> Unit = {}
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
         TopBarWithMenu(
             title = "Carta",
             titleAlignment = TextAlign.Center,
@@ -124,33 +103,59 @@ fun CartaScreenPreview() {
             showBackButton = true,
             onBackClick = {}
         )
+
         CategoriaChips(
             categorias = listOf(null) + CategoryProducto.entries,
-            selectedCategoria = null,
+            selectedCategoria = selectedCategoria,
+            ordenarPorPrecio = ordenarPorPrecio,
             onCategoriaSeleccionada = {},
-            ordenarPorPrecio = false,
-            onOrdenarClick = {},
+            onOrdenarClick = {}
         )
 
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 18.dp, vertical = 2.dp),
-            searchText = "",
+                .padding(horizontal = 24.dp, vertical = 2.dp),
+            searchText = searchText,
             onSearchTextChange = {}
         )
 
+        Spacer(modifier = Modifier.height(14.dp))
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(productosMock) { producto ->
+            items(productos) { producto ->
                 ProductoCard(
                     producto = producto,
-                    onImageClick = {} // Necesario ahora con nueva firma
+                    onImageClick = { onProductoClick(producto) }
                 )
             }
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCartaScreen() {
+    val mockProductos = listOf(
+        Producto(
+            name = "Tortilla de Patatas",
+            description = "Clásica tortilla española con cebolla",
+            category = CategoryProducto.PLATO,
+            price = 8.50,
+            imageUrl = "plato_tortilla"
+        ),
+        Producto(
+            name = "Cerveza",
+            description = "Bien fresquita",
+            category = CategoryProducto.BEBIDA,
+            price = 2.0,
+            imageUrl = "bebida_cerveza"
+        )
+    )
+    CartaScreenContentPreview(productos = mockProductos)
+}
+

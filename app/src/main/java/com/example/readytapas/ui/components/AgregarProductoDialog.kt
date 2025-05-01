@@ -67,7 +67,7 @@ fun AgregarProductoDialog(
                 CategoriaChips(
                     categorias = listOf(null) + CategoryProducto.entries,
                     selectedCategoria = categoriaSeleccionada,
-                    ordenarPorPrecio = null, // Aquí no quieres ordenación por precio
+                    ordenarPorPrecio = null,
                     onCategoriaSeleccionada = onCategoriaSeleccionada
                 )
 

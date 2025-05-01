@@ -15,69 +15,61 @@ class CartaViewModel @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : ViewModel() {
 
-    private val _productos = MutableStateFlow<List<Producto>>(emptyList())
-    val productos: StateFlow<List<Producto>> = _productos
-
-    private val _selectedCategoria = MutableStateFlow<CategoryProducto?>(null) // null == TODOS
-    val selectedCategoria: StateFlow<CategoryProducto?> = _selectedCategoria
-
-    private val _ordenarPorPrecio = MutableStateFlow(false)
-    val ordenarPorPrecio: StateFlow<Boolean> = _ordenarPorPrecio
-
-    private val _searchText = MutableStateFlow("")
-    val searchText: StateFlow<String> = _searchText
-
-    private val _imagenProductoSeleccionada = MutableStateFlow<Producto?>(null)
-    val imagenProductoSeleccionada: StateFlow<Producto?> = _imagenProductoSeleccionada
-
-    init {
-        cargarProductos()
-    }
+    private val _uiState = MutableStateFlow(CartaUiState())
+    val uiState: StateFlow<CartaUiState> = _uiState
 
     val productosFiltrados: StateFlow<List<Producto>> = combine(
-        productos, selectedCategoria, ordenarPorPrecio, searchText
-    ) { productos, categoria, ordenar, search ->
-        var filtrados = if (categoria == null) {
-            productos // Mostrar todos
-        } else {
-            productos.filter { it.category == categoria }
-        }
+        _uiState.map { it.productos },
+        _uiState.map { it.categoriaSeleccionada },
+        _uiState.map { it.ordenarPorPrecio },
+        _uiState.map { it.searchText }
+    ) {
+      productos, categoria, ordenar, search ->
+        var filtrados = if (categoria == null) productos else productos.filter { it.category == categoria }
+
         if (search.isNotBlank()) {
-            filtrados = filtrados.filter {
-                it.name.contains(search, ignoreCase = true)
-            }
+            filtrados = filtrados.filter { it.name.contains(search, ignoreCase = true) }
         }
-        if (ordenar){
-            filtrados.sortedBy { it.price }
-        }
-        else{
-            filtrados
-        }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    fun cargarProductos() {
+        if (ordenar) filtrados.sortedBy { it.price } else filtrados
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    init {
+        loadProductos()
+    }
+
+    private fun loadProductos() {
         viewModelScope.launch {
-            _productos.value = firestoreRepository.getCarta()
+            val productos = firestoreRepository.getCarta()
+            _uiState.value = _uiState.value.copy(productos = productos)
         }
     }
 
-    fun seleccionarCategoria(categoria: CategoryProducto?) {
-        _selectedCategoria.value = categoria
+    fun selectCategoria(categoria: CategoryProducto?) {
+        _uiState.value = _uiState.value.copy(categoriaSeleccionada = categoria)
     }
 
-    fun alternarOrdenPrecio() {
-        _ordenarPorPrecio.value = !_ordenarPorPrecio.value
+    fun selectOrdenPrecio() {
+        _uiState.value = _uiState.value.copy(ordenarPorPrecio = !_uiState.value.ordenarPorPrecio)
     }
 
-    fun actualizarTextoBusqueda(nuevoTexto: String) {
-        _searchText.value = nuevoTexto
+    fun updateSearchText(newText: String) {
+        _uiState.value = _uiState.value.copy(searchText = newText)
     }
 
-    fun seleccionarImagenProducto(producto: Producto) {
-        _imagenProductoSeleccionada.value = producto
+    fun selectProducto(producto: Producto) {
+        _uiState.value = _uiState.value.copy(productoSeleccionado = producto)
     }
 
-    fun cerrarImagenProducto() {
-        _imagenProductoSeleccionada.value = null
+    fun clearSelectedProducto() {
+        _uiState.value = _uiState.value.copy(productoSeleccionado = null)
     }
 }
+
+data class CartaUiState(
+    val productos: List<Producto> = emptyList(),
+    val categoriaSeleccionada: CategoryProducto? = null,
+    val ordenarPorPrecio: Boolean = false,
+    val searchText: String = "",
+    val productoSeleccionado: Producto? = null
+)

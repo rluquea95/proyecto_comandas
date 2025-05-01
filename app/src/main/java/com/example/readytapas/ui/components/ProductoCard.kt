@@ -213,7 +213,7 @@ fun ProductoCardPreview() {
         description = "Clásica tortilla española con cebolla",
         category = CategoryProducto.PLATO,
         price = 8.50,
-        imageUrl = "plato_tortilla" // Asegúrate de tener esta imagen en drawable
+        imageUrl = "plato_tortilla"
     )
 
     ProductoCard(
