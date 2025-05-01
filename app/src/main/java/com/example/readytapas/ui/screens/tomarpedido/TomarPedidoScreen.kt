@@ -21,8 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +38,9 @@ import com.example.readytapas.ui.components.TopBarWithMenu
 import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.MarronOscuro
 import com.example.readytapas.ui.components.*
+import com.example.readytapas.ui.snackbar.GlobalSnackbarHost
+import com.example.readytapas.ui.snackbar.SnackbarManager
+
 
 @Composable
 fun TomarPedidoScreen(
@@ -47,23 +48,25 @@ fun TomarPedidoScreen(
     onLogoutClick: () -> Unit,
     viewModel: TomarPedidoViewModel = hiltViewModel()
 ) {
-    val mesas by viewModel.mesas.collectAsState()
-    val mesaSeleccionada by viewModel.mesaSeleccionada.collectAsState()
-    val productosPedidos by viewModel.productosPedidos.collectAsState()
+    val state by viewModel.uiState.collectAsState()
     val productosFiltrados by viewModel.productosFiltrados.collectAsState()
-    val categoriaSeleccionada by viewModel.categoriaSeleccionada.collectAsState()
-    val searchText by viewModel.searchText.collectAsState()
-    val mostrarSnackbar by viewModel.mostrarSnackbar.collectAsState()
-
     val snackbarHostState = remember { SnackbarHostState() }
     var isDialogOpen by remember { mutableStateOf(false) }
 
+    // Escuchar errorMessage desde el ViewModel
+    LaunchedEffect(state.message) {
+        state.message?.let {
+            SnackbarManager.showMessage(this, it, isError = state.isError)
+            viewModel.clearMessage()
+        }
+    }
+
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = { GlobalSnackbarHost(snackbarHostState = snackbarHostState) },
         bottomBar = {
             Button(
-                onClick = { viewModel.confirmarPedido() },
-                enabled = mesaSeleccionada != null && productosPedidos.isNotEmpty(),
+                onClick = { viewModel.confirmPedido() },
+                enabled = state.mesaSeleccionada != null && state.productosPedidos.isNotEmpty(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -81,16 +84,6 @@ fun TomarPedidoScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            LaunchedEffect(mostrarSnackbar) {
-                if (mostrarSnackbar) {
-                    snackbarHostState.showSnackbar(
-                        message = "Pedido enviado a cocina ✅",
-                        duration = SnackbarDuration.Short
-                    )
-                    viewModel.resetearSnackbar()
-                }
-            }
-
             TopBarWithMenu(
                 title = "Tomar Pedido",
                 titleAlignment = TextAlign.Center,
@@ -102,9 +95,9 @@ fun TomarPedidoScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             MesaDropdown(
-                mesas = mesas,
-                mesaSeleccionada = mesaSeleccionada,
-                onMesaSeleccionada = viewModel::seleccionarMesa
+                mesas = state.mesas,
+                mesaSeleccionada = state.mesaSeleccionada,
+                onMesaSeleccionada = viewModel::selectMesa
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -124,7 +117,7 @@ fun TomarPedidoScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            if (productosPedidos.isNotEmpty()) {
+            if (state.productosPedidos.isNotEmpty()) {
                 Text(
                     text = "Pedido actual:",
                     style = MaterialTheme.typography.titleMedium,
@@ -138,12 +131,12 @@ fun TomarPedidoScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(productosPedidos) { productoPedido ->
+                    items(state.productosPedidos) { productoPedido ->
                         ProductoPedidoItem(
                             productoPedido = productoPedido,
-                            onAumentar = { viewModel.aumentarCantidad(productoPedido) },
-                            onDisminuir = { viewModel.disminuirCantidad(productoPedido) },
-                            onEliminar = { viewModel.eliminarProducto(productoPedido) }
+                            onAumentar = { viewModel.increaseCantidad(productoPedido) },
+                            onDisminuir = { viewModel.decreaseCantidad(productoPedido) },
+                            onEliminar = { viewModel.removeProducto(productoPedido) }
                         )
                     }
                 }
@@ -154,12 +147,12 @@ fun TomarPedidoScreen(
     if (isDialogOpen) {
         AgregarProductoDialog(
             productos = productosFiltrados,
-            categoriaSeleccionada = categoriaSeleccionada,
-            searchText = searchText,
-            onSearchTextChange = viewModel::actualizarTextoBusqueda,
-            onCategoriaSeleccionada = viewModel::seleccionarCategoria,
+            categoriaSeleccionada = state.categoriaSeleccionada,
+            searchText = state.searchText,
+            onSearchTextChange = viewModel::updateSearchText,
+            onCategoriaSeleccionada = viewModel::selectCategoria,
             onProductoSeleccionado = { producto ->
-                viewModel.agregarProducto(producto)
+                viewModel.addProducto(producto)
             },
             onDismiss = { isDialogOpen = false }
         )

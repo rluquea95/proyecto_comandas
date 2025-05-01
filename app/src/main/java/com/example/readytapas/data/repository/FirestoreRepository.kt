@@ -1,5 +1,6 @@
 package com.example.readytapas.data.repository
 
+import android.util.Log
 import com.example.readytapas.data.model.Mesa
 import com.example.readytapas.data.model.Pedido
 import com.example.readytapas.data.model.Producto
@@ -15,42 +16,48 @@ class FirestoreRepository @Inject constructor(
         return firestore.collection(name)
     }
 
-    suspend fun getCarta(): List<Producto> {
+    suspend fun getCarta(): Result<List<Producto>> {
         return try {
-            firestore.collection("Carta")
+            val productos = firestore.collection("Carta")
                 .get()
                 .await()
                 .mapNotNull { it.toObject(Producto::class.java) }
+            Result.success(productos)
         } catch (e: Exception) {
-            emptyList()
+            Log.e("FirestoreRepository", "Error al obtener la carta", e)
+            Result.failure(e)
         }
     }
 
-    suspend fun getMesas(): List<Mesa> {
+    suspend fun getMesas(): Result<List<Mesa>> {
         return try {
-            firestore.collection("Mesas")
+            val mesas = firestore.collection("Mesas")
                 .get()
                 .await()
                 .mapNotNull { it.toObject(Mesa::class.java) }
+            Result.success(mesas)
         } catch (e: Exception) {
-            emptyList()
+            Log.e("FirestoreRepository", "Error al obtener las mesas", e)
+            Result.failure(e)
         }
     }
 
-    suspend fun crearPedido(pedido: Pedido) {
-        try {
+    suspend fun crearPedido(pedido: Pedido): Result<Unit> {
+        return try {
             firestore.collection("Pedidos")
                 .add(pedido)
                 .await()
+            Result.success(Unit)
         } catch (e: Exception) {
-            // Podrías manejar el error si quieres
+            Log.e("FirestoreRepository", "Error al crear pedido", e)
+            Result.failure(e)
         }
     }
 
-    suspend fun actualizarMesa(mesa: Mesa) {
-        try {
+    suspend fun actualizarMesa(mesa: Mesa): Result<Unit> {
+        return try {
             firestore.collection("Mesas")
-                .whereEqualTo("name", mesa.name.name) // name es un enum, hay que usar name
+                .whereEqualTo("name", mesa.name.name)
                 .get()
                 .await()
                 .documents
@@ -58,8 +65,10 @@ class FirestoreRepository @Inject constructor(
                 ?.reference
                 ?.set(mesa)
                 ?.await()
+            Result.success(Unit)
         } catch (e: Exception) {
-            // Podrías manejar el error si quieres
+            Log.e("FirestoreRepository", "Error al actualizar mesa", e)
+            Result.failure(e)
         }
     }
 }

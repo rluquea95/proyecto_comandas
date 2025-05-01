@@ -1,5 +1,6 @@
 package com.example.readytapas.ui.screens.tomarpedido
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readytapas.data.model.CategoryProducto
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,62 +26,57 @@ class TomarPedidoViewModel @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : ViewModel() {
 
-    // Lista de mesas libres
-    private val _mesas = MutableStateFlow<List<Mesa>>(emptyList())
-    val mesas: StateFlow<List<Mesa>> = _mesas
-
-    // Mesa seleccionada para el pedido
-    private val _mesaSeleccionada = MutableStateFlow<Mesa?>(null)
-    val mesaSeleccionada: StateFlow<Mesa?> = _mesaSeleccionada
-
-    // Lista de productos de la carta
-    private val _productos = MutableStateFlow<List<Producto>>(emptyList())
-    val productos: StateFlow<List<Producto>> = _productos
-
-    // Lista de productos que el camarero está pidiendo
-    private val _productosPedidos = MutableStateFlow<List<ProductoPedido>>(emptyList())
-    val productosPedidos: StateFlow<List<ProductoPedido>> = _productosPedidos
-
-    // NUEVO - Controla si hay que mostrar el mensaje de éxito
-    private val _mostrarSnackbar = MutableStateFlow(false)
-    val mostrarSnackbar: StateFlow<Boolean> = _mostrarSnackbar
-
-    private val _searchText = MutableStateFlow("")
-    val searchText: StateFlow<String> = _searchText
-
-    private val _categoriaSeleccionada = MutableStateFlow<CategoryProducto?>(null)
-    val categoriaSeleccionada: StateFlow<CategoryProducto?> = _categoriaSeleccionada
-
-
-    init {
-        cargarMesas()
-        cargarProductos()
-    }
+    private val _uiState = MutableStateFlow(TomarPedidoUiState())
+    val uiState: StateFlow<TomarPedidoUiState> = _uiState
 
     val productosFiltrados: StateFlow<List<Producto>> = combine(
-        productos, searchText, categoriaSeleccionada
+        _uiState.map { it.productos },
+        _uiState.map { it.searchText },
+        _uiState.map { it.categoriaSeleccionada }
     ) { productos, search, categoria ->
         productos.filter {
             (categoria == null || it.category == categoria) &&
                     it.name.contains(search, ignoreCase = true)
         }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    init {
+        loadMesas()
+        loadProductos()
+    }
 
     // Cargar mesas libres (occupied == false)
-    private fun cargarMesas() {
+    private fun loadMesas() {
         viewModelScope.launch {
-            _mesas.value = firestoreRepository.getMesas()
-                .filter { !it.occupied || it.name == NumeroMesa.BARRA }
-                .sortedWith(compareBy(
-                    { if (it.name == NumeroMesa.BARRA) Int.MAX_VALUE else it.name.name.extractNumeroMesa() }
-                ))
+            firestoreRepository.getMesas().onSuccess { mesas ->
+                _uiState.value = _uiState.value.copy(
+                    mesas = mesas.filter { !it.occupied || it.name == NumeroMesa.BARRA }
+                        .sortedWith(compareBy {
+                            if (it.name == NumeroMesa.BARRA) Int.MAX_VALUE else it.name.name.extractNumeroMesa()
+                        })
+                )
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(
+                    message = "Error al cargar mesas disponibles",
+                    isError = true
+                )
+                Log.e("TomarPedido", "Error al cargar mesas", it)
+            }
         }
     }
 
     // Cargar productos de la carta
-    private fun cargarProductos() {
+    private fun loadProductos() {
         viewModelScope.launch {
-            _productos.value = firestoreRepository.getCarta()
+            firestoreRepository.getCarta().onSuccess { productos ->
+                _uiState.value = _uiState.value.copy(productos = productos)
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(
+                    message = "Error al cargar productos",
+                    isError = true
+                )
+                Log.e("TomarPedido", "Error al cargar productos", it)
+            }
         }
     }
 
@@ -89,100 +86,124 @@ class TomarPedidoViewModel @Inject constructor(
     }
 
     // Seleccionar mesa
-    fun seleccionarMesa(mesa: Mesa) {
-        _mesaSeleccionada.value = mesa
+    fun selectMesa(mesa: Mesa) {
+        _uiState.value = _uiState.value.copy(mesaSeleccionada = mesa)
     }
 
-    fun actualizarTextoBusqueda(texto: String) {
-        _searchText.value = texto
+    fun updateSearchText(text: String) {
+        _uiState.value = _uiState.value.copy(searchText = text)
     }
 
-    fun seleccionarCategoria(categoria: CategoryProducto?) {
-        _categoriaSeleccionada.value = categoria
+    fun selectCategoria(categoria: CategoryProducto?) {
+        _uiState.value = _uiState.value.copy(categoriaSeleccionada = categoria)
     }
 
     // Añadir producto al pedido
-    fun agregarProducto(producto: Producto) {
-        val productosActuales = _productosPedidos.value.toMutableList()
-        val existente = productosActuales.find { it.producto.name == producto.name }
+    fun addProducto(producto: Producto) {
+        val productos = _uiState.value.productosPedidos.toMutableList()
+        val existente = productos.find { it.producto.name == producto.name }
 
         if (existente != null) {
             val actualizado = existente.copy(cantidad = existente.cantidad + 1)
-            productosActuales[productosActuales.indexOf(existente)] = actualizado
+            productos[productos.indexOf(existente)] = actualizado
         } else {
-            productosActuales.add(
-                ProductoPedido(
-                    producto = producto,
-                    cantidad = 1,
-                    preparado = false
-                )
-            )
+            productos.add(ProductoPedido(producto, 1, preparado = false))
         }
-        _productosPedidos.value = productosActuales
+
+        _uiState.value = _uiState.value.copy(productosPedidos = productos)
     }
 
     // Aumentar cantidad
-    fun aumentarCantidad(productoPedido: ProductoPedido) {
-        val productosActuales = _productosPedidos.value.toMutableList()
-        val index = productosActuales.indexOfFirst { it.producto.name == productoPedido.producto.name }
+    fun increaseCantidad(productoPedido: ProductoPedido) {
+        val productos = _uiState.value.productosPedidos.toMutableList()
+        val index = productos.indexOfFirst { it.producto.name == productoPedido.producto.name }
         if (index != -1) {
-            val actualizado = productosActuales[index].copy(cantidad = productosActuales[index].cantidad + 1)
-            productosActuales[index] = actualizado
-            _productosPedidos.value = productosActuales
+            val actualizado = productos[index].copy(cantidad = productos[index].cantidad + 1)
+            productos[index] = actualizado
+            _uiState.value = _uiState.value.copy(productosPedidos = productos)
         }
     }
 
     // Disminuir cantidad
-    fun disminuirCantidad(productoPedido: ProductoPedido) {
-        val productosActuales = _productosPedidos.value.toMutableList()
-        val index = productosActuales.indexOfFirst { it.producto.name == productoPedido.producto.name }
+    fun decreaseCantidad(productoPedido: ProductoPedido) {
+        val productos = _uiState.value.productosPedidos.toMutableList()
+        val index = productos.indexOfFirst { it.producto.name == productoPedido.producto.name }
         if (index != -1) {
-            val actual = productosActuales[index]
+            val actual = productos[index]
             if (actual.cantidad > 1) {
-                productosActuales[index] = actual.copy(cantidad = actual.cantidad - 1)
+                productos[index] = actual.copy(cantidad = actual.cantidad - 1)
             } else {
-                productosActuales.removeAt(index)
+                productos.removeAt(index)
             }
-            _productosPedidos.value = productosActuales
+            _uiState.value = _uiState.value.copy(productosPedidos = productos)
         }
     }
 
     // Eliminar producto del pedido
-    fun eliminarProducto(productoPedido: ProductoPedido) {
-        val productosActuales = _productosPedidos.value.toMutableList()
-        productosActuales.removeIf { it.producto.name == productoPedido.producto.name }
-        _productosPedidos.value = productosActuales
+    fun removeProducto(productoPedido: ProductoPedido) {
+        val productos = _uiState.value.productosPedidos.toMutableList()
+        val eliminado = productos.find { it.producto.name == productoPedido.producto.name }
+        productos.removeIf { it.producto.name == productoPedido.producto.name }
+        _uiState.value = _uiState.value.copy(
+            productosPedidos = productos,
+            message = eliminado?.let { "Producto eliminado: ${it.producto.name}" },
+            isError = false,
+        )
     }
 
     // Confirmar y guardar el pedido
-    fun confirmarPedido() {
-        val mesaSeleccionada = _mesaSeleccionada.value
-        val productos = _productosPedidos.value
+    fun confirmPedido() {
+        val mesa = _uiState.value.mesaSeleccionada
+        val productos = _uiState.value.productosPedidos
 
-        if (mesaSeleccionada != null && productos.isNotEmpty()) {
-            viewModelScope.launch {
-                val pedido = Pedido(
-                    mesa = mesaSeleccionada.name,
-                    carta = productos,
-                    state = EstadoPedido.ENCURSO,
-                    total = 0.0
+        if (mesa == null || productos.isEmpty()) {
+            _uiState.value = _uiState.value.copy(
+                message = "Selecciona una mesa y añade productos",
+                isError = true
+            )
+            return
+        }
+
+        viewModelScope.launch {
+            val pedido = Pedido(
+                mesa = mesa.name,
+                carta = productos,
+                state = EstadoPedido.ENCURSO,
+                total = 0.0
+            )
+
+            val resultadoPedido = firestoreRepository.crearPedido(pedido)
+            val resultadoMesa = firestoreRepository.actualizarMesa(mesa.copy(occupied = true))
+
+            if (resultadoPedido.isSuccess && resultadoMesa.isSuccess) {
+                _uiState.value = _uiState.value.copy(
+                    mesaSeleccionada = null,
+                    productosPedidos = emptyList(),
+                    message = "Pedido enviado a cocina ✅",
+                    isError = false
                 )
-
-                firestoreRepository.crearPedido(pedido)
-                firestoreRepository.actualizarMesa(mesaSeleccionada.copy(occupied = true))
-
-                _mostrarSnackbar.value = true
-
-                // Limpiar datos después de enviar el pedido
-                _mesaSeleccionada.value = null
-                _productosPedidos.value = emptyList()
-                //delay(500) // Opcional: Pequeño retraso para dar tiempo a Firebase a propagar el cambio
-                cargarMesas()
+                loadMesas()
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    message = "Error al enviar el pedido",
+                    isError = true
+                )
             }
         }
     }
 
-    fun resetearSnackbar() {
-        _mostrarSnackbar.value = false
+    fun clearMessage() {
+        _uiState.value = _uiState.value.copy(message = null)
     }
 }
+
+data class TomarPedidoUiState(
+    val mesas: List<Mesa> = emptyList(),
+    val mesaSeleccionada: Mesa? = null,
+    val productos: List<Producto> = emptyList(),
+    val productosPedidos: List<ProductoPedido> = emptyList(),
+    val searchText: String = "",
+    val categoriaSeleccionada: CategoryProducto? = null,
+    val message: String? = null,
+    val isError: Boolean = false
+)

@@ -1,5 +1,6 @@
 package com.example.readytapas.ui.screens.carta
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readytapas.data.model.CategoryProducto
@@ -40,8 +41,13 @@ class CartaViewModel @Inject constructor(
 
     private fun loadProductos() {
         viewModelScope.launch {
-            val productos = firestoreRepository.getCarta()
-            _uiState.value = _uiState.value.copy(productos = productos)
+            val result = firestoreRepository.getCarta()
+            result.onSuccess { productos ->
+                _uiState.value = _uiState.value.copy(productos = productos)
+            }.onFailure {
+                // Aquí podrías añadir un mensaje de error en el estado si quieres mostrarlo
+                Log.e("CartaViewModel", "Error al cargar productos", it)
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun GlobalSnackbarHost(snackbarHostState: SnackbarHostState) {
