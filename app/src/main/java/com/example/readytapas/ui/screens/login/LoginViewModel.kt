@@ -36,7 +36,7 @@ class LoginViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 emailError = email.isEmpty(),
                 passwordError = password.isEmpty(),
-                message = "Por favor, introduce tu email y contraseña",
+                message = "Debes introducir un correo y contraseña",
                 isError = true,
             )
             return
@@ -99,10 +99,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun clearMessage() {
-        _uiState.value = _uiState.value.copy(
-            message = null,
-            isError = false
-        )
+        _uiState.value = _uiState.value.copy(message = null)
     }
 }
 

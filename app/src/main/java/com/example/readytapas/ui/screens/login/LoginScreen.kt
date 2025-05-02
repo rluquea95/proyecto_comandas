@@ -24,8 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.readytapas.R
-import com.example.readytapas.ui.snackbar.GlobalSnackbarHost
-import com.example.readytapas.ui.snackbar.SnackbarManager
+import com.example.readytapas.ui.components.CustomSnackbarHost
 import com.example.readytapas.ui.theme.BeigeClaro
 import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.GrisMedio
@@ -42,16 +41,20 @@ fun LoginScreen(
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Escuchar errorMessage desde el ViewModel
     LaunchedEffect(state.message) {
         state.message?.let {
-            SnackbarManager.showMessage(this, it, isError = state.isError)
+            snackbarHostState.showSnackbar(it)
             viewModel.clearMessage()
         }
     }
 
     Scaffold(
-        snackbarHost = { GlobalSnackbarHost(snackbarHostState = snackbarHostState) }
+        snackbarHost = {
+            CustomSnackbarHost(
+                snackbarHostState = snackbarHostState,
+                isError = state.isError
+            )
+        }
     ) { paddingValues ->
         LoginScreenContent(
             modifier = Modifier.padding(paddingValues),

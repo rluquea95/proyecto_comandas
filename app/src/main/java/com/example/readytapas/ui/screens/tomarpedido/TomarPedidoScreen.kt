@@ -38,8 +38,7 @@ import com.example.readytapas.ui.components.TopBarWithMenu
 import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.MarronOscuro
 import com.example.readytapas.ui.components.*
-import com.example.readytapas.ui.snackbar.GlobalSnackbarHost
-import com.example.readytapas.ui.snackbar.SnackbarManager
+import com.example.readytapas.ui.components.CustomSnackbarHost
 
 
 @Composable
@@ -53,16 +52,20 @@ fun TomarPedidoScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var isDialogOpen by remember { mutableStateOf(false) }
 
-    // Escuchar errorMessage desde el ViewModel
     LaunchedEffect(state.message) {
         state.message?.let {
-            SnackbarManager.showMessage(this, it, isError = state.isError)
+            snackbarHostState.showSnackbar(it)
             viewModel.clearMessage()
         }
     }
 
     Scaffold(
-        snackbarHost = { GlobalSnackbarHost(snackbarHostState = snackbarHostState) },
+        snackbarHost = {
+            CustomSnackbarHost(
+                snackbarHostState = snackbarHostState,
+                isError = state.isError
+            )
+        },
         bottomBar = {
             Button(
                 onClick = { viewModel.confirmPedido() },

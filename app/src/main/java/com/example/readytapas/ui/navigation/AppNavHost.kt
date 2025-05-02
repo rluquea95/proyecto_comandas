@@ -42,10 +42,10 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
             CartaScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
 
-        // Pantallas vacías para cada destino
         composable("tomarPedido") {
             TomarPedidoScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
+
         composable("enPreparacion") {
             // Componente vacío para la pantalla "En preparación"
             Box(modifier = Modifier
@@ -55,6 +55,7 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
                 Text("En Preparación", modifier = Modifier.align(Alignment.Center))
             }
         }
+
         composable("platosListos") {
             // Componente vacío para la pantalla "Platos Listos"
             Box(modifier = Modifier

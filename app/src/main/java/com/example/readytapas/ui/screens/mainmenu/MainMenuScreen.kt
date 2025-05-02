@@ -62,7 +62,10 @@ fun MainMenuScreen(
                 MenuItem(
                     painter = painterResource(id = R.drawable.tomar_notas),
                     text = "Tomar pedido",
-                    onClick = { navController.navigate("tomarPedido") }
+                    onClick = {
+                        //SnackbarManager.clear()
+                        navController.navigate("tomarPedido")
+                    }
                 )
 
                 Spacer(modifier = Modifier.width(menuItemSpacing))
@@ -71,7 +74,10 @@ fun MainMenuScreen(
                 MenuItem(
                     painter = painterResource(id = R.drawable.en_preparacion),
                     text = "En preparación",
-                    onClick = { navController.navigate("enPreparacion") }
+                    onClick = {
+                        //SnackbarManager.clear()
+                        navController.navigate("enPreparacion")
+                    }
                 )
             }
 
@@ -87,7 +93,10 @@ fun MainMenuScreen(
                 MenuItem(
                     painter = painterResource(id = R.drawable.platos_listos),
                     text = "Platos listos",
-                    onClick = { navController.navigate("platosListos") }
+                    onClick = {
+                        //SnackbarManager.clear()
+                        navController.navigate("platosListos")
+                    }
                 )
 
                 Spacer(modifier = Modifier.width(menuItemSpacing))
@@ -96,7 +105,10 @@ fun MainMenuScreen(
                 MenuItem(
                     painter = painterResource(id = R.drawable.carta),
                     text = "Carta",
-                    onClick = { navController.navigate("carta") }
+                    onClick = {
+                        //SnackbarManager.clear()
+                        navController.navigate("carta")
+                    }
                 )
             }
 
@@ -112,7 +124,10 @@ fun MainMenuScreen(
                 MenuItem(
                     painter = painterResource(id = R.drawable.pendiente_cobro),
                     text = "Pendiente de cobro",
-                    onClick = { navController.navigate("pendienteCobro") }
+                    onClick = {
+                        //SnackbarManager.clear()
+                        navController.navigate("pendienteCobro")
+                    }
                 )
 
                 Spacer(modifier = Modifier.width(menuItemSpacing))
@@ -121,7 +136,10 @@ fun MainMenuScreen(
                 MenuItem(
                     painter = painterResource(id = R.drawable.reservas),
                     text = "Reserva",
-                    onClick = { navController.navigate("reservas") }
+                    onClick = {
+                        //SnackbarManager.clear()
+                        navController.navigate("reservas")
+                    }
                 )
             }
         }
