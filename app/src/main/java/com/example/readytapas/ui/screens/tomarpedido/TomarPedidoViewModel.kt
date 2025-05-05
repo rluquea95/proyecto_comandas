@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readytapas.data.model.CategoryProducto
 import com.example.readytapas.data.model.EstadoPedido
+import com.example.readytapas.data.model.EstadoUnidad
 import com.example.readytapas.data.model.Mesa
 import com.example.readytapas.data.model.NumeroMesa
 import com.example.readytapas.data.model.Pedido
@@ -104,12 +105,17 @@ class TomarPedidoViewModel @Inject constructor(
         val existente = productos.find { it.producto.name == producto.name }
 
         if (existente != null) {
-            val actualizado = existente.copy(cantidad = existente.cantidad + 1)
+            val nuevasUnidades = existente.unidades + EstadoUnidad()
+            val actualizado = existente.copy(unidades = nuevasUnidades)
             productos[productos.indexOf(existente)] = actualizado
         } else {
-            productos.add(ProductoPedido(producto, 1, preparado = false))
+            productos.add(
+                ProductoPedido(
+                    producto = producto,
+                    unidades = listOf(EstadoUnidad())
+                )
+            )
         }
-
         _uiState.value = _uiState.value.copy(productosPedidos = productos)
     }
 
@@ -118,7 +124,9 @@ class TomarPedidoViewModel @Inject constructor(
         val productos = _uiState.value.productosPedidos.toMutableList()
         val index = productos.indexOfFirst { it.producto.name == productoPedido.producto.name }
         if (index != -1) {
-            val actualizado = productos[index].copy(cantidad = productos[index].cantidad + 1)
+            val actual = productos[index]
+            val nuevasUnidades = actual.unidades + EstadoUnidad()
+            val actualizado = actual.copy(unidades = nuevasUnidades)
             productos[index] = actualizado
             _uiState.value = _uiState.value.copy(productosPedidos = productos)
         }
@@ -130,8 +138,9 @@ class TomarPedidoViewModel @Inject constructor(
         val index = productos.indexOfFirst { it.producto.name == productoPedido.producto.name }
         if (index != -1) {
             val actual = productos[index]
-            if (actual.cantidad > 1) {
-                productos[index] = actual.copy(cantidad = actual.cantidad - 1)
+            if (actual.unidades.size > 1) {
+                val nuevasUnidades = actual.unidades.dropLast(1)
+                productos[index] = actual.copy(unidades = nuevasUnidades)
             } else {
                 productos.removeAt(index)
             }

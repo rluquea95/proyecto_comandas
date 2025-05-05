@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.example.readytapas.data.model.CategoryProducto
 import com.example.readytapas.data.model.Producto
 import com.example.readytapas.data.model.ProductoPedido
+import com.example.readytapas.data.model.EstadoUnidad
 import com.example.readytapas.ui.theme.BeigeClaro
 import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.GrisMedio
@@ -85,7 +86,7 @@ fun ProductoPedidoItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = productoPedido.cantidad.toString(),
+                        text = productoPedido.unidades.size.toString(),
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                         color = BlancoHueso
                     )
@@ -133,7 +134,7 @@ fun ProductoPedidoItemPreview() {
                 price = 3.5,
                 imageUrl = "plato_croquetas"
             ),
-            cantidad = 2
+            unidades = List(2) { EstadoUnidad() }
         ),
         onAumentar = {},
         onDisminuir = {},

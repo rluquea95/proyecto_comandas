@@ -34,6 +34,7 @@ import com.example.readytapas.data.model.Mesa
 import com.example.readytapas.data.model.NumeroMesa
 import com.example.readytapas.data.model.Producto
 import com.example.readytapas.data.model.ProductoPedido
+import com.example.readytapas.data.model.EstadoUnidad
 import com.example.readytapas.ui.components.TopBarWithMenu
 import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.MarronOscuro
@@ -177,8 +178,8 @@ fun TomarPedidoScreenPreview() {
     )
 
     val productosPedidosMock = listOf(
-        ProductoPedido(producto = productosMock[0], cantidad = 2),
-        ProductoPedido(producto = productosMock[1], cantidad = 1)
+        ProductoPedido(producto = productosMock[0], unidades = List(2) { EstadoUnidad() }),
+        ProductoPedido(producto = productosMock[1], unidades = List(1) { EstadoUnidad() })
     )
 
     // Modo fake, sin ViewModel
