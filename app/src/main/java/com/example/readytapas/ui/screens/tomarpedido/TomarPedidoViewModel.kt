@@ -141,10 +141,16 @@ class TomarPedidoViewModel @Inject constructor(
             if (actual.unidades.size > 1) {
                 val nuevasUnidades = actual.unidades.dropLast(1)
                 productos[index] = actual.copy(unidades = nuevasUnidades)
+                _uiState.value = _uiState.value.copy(productosPedidos = productos)
             } else {
                 productos.removeAt(index)
+
+                _uiState.value = _uiState.value.copy(
+                    productosPedidos = productos,
+                    message = "Producto eliminado: ${productoPedido.producto.name}",
+                    isError = false
+                )
             }
-            _uiState.value = _uiState.value.copy(productosPedidos = productos)
         }
     }
 

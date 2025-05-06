@@ -13,6 +13,7 @@ import com.example.readytapas.ui.screens.login.LoginScreen
 import com.example.readytapas.ui.screens.mainmenu.MainMenuScreen
 import androidx.compose.ui.Alignment
 import com.example.readytapas.ui.screens.carta.CartaScreen
+import com.example.readytapas.ui.screens.enpreparacion.EnPreparacionScreen
 import com.example.readytapas.ui.screens.tomarpedido.TomarPedidoScreen
 import com.example.readytapas.ui.theme.MarronMedioAcento
 
@@ -47,13 +48,7 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
         }
 
         composable("enPreparacion") {
-            // Componente vacío para la pantalla "En preparación"
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(MarronMedioAcento)
-            ) {
-                Text("En Preparación", modifier = Modifier.align(Alignment.Center))
-            }
+            EnPreparacionScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
 
         composable("platosListos") {

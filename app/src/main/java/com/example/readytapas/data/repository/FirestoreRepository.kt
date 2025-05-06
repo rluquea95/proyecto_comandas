@@ -42,18 +42,6 @@ class FirestoreRepository @Inject constructor(
         }
     }
 
-    suspend fun crearPedido(pedido: Pedido): Result<Unit> {
-        return try {
-            firestore.collection("Pedidos")
-                .add(pedido)
-                .await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Log.e("FirestoreRepository", "Error al crear pedido", e)
-            Result.failure(e)
-        }
-    }
-
     suspend fun actualizarMesa(mesa: Mesa): Result<Unit> {
         return try {
             firestore.collection("Mesas")
@@ -68,6 +56,52 @@ class FirestoreRepository @Inject constructor(
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error al actualizar mesa", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun crearPedido(pedido: Pedido): Result<Unit> {
+        return try {
+            firestore.collection("Pedidos")
+                .add(pedido)
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error al crear pedido", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getPedidos(): Result<List<Pedido>> {
+        return try {
+            val pedidos = firestore.collection("Pedidos")
+                .get()
+                .await()
+                .mapNotNull { it.toObject(Pedido::class.java) }
+            Result.success(pedidos)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error al obtener los pedidos", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun actualizarPedidoPorMesa(pedido: Pedido): Result<Unit> {
+        return try {
+            val documento = firestore.collection("Pedidos")
+                .whereEqualTo("mesa", pedido.mesa.name)
+                .get()
+                .await()
+                .documents
+                .firstOrNull()
+
+            if (documento != null) {
+                documento.reference.set(pedido).await()
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("No se encontró el pedido para la mesa ${pedido.mesa.name}"))
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error al actualizar pedido", e)
             Result.failure(e)
         }
     }
