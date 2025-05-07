@@ -19,6 +19,8 @@ class CartaViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CartaUiState())
     val uiState: StateFlow<CartaUiState> = _uiState
 
+    /* Combina diferentes flujos de datos en un solo flujo de datos.
+    * El flujo de datos se actualiza cada vez que uno de los flujos de datos se actualiza. */
     val productosFiltrados: StateFlow<List<Producto>> = combine(
         _uiState.map { it.productos },
         _uiState.map { it.categoriaSeleccionada },
@@ -26,13 +28,20 @@ class CartaViewModel @Inject constructor(
         _uiState.map { it.searchText }
     ) {
       productos, categoria, ordenar, search ->
+        // Filtra los productos según la categoría seleccionada
         var filtrados = if (categoria == null) productos else productos.filter { it.category == categoria }
 
+        // Filtra los productos según el texto de búsqueda sin distinguir entre mayusculas y minusculas
         if (search.isNotBlank()) {
             filtrados = filtrados.filter { it.name.contains(search, ignoreCase = true) }
         }
 
         if (ordenar) filtrados.sortedBy { it.price } else filtrados
+
+        /* Convierte el flujo de datos en un StateFlow:
+        *  - Vive mientras el ViewModel esté activo (viewModelScope)
+        *  - Solo permanece activo mientras hay observadores (se suspende tras 5 segundos sin uso)
+        *  - El valor inicial es una lista vacía */
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
@@ -43,9 +52,19 @@ class CartaViewModel @Inject constructor(
         viewModelScope.launch {
             val result = firestoreRepository.getCarta()
             result.onSuccess { productos ->
-                _uiState.value = _uiState.value.copy(productos = productos)
+                if (productos.isEmpty()) {
+                    _uiState.value = _uiState.value.copy(
+                        message = "No se encontraron productos.",
+                        isError = true
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(productos = productos)
+                }
             }.onFailure {
-                // Aquí podrías añadir un mensaje de error en el estado si quieres mostrarlo
+                _uiState.value = _uiState.value.copy(
+                    message = "Error al cargar productos",
+                    isError = true
+                )
                 Log.e("CartaViewModel", "Error al cargar productos", it)
             }
         }
@@ -70,6 +89,10 @@ class CartaViewModel @Inject constructor(
     fun clearSelectedProducto() {
         _uiState.value = _uiState.value.copy(productoSeleccionado = null)
     }
+
+    fun clearMessage() {
+        _uiState.value = _uiState.value.copy(message = null, isError = false)
+    }
 }
 
 data class CartaUiState(
@@ -77,5 +100,7 @@ data class CartaUiState(
     val categoriaSeleccionada: CategoryProducto? = null,
     val ordenarPorPrecio: Boolean = false,
     val searchText: String = "",
-    val productoSeleccionado: Producto? = null
+    val productoSeleccionado: Producto? = null,
+    val message: String? = null,
+    val isError: Boolean = false
 )

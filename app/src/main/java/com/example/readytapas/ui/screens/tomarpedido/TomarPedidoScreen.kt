@@ -67,6 +67,15 @@ fun TomarPedidoScreen(
                 isError = state.isError
             )
         },
+        topBar = {
+            TopBarWithMenu(
+                title = "Tomar Pedido",
+                titleAlignment = TextAlign.Center,
+                onLogoutClick = onLogoutClick,
+                showBackButton = true,
+                onBackClick = { navController.popBackStack() }
+            )
+        },
         bottomBar = {
             Button(
                 onClick = { viewModel.confirmPedido() },
@@ -88,15 +97,6 @@ fun TomarPedidoScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            TopBarWithMenu(
-                title = "Tomar Pedido",
-                titleAlignment = TextAlign.Center,
-                onLogoutClick = onLogoutClick,
-                showBackButton = true,
-                onBackClick = { navController.popBackStack() }
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             MesaDropdown(
                 mesas = state.mesas,
@@ -197,6 +197,15 @@ fun TomarPedidoScreenContentPreview(
     productosPedidos: List<ProductoPedido>
 ) {
     Scaffold(
+        topBar = {
+            TopBarWithMenu(
+                title = "Tomar Pedido",
+                titleAlignment = TextAlign.Center,
+                onLogoutClick = {},
+                showBackButton = true,
+                onBackClick = {}
+            )
+        },
         bottomBar = {
             Button(
                 onClick = {},
@@ -214,15 +223,6 @@ fun TomarPedidoScreenContentPreview(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            TopBarWithMenu(
-                title = "Tomar Pedido",
-                titleAlignment = TextAlign.Center,
-                onLogoutClick = {},
-                showBackButton = true,
-                onBackClick = {}
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             MesaDropdown(
                 mesas = mesas,

@@ -1,5 +1,6 @@
 package com.example.readytapas.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenuItem
@@ -7,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
@@ -19,8 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.readytapas.data.model.Mesa
 import com.example.readytapas.data.model.NumeroMesa
 import com.example.readytapas.ui.theme.BeigeClaro
@@ -44,7 +48,7 @@ fun MesaDropdown(
             readOnly = true,
             value = mesaSeleccionada?.let { formatearNombreMesa(it.name) } ?: "Selecciona una mesa",
             onValueChange = {},
-            label = { Text("Mesa") },
+            label = { Text("Mesa", style = MaterialTheme.typography.bodyMedium) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = BeigeClaro,
@@ -56,6 +60,7 @@ fun MesaDropdown(
                 focusedLabelColor = MarronOscuro,
                 unfocusedLabelColor = MarronOscuro
             ),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
             modifier = Modifier
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
                 .fillMaxWidth()
@@ -79,14 +84,18 @@ fun MesaDropdown(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = formatearNombreMesa(mesa.name),
-                            color = MarronOscuro
+                            text = mesa.name.name,
+                            color = MarronOscuro,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         )
                     },
                     onClick = {
                         onMesaSeleccionada(mesa)
                         expanded = false
                     },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(BeigeClaro),
                     colors = MenuDefaults.itemColors(
                         textColor = MarronOscuro,
                         disabledTextColor = Color.Gray

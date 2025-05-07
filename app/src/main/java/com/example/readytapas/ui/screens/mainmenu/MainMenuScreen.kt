@@ -63,7 +63,6 @@ fun MainMenuScreen(
                     painter = painterResource(id = R.drawable.tomar_notas),
                     text = "Tomar pedido",
                     onClick = {
-                        //SnackbarManager.clear()
                         navController.navigate("tomarPedido")
                     }
                 )
@@ -75,7 +74,6 @@ fun MainMenuScreen(
                     painter = painterResource(id = R.drawable.en_preparacion),
                     text = "En preparación",
                     onClick = {
-                        //SnackbarManager.clear()
                         navController.navigate("enPreparacion")
                     }
                 )
@@ -94,7 +92,6 @@ fun MainMenuScreen(
                     painter = painterResource(id = R.drawable.platos_listos),
                     text = "Platos listos",
                     onClick = {
-                        //SnackbarManager.clear()
                         navController.navigate("platosListos")
                     }
                 )
@@ -106,7 +103,6 @@ fun MainMenuScreen(
                     painter = painterResource(id = R.drawable.carta),
                     text = "Carta",
                     onClick = {
-                        //SnackbarManager.clear()
                         navController.navigate("carta")
                     }
                 )
@@ -125,7 +121,6 @@ fun MainMenuScreen(
                     painter = painterResource(id = R.drawable.pendiente_cobro),
                     text = "Pendiente de cobro",
                     onClick = {
-                        //SnackbarManager.clear()
                         navController.navigate("pendienteCobro")
                     }
                 )
@@ -137,7 +132,6 @@ fun MainMenuScreen(
                     painter = painterResource(id = R.drawable.reservas),
                     text = "Reserva",
                     onClick = {
-                        //SnackbarManager.clear()
                         navController.navigate("reservas")
                     }
                 )

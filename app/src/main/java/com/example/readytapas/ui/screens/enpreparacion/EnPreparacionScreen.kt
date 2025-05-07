@@ -2,6 +2,7 @@ package com.example.readytapas.ui.screens.enpreparacion
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,13 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -25,8 +22,6 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
@@ -40,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -233,7 +227,7 @@ fun EnPreparacionScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun EnPreparacionScreenContentPreview() {
+fun EnPreparacionScreenPreview() {
     val mockProducto1 = Producto(name = "Caña", category = CategoryProducto.BEBIDA)
     val mockProducto2 = Producto(name = "Tortilla", category = CategoryProducto.PLATO)
 
@@ -264,15 +258,21 @@ fun EnPreparacionScreenContentPreview() {
         vista = VistaPreparacion.COCINA
     )
 
-    EnPreparacionScreenContentPreview(state = previewState)
+    EnPreparacionScreenMock(state = previewState)
 }
 
 @Composable
-fun EnPreparacionScreenContentPreview(state: EnPreparacionUiState) {
+fun EnPreparacionScreenMock(state: EnPreparacionUiState) {
     Scaffold(
+        snackbarHost = {
+            CustomSnackbarHost(
+                snackbarHostState = SnackbarHostState(),
+                isError = state.isError
+            )
+        },
         topBar = {
             TopBarWithMenu(
-                title = "En preparación",
+                title = "En Preparación",
                 titleAlignment = TextAlign.Center,
                 onLogoutClick = {},
                 showBackButton = false,
@@ -285,7 +285,12 @@ fun EnPreparacionScreenContentPreview(state: EnPreparacionUiState) {
                 enabled = state.productosSeleccionados.any { it.value.isNotEmpty() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MarronOscuro,
+                    contentColor = BlancoHueso
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Confirmar preparados")
             }
@@ -293,15 +298,46 @@ fun EnPreparacionScreenContentPreview(state: EnPreparacionUiState) {
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            val selectedTabIndex = when (state.vista) {
+                VistaPreparacion.CAMARERO -> 0
+                VistaPreparacion.COCINA -> 1
+            }
+            val tabs = listOf("CAMARERO", "COCINA")
+
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                containerColor = Color.Transparent,
+                contentColor = MarronOscuro,
+                modifier = Modifier.fillMaxWidth(),
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        color = MarronOscuro
+                    )
+                }
             ) {
-                Text("Camarero")
-                Switch(checked = state.vista == VistaPreparacion.COCINA, onCheckedChange = {})
-                Text("Cocina")
+                tabs.forEachIndexed { index, title ->
+                    val isSelected = selectedTabIndex == index
+                    val backgroundColor = if (isSelected) MarronOscuro else BeigeClaro
+                    val textColor = if (isSelected) BlancoHueso else MarronOscuro
+
+                    Tab(
+                        selected = isSelected,
+                        onClick = {}
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .background(backgroundColor, RoundedCornerShape(12.dp))
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = title,
+                                color = textColor,
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                    }
+                }
             }
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -309,7 +345,6 @@ fun EnPreparacionScreenContentPreview(state: EnPreparacionUiState) {
                     val mesa = pedido.mesa.name
                     val isExpanded = state.pedidosExpandidos.contains(mesa)
 
-                    // ✅ Mostrar una línea por unidad no preparada (en ambas vistas)
                     val productosPendientes = pedido.carta.flatMap { producto ->
                         producto.unidades.mapIndexedNotNull { idx, unidad ->
                             if (!unidad.preparado &&
@@ -326,34 +361,47 @@ fun EnPreparacionScreenContentPreview(state: EnPreparacionUiState) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
-                            .clickable { }
+                            .padding(8.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Mesa: $mesa", style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                text = mesa,
+                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                color = MarronOscuro
+                            )
 
-                            if (isExpanded) {
-                                Spacer(Modifier.height(8.dp))
+                            Spacer(Modifier.height(8.dp))
 
-                                if (productosPendientes.isEmpty()) {
-                                    Text("Todos los productos están preparados.")
-                                } else {
-                                    productosPendientes.forEach { (productoPedido, idx) ->
-                                        val clave = "${productoPedido.producto.name}-$idx"
-                                        val seleccionado = state.productosSeleccionados[mesa]?.contains(clave) == true
+                            productosPendientes.forEach { (productoPedido, idx) ->
+                                val clave = "${productoPedido.producto.name}-$idx"
+                                val seleccionado = state.productosSeleccionados[mesa]?.contains(clave) == true
 
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            Checkbox(
-                                                checked = seleccionado,
-                                                onCheckedChange = {},
-                                                enabled = false
-                                            )
-                                            Text("${productoPedido.producto.name} (${idx + 1})")
-                                        }
-                                    }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                        .background(BeigeClaro, RoundedCornerShape(8.dp))
+                                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                                ) {
+                                    Checkbox(
+                                        checked = seleccionado,
+                                        onCheckedChange = {},
+                                        enabled = false,
+                                        colors = CheckboxDefaults.colors(
+                                            checkedColor = MarronOscuro,
+                                            uncheckedColor = Color.Gray,
+                                            checkmarkColor = BlancoHueso
+                                        )
+                                    )
+                                    Text(
+                                        productoPedido.producto.name,
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                        color = MarronOscuro
+                                    )
                                 }
                             }
                         }
@@ -363,3 +411,4 @@ fun EnPreparacionScreenContentPreview(state: EnPreparacionUiState) {
         }
     }
 }
+
