@@ -12,6 +12,7 @@ import com.example.readytapas.data.model.Pedido
 import com.example.readytapas.data.model.Producto
 import com.example.readytapas.data.model.ProductoPedido
 import com.example.readytapas.data.repository.FirestoreRepository
+import com.example.readytapas.ui.components.SnackbarType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -59,7 +60,7 @@ class TomarPedidoViewModel @Inject constructor(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     message = "Error al cargar mesas disponibles",
-                    isError = true
+                    snackbarType = SnackbarType.ERROR
                 )
                 Log.e("TomarPedido", "Error al cargar mesas", it)
             }
@@ -74,7 +75,7 @@ class TomarPedidoViewModel @Inject constructor(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     message = "Error al cargar productos",
-                    isError = true
+                    snackbarType = SnackbarType.ERROR
                 )
                 Log.e("TomarPedido", "Error al cargar productos", it)
             }
@@ -148,7 +149,7 @@ class TomarPedidoViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     productosPedidos = productos,
                     message = "Producto eliminado: ${productoPedido.producto.name}",
-                    isError = false
+                    snackbarType = SnackbarType.INFO
                 )
             }
         }
@@ -162,7 +163,7 @@ class TomarPedidoViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             productosPedidos = productos,
             message = eliminado?.let { "Producto eliminado: ${it.producto.name}" },
-            isError = false,
+            snackbarType = SnackbarType.INFO
         )
     }
 
@@ -174,7 +175,7 @@ class TomarPedidoViewModel @Inject constructor(
         if (mesa == null || productos.isEmpty()) {
             _uiState.value = _uiState.value.copy(
                 message = "Selecciona una mesa y añade productos",
-                isError = true
+                snackbarType = SnackbarType.ERROR
             )
             return
         }
@@ -195,20 +196,23 @@ class TomarPedidoViewModel @Inject constructor(
                     mesaSeleccionada = null,
                     productosPedidos = emptyList(),
                     message = "Pedido enviado a cocina ✅",
-                    isError = false
+                    snackbarType = SnackbarType.SUCCESS
                 )
                 loadMesas()
             } else {
                 _uiState.value = _uiState.value.copy(
                     message = "Error al enviar el pedido",
-                    isError = true
+                    snackbarType = SnackbarType.ERROR
                 )
             }
         }
     }
 
     fun clearMessage() {
-        _uiState.value = _uiState.value.copy(message = null)
+        _uiState.value = _uiState.value.copy(
+            message = null,
+            snackbarType = SnackbarType.INFO
+        )
     }
 }
 
@@ -220,5 +224,5 @@ data class TomarPedidoUiState(
     val searchText: String = "",
     val categoriaSeleccionada: CategoryProducto? = null,
     val message: String? = null,
-    val isError: Boolean = false
+    val snackbarType: SnackbarType = SnackbarType.INFO
 )

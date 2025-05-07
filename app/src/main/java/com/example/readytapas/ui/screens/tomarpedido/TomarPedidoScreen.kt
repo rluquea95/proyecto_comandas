@@ -64,7 +64,7 @@ fun TomarPedidoScreen(
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
-                isError = state.isError
+                snackbarType = state.snackbarType
             )
         },
         topBar = {

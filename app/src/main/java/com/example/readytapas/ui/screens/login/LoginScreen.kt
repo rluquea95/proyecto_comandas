@@ -52,7 +52,7 @@ fun LoginScreen(
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
-                isError = state.isError
+                snackbarType = state.snackbarType
             )
         }
     ) { paddingValues ->

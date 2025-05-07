@@ -52,7 +52,10 @@ fun CartaScreen(
 
     Scaffold(
         snackbarHost = {
-            CustomSnackbarHost(snackbarHostState, isError = state.isError)
+            CustomSnackbarHost(
+                snackbarHostState = snackbarHostState,
+                snackbarType = state.snackbarType
+            )
         },
         topBar = {
             TopBarWithMenu(

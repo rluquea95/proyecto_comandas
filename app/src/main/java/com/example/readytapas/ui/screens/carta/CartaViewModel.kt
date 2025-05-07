@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.readytapas.data.model.CategoryProducto
 import com.example.readytapas.data.model.Producto
 import com.example.readytapas.data.repository.FirestoreRepository
+import com.example.readytapas.ui.components.SnackbarType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ class CartaViewModel @Inject constructor(
                 if (productos.isEmpty()) {
                     _uiState.value = _uiState.value.copy(
                         message = "No se encontraron productos.",
-                        isError = true
+                        snackbarType = SnackbarType.ERROR
                     )
                 } else {
                     _uiState.value = _uiState.value.copy(productos = productos)
@@ -63,7 +64,7 @@ class CartaViewModel @Inject constructor(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     message = "Error al cargar productos",
-                    isError = true
+                    snackbarType = SnackbarType.ERROR
                 )
                 Log.e("CartaViewModel", "Error al cargar productos", it)
             }
@@ -91,7 +92,10 @@ class CartaViewModel @Inject constructor(
     }
 
     fun clearMessage() {
-        _uiState.value = _uiState.value.copy(message = null, isError = false)
+        _uiState.value = _uiState.value.copy(
+            message = null,
+            snackbarType = SnackbarType.INFO
+        )
     }
 }
 
@@ -102,5 +106,6 @@ data class CartaUiState(
     val searchText: String = "",
     val productoSeleccionado: Producto? = null,
     val message: String? = null,
-    val isError: Boolean = false
+    val isError: Boolean = false,
+    val snackbarType: SnackbarType = SnackbarType.INFO
 )

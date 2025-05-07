@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readytapas.data.repository.AuthRepository
+import com.example.readytapas.ui.components.SnackbarType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +38,7 @@ class LoginViewModel @Inject constructor(
                 emailError = email.isEmpty(),
                 passwordError = password.isEmpty(),
                 message = "Debes introducir un correo y contraseña",
-                isError = true,
+                snackbarType = SnackbarType.ERROR
             )
             return
         }
@@ -58,7 +59,7 @@ class LoginViewModel @Inject constructor(
             }.onFailure { e ->
                 _uiState.value = _uiState.value.copy(
                     message = "Email o contraseña inválidos",
-                    isError = true
+                    snackbarType = SnackbarType.ERROR
                 )
                 Log.e("Login", "Error al iniciar sesión:", e)
             }
@@ -71,7 +72,7 @@ class LoginViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 emailError = true,
                 message = "Introduce tu email para restablecer la contraseña.",
-                isError = true
+                snackbarType = SnackbarType.ERROR
             )
             return
         }
@@ -86,12 +87,12 @@ class LoginViewModel @Inject constructor(
             result.onSuccess {
                 _uiState.value = _uiState.value.copy(
                     message = "Revisa tu correo para restablecer la contraseña.",
-                    isError = false,
+                    snackbarType = SnackbarType.INFO,
                 )
             }.onFailure { e ->
                 _uiState.value = _uiState.value.copy(
                     message = "Error al restablecer la contraseña.",
-                    isError = true,
+                    snackbarType = SnackbarType.ERROR
                 )
                 Log.e("Login", "Error al reestablecer la contraseña:", e)
             }
@@ -99,7 +100,10 @@ class LoginViewModel @Inject constructor(
     }
 
     fun clearMessage() {
-        _uiState.value = _uiState.value.copy(message = null)
+        _uiState.value = _uiState.value.copy(
+            message = null,
+            snackbarType = SnackbarType.INFO
+        )
     }
 }
 
@@ -110,5 +114,5 @@ data class LoginUiState(
     val emailError: Boolean = false,
     val passwordError: Boolean = false,
     val message: String? = null,
-    val isError: Boolean = false
+    val snackbarType: SnackbarType = SnackbarType.INFO
 )

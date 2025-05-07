@@ -75,7 +75,10 @@ fun EnPreparacionScreen(
 
     Scaffold(
         snackbarHost = {
-            CustomSnackbarHost(snackbarHostState, isError = state.isError)
+            CustomSnackbarHost(
+                snackbarHostState = snackbarHostState,
+                snackbarType = state.snackbarType
+            )
         },
         topBar = {
             TopBarWithMenu(
@@ -263,11 +266,12 @@ fun EnPreparacionScreenPreview() {
 
 @Composable
 fun EnPreparacionScreenMock(state: EnPreparacionUiState) {
+    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         snackbarHost = {
             CustomSnackbarHost(
-                snackbarHostState = SnackbarHostState(),
-                isError = state.isError
+                snackbarHostState = snackbarHostState,
+                snackbarType = state.snackbarType
             )
         },
         topBar = {

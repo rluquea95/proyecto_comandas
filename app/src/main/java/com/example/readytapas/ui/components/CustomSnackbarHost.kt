@@ -12,25 +12,52 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
 
 
 @Composable
-fun CustomSnackbarHost(snackbarHostState: SnackbarHostState, isError: Boolean) {
+fun CustomSnackbarHost(
+    snackbarHostState: SnackbarHostState,
+    snackbarType: SnackbarType
+) {
     SnackbarHost(hostState = snackbarHostState) { data ->
-        val icon = if (isError) Icons.Default.Warning else Icons.Default.CheckCircle
-        val bgColor = if (isError) MaterialTheme.colorScheme.error else Color(0xFF4CAF50)
-        val iconTint = if (isError) Color.White else Color.Black
-        val textColor = if (isError) Color.White else Color.Black
+
+        val icon: ImageVector
+        val bgColor: Color
+        val iconTint: Color
+        val textColor: Color
+
+        when (snackbarType) {
+            SnackbarType.ERROR -> {
+                icon = Icons.Default.Warning
+                bgColor = MaterialTheme.colorScheme.error
+                iconTint = Color.White
+                textColor = Color.White
+            }
+            SnackbarType.SUCCESS -> {
+                icon = Icons.Default.CheckCircle
+                bgColor = Color.Green
+                iconTint = Color.Black
+                textColor = Color.Black
+            }
+            SnackbarType.INFO -> {
+                icon = Icons.Default.Info
+                bgColor = MaterialTheme.colorScheme.primary
+                iconTint = Color.White
+                textColor = Color.White
+            }
+        }
 
         Snackbar(
             containerColor = bgColor,
-            contentColor = Color.White,
+            contentColor = textColor,
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
@@ -55,4 +82,10 @@ fun CustomSnackbarHost(snackbarHostState: SnackbarHostState, isError: Boolean) {
             }
         }
     }
+}
+
+enum class SnackbarType {
+    INFO,
+    SUCCESS,
+    ERROR
 }

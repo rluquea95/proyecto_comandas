@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.readytapas.data.model.*
 import com.example.readytapas.data.repository.FirestoreRepository
+import com.example.readytapas.ui.components.SnackbarType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +33,7 @@ class EnPreparacionViewModel @Inject constructor(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     message = "Error al cargar pedidos",
-                    isError = true
+                    snackbarType = SnackbarType.ERROR
                 )
                 Log.e("EnPreparacion", "Error al cargar pedidos", it)
             }
@@ -94,7 +95,10 @@ class EnPreparacionViewModel @Inject constructor(
     }
 
     fun clearMessage() {
-        _uiState.value = _uiState.value.copy(message = null)
+        _uiState.value = _uiState.value.copy(
+            message = null,
+            snackbarType = SnackbarType.INFO
+        )
     }
 
     fun confirmPreparados() {
@@ -128,7 +132,7 @@ class EnPreparacionViewModel @Inject constructor(
                     if (result.isFailure) {
                         _uiState.value = _uiState.value.copy(
                             message = "Error al actualizar pedido de ${mesa.name}",
-                            isError = true
+                            snackbarType = SnackbarType.ERROR
                         )
                         huboError = true
                     }
@@ -138,7 +142,7 @@ class EnPreparacionViewModel @Inject constructor(
             if (!huboError) {
                 _uiState.value = _uiState.value.copy(
                     message = "Productos marcados como preparados ✅",
-                    isError = false,
+                    snackbarType = SnackbarType.SUCCESS,
                     productosSeleccionados = emptyMap()
                 )
                 loadPedidos()
@@ -154,7 +158,7 @@ data class EnPreparacionUiState(
     val productosSeleccionados: Map<String, Set<String>> = emptyMap(), // mesa -> claves seleccionadas
     val vista: VistaPreparacion = VistaPreparacion.COCINA,
     val message: String? = null,
-    val isError: Boolean = false
+    val snackbarType: SnackbarType = SnackbarType.INFO
 )
 
 enum class VistaPreparacion {
