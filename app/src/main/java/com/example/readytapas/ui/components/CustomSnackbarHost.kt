@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.readytapas.ui.theme.MarronOscuro
 
 
 @Composable
@@ -37,7 +38,7 @@ fun CustomSnackbarHost(
         when (snackbarType) {
             SnackbarType.ERROR -> {
                 icon = Icons.Default.Warning
-                bgColor = MaterialTheme.colorScheme.error
+                bgColor = MarronOscuro
                 iconTint = Color.White
                 textColor = Color.White
             }

@@ -42,7 +42,7 @@ fun CartaScreen(
     val productos by viewModel.productosFiltrados.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Mostrar mensaje en snackbar cuando se detecta un error
+    // Mostrar mensaje en snackbar
     LaunchedEffect(state.message) {
         state.message?.let {
             snackbarHostState.showSnackbar(it)

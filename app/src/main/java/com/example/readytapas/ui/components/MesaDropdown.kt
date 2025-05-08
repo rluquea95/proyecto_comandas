@@ -46,7 +46,7 @@ fun MesaDropdown(
     ) {
         TextField(
             readOnly = true,
-            value = mesaSeleccionada?.let { formatearNombreMesa(it.name) } ?: "Selecciona una mesa",
+            value = mesaSeleccionada?.name?.name ?: "Selecciona una mesa",
             onValueChange = {},
             label = { Text("Mesa", style = MaterialTheme.typography.bodyMedium) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
@@ -71,8 +71,8 @@ fun MesaDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            mesas.forEachIndexed { index, mesa ->
-                if (mesa.name == NumeroMesa.BARRA && index != 0) {
+            mesas.forEach { mesa ->
+                if (mesa.name == NumeroMesa.BARRA) {
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -104,10 +104,6 @@ fun MesaDropdown(
             }
         }
     }
-}
-
-fun formatearNombreMesa(numeroMesa: NumeroMesa): String {
-    return numeroMesa.name.replace('_', ' ')
 }
 
 @Preview(showBackground = true)

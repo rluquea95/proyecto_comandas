@@ -314,7 +314,7 @@ fun EnPreparacionScreenMock(state: EnPreparacionUiState) {
                 contentColor = MarronOscuro,
                 modifier = Modifier.fillMaxWidth(),
                 indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
+                    SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
                         color = MarronOscuro
                     )
