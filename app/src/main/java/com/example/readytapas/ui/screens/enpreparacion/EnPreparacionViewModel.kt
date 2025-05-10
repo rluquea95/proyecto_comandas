@@ -96,8 +96,7 @@ class EnPreparacionViewModel @Inject constructor(
 
     fun clearMessage() {
         _uiState.value = _uiState.value.copy(
-            message = null,
-            snackbarType = SnackbarType.INFO
+            message = null
         )
     }
 
@@ -141,7 +140,7 @@ class EnPreparacionViewModel @Inject constructor(
 
             if (!huboError) {
                 _uiState.value = _uiState.value.copy(
-                    message = "Productos marcados como preparados ✅",
+                    message = "Productos marcados como preparados",
                     snackbarType = SnackbarType.SUCCESS,
                     productosSeleccionados = emptyMap()
                 )

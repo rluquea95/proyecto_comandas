@@ -5,10 +5,14 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -57,7 +61,11 @@ fun ProductoCard(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad),
     ) {
-        Row(modifier = Modifier.padding(8.dp)) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min) // Establece la altura mínima
+            .padding(8.dp)
+        ) {
             Column(modifier = Modifier.wrapContentWidth()) {
                 Image(
                     painter = loadLocalDrawableStrict(producto.imageUrl),
@@ -70,13 +78,13 @@ fun ProductoCard(
             }
 
             Spacer(modifier = Modifier.width(12.dp))
-
+            // Nombre y descripción centrados verticalmente
             Column(modifier = Modifier.wrapContentWidth()) {
                 Text(
                     producto.name,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = MarronOscuro,
-                    modifier = Modifier.width(180.dp)
+                    modifier = Modifier.width(160.dp)
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -85,20 +93,23 @@ fun ProductoCard(
                     producto.description,
                     color = MarronOscuro,
                     maxLines = 4,
-                    //overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.width(170.dp)
+                    modifier = Modifier.width(160.dp)
                 )
             }
 
             Spacer(modifier = Modifier.width(6.dp))
 
             // Precio centrado verticalmente
-            Column(modifier = Modifier.align(alignment = Alignment.CenterVertically)
+            Column(modifier = Modifier
+                .fillMaxHeight()
+                .wrapContentWidth(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
-                    modifier = Modifier
-                        .padding(vertical = 10.dp)
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(top = 4.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(MarronMedioAcentoOpacidad),
                     contentAlignment = Alignment.Center,
@@ -107,28 +118,28 @@ fun ProductoCard(
                         producto.category.name,
                         color = BlancoHueso,
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.width(250.dp)
+                        textAlign = TextAlign.Center
                     )
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
-
                 Box(
                     modifier = Modifier.fillMaxWidth()
+                        .padding(bottom = 4.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(BlancoHueso),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
+                        // Formatear el precio con dos decimales si es necesario
                         if (producto.price == producto.price.toInt().toDouble()) {
                             "${producto.price.toInt()} €"
                         } else {
+                            // Formatear el precio con dos decimales
                             "${String.format(Locale.getDefault(), "%.2f", producto.price)} €"
                         },
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         color = GrisMedio,
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -166,7 +177,7 @@ fun ImagenProductoDialog(
                 Text(
                     producto.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 8.dp, start = 10.dp, end = 10.dp),
                     textAlign = TextAlign.Center,
                     color = GrisMedio
                 )
@@ -195,6 +206,7 @@ fun loadLocalDrawableStrict(name: String): Painter {
     val context = LocalContext.current
 
     val resId = remember(name) {
+        // Busca la imagen en res/drawable y almacena su ID
         context.resources.getIdentifier(name, "drawable", context.packageName)
     }
     return if (resId != 0) {
@@ -209,10 +221,10 @@ fun loadLocalDrawableStrict(name: String): Painter {
 @Composable
 fun ProductoCardPreview() {
     val productoMock = Producto(
-        name = "Tortilla de Patatas",
-        description = "Clásica tortilla española con cebolla",
-        category = CategoryProducto.PLATO,
-        price = 8.50,
+        name = "Cuña de tortilla de patatas",
+        description = "Porción de tortilla de patatas",
+        category = CategoryProducto.TAPA,
+        price = 21.50,
         imageUrl = "plato_tortilla"
     )
 

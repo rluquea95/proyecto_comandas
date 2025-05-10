@@ -77,7 +77,8 @@ fun EnPreparacionScreen(
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
-                snackbarType = state.snackbarType
+                snackbarType = state.snackbarType,
+                onDismiss = { viewModel.clearMessage() }
             )
         },
         topBar = {
@@ -271,7 +272,8 @@ fun EnPreparacionScreenMock(state: EnPreparacionUiState) {
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
-                snackbarType = state.snackbarType
+                snackbarType = state.snackbarType,
+                onDismiss = {}
             )
         },
         topBar = {

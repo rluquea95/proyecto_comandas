@@ -93,8 +93,7 @@ class CartaViewModel @Inject constructor(
 
     fun clearMessage() {
         _uiState.value = _uiState.value.copy(
-            message = null,
-            snackbarType = SnackbarType.INFO
+            message = null
         )
     }
 }

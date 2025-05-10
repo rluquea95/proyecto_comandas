@@ -64,7 +64,8 @@ fun TomarPedidoScreen(
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
-                snackbarType = state.snackbarType
+                snackbarType = state.snackbarType,
+                onDismiss = { viewModel.clearMessage() }
             )
         },
         topBar = {

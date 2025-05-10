@@ -52,7 +52,8 @@ fun LoginScreen(
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
-                snackbarType = state.snackbarType
+                snackbarType = state.snackbarType,
+                onDismiss = { viewModel.clearMessage() }
             )
         }
     ) { paddingValues ->

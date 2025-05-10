@@ -26,7 +26,8 @@ import com.example.readytapas.ui.theme.MarronOscuro
 @Composable
 fun CustomSnackbarHost(
     snackbarHostState: SnackbarHostState,
-    snackbarType: SnackbarType
+    snackbarType: SnackbarType,
+    onDismiss: () -> Unit
 ) {
     SnackbarHost(hostState = snackbarHostState) { data ->
 
@@ -38,7 +39,7 @@ fun CustomSnackbarHost(
         when (snackbarType) {
             SnackbarType.ERROR -> {
                 icon = Icons.Default.Warning
-                bgColor = MarronOscuro
+                bgColor = MaterialTheme.colorScheme.error
                 iconTint = Color.White
                 textColor = Color.White
             }
@@ -50,7 +51,7 @@ fun CustomSnackbarHost(
             }
             SnackbarType.INFO -> {
                 icon = Icons.Default.Info
-                bgColor = MaterialTheme.colorScheme.primary
+                bgColor = MarronOscuro
                 iconTint = Color.White
                 textColor = Color.White
             }
@@ -77,7 +78,7 @@ fun CustomSnackbarHost(
                     color = textColor,
                     modifier = Modifier.weight(1f)
                 )
-                IconButton(onClick = { /* opcional: no tiene dismiss nativo */ }) {
+                IconButton(onClick = { onDismiss() }) {
                     Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = iconTint)
                 }
             }
