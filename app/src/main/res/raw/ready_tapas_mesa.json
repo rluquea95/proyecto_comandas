@@ -60,7 +60,62 @@
     "reserved": false
   },
   {
-    "name": "BARRA",
+    "name": "BARRA_1",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_2",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_3",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_4",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_5",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_6",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_7",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_8",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_9",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_10",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_11",
+    "occupied": false,
+    "reserved": false
+  },
+  {
+    "name": "BARRA_12",
     "occupied": false,
     "reserved": false
   }

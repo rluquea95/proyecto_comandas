@@ -43,7 +43,6 @@ fun ProductoPedidoDialogItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onAgregar() },
-            //.padding(horizontal = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)

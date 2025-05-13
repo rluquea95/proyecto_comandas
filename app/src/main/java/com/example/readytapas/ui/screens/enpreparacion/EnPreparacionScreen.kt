@@ -150,13 +150,13 @@ fun EnPreparacionScreen(
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 val pedidosFiltrados = state.pedidos.filter { pedido ->
-                    val mesaName = pedido.mesa.name
-                    viewModel.getProductosPendientesPorMesa(mesaName).isNotEmpty()
+                    viewModel.getProductosPendientesPorMesa(pedido.mesa.name).isNotEmpty()
                 }
 
                 items(items = pedidosFiltrados, key = { it.mesa.name }) { pedido ->
                     val mesaName = pedido.mesa.name
-                    val isExpanded = state.pedidosExpandidos.contains(mesaName)
+                    val expandedForView = state.pedidosExpandidos[state.vista] ?: emptySet()
+                    val isExpanded = expandedForView.contains(mesaName)
                     val productosPendientes = viewModel.getProductosPendientesPorMesa(mesaName)
 
                     Card(
@@ -228,11 +228,10 @@ fun EnPreparacionScreen(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun EnPreparacionScreenPreview() {
-    val mockProducto1 = Producto(name = "Caña", category = CategoryProducto.BEBIDA)
+    val mockProducto1 = Producto(name = "Cerveza", category = CategoryProducto.BEBIDA)
     val mockProducto2 = Producto(name = "Tortilla", category = CategoryProducto.PLATO)
 
     val mockPedido = Pedido(
@@ -257,7 +256,10 @@ fun EnPreparacionScreenPreview() {
 
     val previewState = EnPreparacionUiState(
         pedidos = listOf(mockPedido),
-        pedidosExpandidos = setOf("MESA_1"),
+        pedidosExpandidos = mapOf(
+            VistaPreparacion.CAMARERO to emptySet(),
+            VistaPreparacion.COCINA   to setOf("MESA_1")
+        ),
         productosSeleccionados = mapOf("MESA_1" to setOf("Caña-0", "Tortilla-1")),
         vista = VistaPreparacion.COCINA
     )
@@ -347,67 +349,97 @@ fun EnPreparacionScreenMock(state: EnPreparacionUiState) {
             }
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(state.pedidos) { pedido ->
-                    val mesa = pedido.mesa.name
-                    val isExpanded = state.pedidosExpandidos.contains(mesa)
-
-                    val productosPendientes = pedido.carta.flatMap { producto ->
-                        producto.unidades.mapIndexedNotNull { idx, unidad ->
-                            if (!unidad.preparado &&
-                                when (state.vista) {
-                                    VistaPreparacion.CAMARERO -> producto.producto.category == CategoryProducto.BEBIDA
-                                    VistaPreparacion.COCINA -> producto.producto.category != CategoryProducto.BEBIDA
-                                }
-                            ) {
-                                producto to idx
-                            } else null
+                // filtramos pedidos con pendientes
+                val pedidosFiltrados = state.pedidos.filter { pedido ->
+                    pedido.carta
+                        .filter {
+                            when (state.vista) {
+                                VistaPreparacion.CAMARERO -> it.producto.category == CategoryProducto.BEBIDA
+                                VistaPreparacion.COCINA   -> it.producto.category in listOf(
+                                    CategoryProducto.PLATO, CategoryProducto.TAPA
+                                )
+                            }
                         }
-                    }
+                        .flatMap { pp ->
+                            pp.unidades.mapIndexedNotNull { idx, unidad ->
+                                if (!unidad.preparado) pp to idx else null
+                            }
+                        }
+                        .isNotEmpty()
+                }
+
+                items(items = pedidosFiltrados, key = { it.mesa.name }) { pedido ->
+                    val mesaName = pedido.mesa.name
+                    val expandedForView = state.pedidosExpandidos[state.vista] ?: emptySet()
+                    val isExpanded = expandedForView.contains(mesaName)
+                    // volvemos a calcular pendientes
+                    val productosPendientes = pedido.carta
+                        .filter {
+                            when (state.vista) {
+                                VistaPreparacion.CAMARERO -> it.producto.category == CategoryProducto.BEBIDA
+                                VistaPreparacion.COCINA   -> it.producto.category in listOf(
+                                    CategoryProducto.PLATO, CategoryProducto.TAPA
+                                )
+                            }
+                        }
+                        .flatMap { pp ->
+                            pp.unidades.mapIndexedNotNull { idx, unidad ->
+                                if (!unidad.preparado) pp to idx else null
+                            }
+                        }
 
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(8.dp)
+                            .clickable {},
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad)
+                        shape     = RoundedCornerShape(12.dp),
+                        colors    = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = mesa,
+                                text  = mesaName,
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                 color = MarronOscuro
                             )
-
-                            Spacer(Modifier.height(8.dp))
-
-                            productosPendientes.forEach { (productoPedido, idx) ->
-                                val clave = "${productoPedido.producto.name}-$idx"
-                                val seleccionado = state.productosSeleccionados[mesa]?.contains(clave) == true
-
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
-                                        .background(BeigeClaro, RoundedCornerShape(8.dp))
-                                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                                ) {
-                                    Checkbox(
-                                        checked = seleccionado,
-                                        onCheckedChange = {},
-                                        enabled = false,
-                                        colors = CheckboxDefaults.colors(
-                                            checkedColor = MarronOscuro,
-                                            uncheckedColor = Color.Gray,
-                                            checkmarkColor = BlancoHueso
-                                        )
-                                    )
+                            if (isExpanded) {
+                                Spacer(Modifier.height(8.dp))
+                                if (productosPendientes.isEmpty()) {
                                     Text(
-                                        productoPedido.producto.name,
+                                        "Todos los productos están preparados.",
                                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                                         color = MarronOscuro
                                     )
+                                } else {
+                                    productosPendientes.forEach { (pp, idx) ->
+                                        val clave = "${pp.producto.name}-$idx"
+                                        val sel = state.productosSeleccionados[mesaName]?.contains(clave) == true
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 4.dp)
+                                                .background(BeigeClaro, RoundedCornerShape(8.dp))
+                                                .padding(horizontal = 12.dp, vertical = 8.dp)
+                                        ) {
+                                            Checkbox(
+                                                checked = sel,
+                                                onCheckedChange = {},
+                                                enabled = false,
+                                                colors = CheckboxDefaults.colors(
+                                                    checkedColor   = MarronOscuro,
+                                                    uncheckedColor = Color.Gray,
+                                                    checkmarkColor = BlancoHueso
+                                                )
+                                            )
+                                            Text(
+                                                pp.producto.name,
+                                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                                color = MarronOscuro
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -417,4 +449,3 @@ fun EnPreparacionScreenMock(state: EnPreparacionUiState) {
         }
     }
 }
-

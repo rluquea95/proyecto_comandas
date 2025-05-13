@@ -170,7 +170,7 @@ fun TomarPedidoScreenPreview() {
     val mesasMock = listOf(
         Mesa(name = NumeroMesa.MESA_1, occupied = false),
         Mesa(name = NumeroMesa.MESA_2, occupied = false),
-        Mesa(name = NumeroMesa.BARRA, occupied = false)
+        Mesa(name = NumeroMesa.BARRA_2, occupied = false)
     )
 
     val productosMock = listOf(

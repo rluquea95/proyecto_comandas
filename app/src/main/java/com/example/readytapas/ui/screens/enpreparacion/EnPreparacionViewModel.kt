@@ -41,11 +41,14 @@ class EnPreparacionViewModel @Inject constructor(
     }
 
     fun toggleExpandido(mesa: String) {
-        val actuales = _uiState.value.pedidosExpandidos.toMutableSet()
-        if (!actuales.add(mesa)) {
-            actuales.remove(mesa)
-        }
-        _uiState.value = _uiState.value.copy(pedidosExpandidos = actuales)
+        val vista = _uiState.value.vista
+        val nuevosMap = _uiState.value.pedidosExpandidos.toMutableMap()
+        val actuales = nuevosMap[vista]!!.toMutableSet()
+
+        if (!actuales.add(mesa)) actuales.remove(mesa)
+        nuevosMap[vista] = actuales
+
+        _uiState.value = _uiState.value.copy(pedidosExpandidos = nuevosMap)
     }
 
     fun toggleSeleccionUnidad(mesa: String, clave: String) {
@@ -103,6 +106,7 @@ class EnPreparacionViewModel @Inject constructor(
     fun confirmPreparados() {
         val pedidosActuales = _uiState.value.pedidos
         val productosSeleccionados = _uiState.value.productosSeleccionados
+        val vistaActual = _uiState.value.vista
 
         viewModelScope.launch {
             var huboError = false
@@ -114,14 +118,20 @@ class EnPreparacionViewModel @Inject constructor(
 
                 if (seleccionados.isNotEmpty()) {
                     for (i in productos.indices) {
-                        val producto = productos[i]
+                        val productoPedido = productos[i]
+                        val esBebida = productoPedido.producto.category == CategoryProducto.BEBIDA
 
-                        val nuevasUnidades = producto.unidades.mapIndexed { idx, unidad ->
-                            val clave = "${producto.producto.name}-$idx"
-                            if (clave in seleccionados) unidad.copy(preparado = true) else unidad
+                        val nuevasUnidades = productoPedido.unidades.mapIndexed { idx, unidad ->
+                            val clave = "${productoPedido.producto.name}-$idx"
+                            if (clave in seleccionados) {
+                                unidad.copy(
+                                    preparado = true,
+                                    entregado = if (vistaActual==VistaPreparacion.CAMARERO && esBebida) true else unidad.entregado
+                                )
+                            } else unidad
                         }
 
-                        productos[i] = producto.copy(unidades = nuevasUnidades)
+                        productos[i] = productoPedido.copy(unidades = nuevasUnidades)
                     }
 
                     val pedidoActualizado = pedido.copy(carta = productos)
@@ -153,7 +163,10 @@ class EnPreparacionViewModel @Inject constructor(
 
 data class EnPreparacionUiState(
     val pedidos: List<Pedido> = emptyList(),
-    val pedidosExpandidos: Set<String> = emptySet(),
+    val pedidosExpandidos: Map<VistaPreparacion, Set<String>> = mapOf(
+        VistaPreparacion.CAMARERO to emptySet(),
+        VistaPreparacion.COCINA to emptySet()
+    ),
     val productosSeleccionados: Map<String, Set<String>> = emptyMap(), // mesa -> claves seleccionadas
     val vista: VistaPreparacion = VistaPreparacion.COCINA,
     val message: String? = null,

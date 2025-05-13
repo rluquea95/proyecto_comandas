@@ -39,6 +39,8 @@ fun MesaDropdown(
     onMesaSeleccionada: (Mesa) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    // Calcula el índice del primer elemento de barra (BARRA_*)
+    val firstBarIndex = mesas.indexOfFirst { it.name.name.startsWith("BARRA_") }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -71,8 +73,9 @@ fun MesaDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            mesas.forEach { mesa ->
-                if (mesa.name == NumeroMesa.BARRA) {
+            mesas.forEachIndexed { index, mesa ->
+                // Dibuja la línea divisoria justo antes de la primera barra
+                if (index == firstBarIndex) {
                     HorizontalDivider(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -81,12 +84,13 @@ fun MesaDropdown(
                         color = Color.Gray
                     )
                 }
+
                 DropdownMenuItem(
                     text = {
                         Text(
                             text = mesa.name.name,
                             color = MarronOscuro,
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     },
                     onClick = {
@@ -97,7 +101,7 @@ fun MesaDropdown(
                         .fillMaxWidth()
                         .background(BeigeClaro),
                     colors = MenuDefaults.itemColors(
-                        textColor = MarronOscuro,
+                        textColor         = MarronOscuro,
                         disabledTextColor = Color.Gray
                     )
                 )
@@ -112,7 +116,7 @@ fun MesaDropdownPreview() {
     val mesasMock = listOf(
         Mesa(name = NumeroMesa.MESA_1, occupied = false),
         Mesa(name = NumeroMesa.MESA_2, occupied = false),
-        Mesa(name = NumeroMesa.BARRA, occupied = false)
+        Mesa(name = NumeroMesa.BARRA_2, occupied = false)
     )
 
     var mesaSeleccionada by remember { mutableStateOf<Mesa?>(null) }

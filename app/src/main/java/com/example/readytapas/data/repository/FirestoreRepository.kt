@@ -2,6 +2,7 @@ package com.example.readytapas.data.repository
 
 import android.util.Log
 import com.example.readytapas.data.model.Mesa
+import com.example.readytapas.data.model.NumeroMesa
 import com.example.readytapas.data.model.Pedido
 import com.example.readytapas.data.model.Producto
 import com.google.firebase.firestore.CollectionReference

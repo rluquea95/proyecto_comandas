@@ -51,12 +51,10 @@ class TomarPedidoViewModel @Inject constructor(
     private fun loadMesas() {
         viewModelScope.launch {
             firestoreRepository.getMesas().onSuccess { mesas ->
-                _uiState.value = _uiState.value.copy(
-                    mesas = mesas.filter { !it.occupied || it.name == NumeroMesa.BARRA }
-                        .sortedWith(compareBy {
-                            if (it.name == NumeroMesa.BARRA) Int.MAX_VALUE else it.name.name.extractNumeroMesa()
-                        })
-                )
+                val disponibles = mesas
+                    .filter { !it.occupied }
+                    .sortedBy { it.name.orderIndex() }
+                _uiState.value = _uiState.value.copy(mesas = disponibles)
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     message = "Error al cargar mesas disponibles",
@@ -82,9 +80,13 @@ class TomarPedidoViewModel @Inject constructor(
         }
     }
 
-    //Extraer el número de la mesa
-    private fun String.extractNumeroMesa(): Int {
-        return this.substringAfter("MESA_").toIntOrNull() ?: Int.MAX_VALUE
+    // Extensión para ordenar primero mesas y luego barras
+    private fun NumeroMesa.orderIndex(): Int = when {
+        this.name.startsWith("MESA_") ->
+            this.name.substringAfter("MESA_").toIntOrNull() ?: Int.MAX_VALUE
+        this.name.startsWith("BARRA_") ->
+            100 + (this.name.substringAfter("BARRA_").toIntOrNull() ?: Int.MAX_VALUE)
+        else -> Int.MAX_VALUE
     }
 
     // Seleccionar mesa
@@ -195,7 +197,7 @@ class TomarPedidoViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     mesaSeleccionada = null,
                     productosPedidos = emptyList(),
-                    message = "Pedido enviado a cocina ✅",
+                    message = "Pedido enviado a cocina",
                     snackbarType = SnackbarType.SUCCESS
                 )
                 loadMesas()
