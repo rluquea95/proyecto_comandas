@@ -111,40 +111,39 @@ class EnPreparacionViewModel @Inject constructor(
         viewModelScope.launch {
             var huboError = false
 
-            for (pedido in pedidosActuales) {
+            pedidosActuales.forEach { pedido ->
                 val mesa = pedido.mesa
-                val productos = pedido.carta.toMutableList()
                 val seleccionados = productosSeleccionados[mesa.name] ?: emptySet()
+                if (seleccionados.isEmpty()) return@forEach
 
-                if (seleccionados.isNotEmpty()) {
-                    for (i in productos.indices) {
-                        val productoPedido = productos[i]
-                        val esBebida = productoPedido.producto.category == CategoryProducto.BEBIDA
+                // 1) Construimos la lista nueva de ProductoPedido
+                val nuevaCarta = pedido.carta.map { pp ->
+                    val esBebida = pp.producto.category == CategoryProducto.BEBIDA
 
-                        val nuevasUnidades = productoPedido.unidades.mapIndexed { idx, unidad ->
-                            val clave = "${productoPedido.producto.name}-$idx"
-                            if (clave in seleccionados) {
-                                unidad.copy(
-                                    preparado = true,
-                                    entregado = if (vistaActual==VistaPreparacion.CAMARERO && esBebida) true else unidad.entregado
-                                )
-                            } else unidad
-                        }
-
-                        productos[i] = productoPedido.copy(unidades = nuevasUnidades)
+                    // Mapeamos cada unidad: si está marcada, la pasamos a preparadas (y entregada si es camarero+bebida)
+                    val nuevasUnidades = pp.unidades.mapIndexed { idx, unidad ->
+                        val clave = "${pp.producto.name}-$idx"
+                        if (clave in seleccionados) {
+                            unidad.copy(
+                                preparado = true,
+                                entregado = if (vistaActual == VistaPreparacion.CAMARERO && esBebida) true else unidad.entregado
+                            )
+                        } else unidad
                     }
+                    pp.copy(unidades = nuevasUnidades)
+                }
 
-                    val pedidoActualizado = pedido.copy(carta = productos)
+                // 2) Creamos el pedido actualizado
+                val pedidoActualizado = pedido.copy(carta = nuevaCarta)
 
-                    val result = firestoreRepository.actualizarPedidoPorMesa(pedidoActualizado)
-
-                    if (result.isFailure) {
-                        _uiState.value = _uiState.value.copy(
-                            message = "Error al actualizar pedido de ${mesa.name}",
-                            snackbarType = SnackbarType.ERROR
-                        )
-                        huboError = true
-                    }
+                // 3) Pedimos al repositorio que lo grabe y, si toca, marque state=LISTO
+                val result = firestoreRepository.actualizarEstadoPedido(pedidoActualizado)
+                if (result.isFailure) {
+                    huboError = true
+                    _uiState.value = _uiState.value.copy(
+                        message = "Error al actualizar pedido de ${mesa.name}",
+                        snackbarType = SnackbarType.ERROR
+                    )
                 }
             }
 

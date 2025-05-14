@@ -1,6 +1,7 @@
 package com.example.readytapas.data.repository
 
 import android.util.Log
+import com.example.readytapas.data.model.EstadoPedido
 import com.example.readytapas.data.model.Mesa
 import com.example.readytapas.data.model.NumeroMesa
 import com.example.readytapas.data.model.Pedido
@@ -86,15 +87,13 @@ class FirestoreRepository @Inject constructor(
         }
     }
 
+    //Actualiza el pedido por mesa
     suspend fun actualizarPedidoPorMesa(pedido: Pedido): Result<Unit> {
         return try {
             val documento = firestore.collection("Pedidos")
                 .whereEqualTo("mesa", pedido.mesa.name)
-                .get()
-                .await()
-                .documents
-                .firstOrNull()
-
+                .get().await()
+                .documents.firstOrNull()
             if (documento != null) {
                 documento.reference.set(pedido).await()
                 Result.success(Unit)
@@ -103,6 +102,27 @@ class FirestoreRepository @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error al actualizar pedido", e)
+            Result.failure(e)
+        }
+    }
+
+    //Actualiza el estado del pedido
+    suspend fun actualizarEstadoPedido(pedido: Pedido): Result<Unit> {
+        return try {
+            val todasUnidades = pedido.carta.flatMap { it.unidades }
+            val estaListo = todasUnidades.all { it.preparado && it.entregado }
+
+            val estadoAEscribir = when {
+                // Si está CERRADO, se deja igual
+                pedido.state == EstadoPedido.CERRADO -> EstadoPedido.CERRADO
+                // Si está LISTO, se deja igual
+                estaListo -> EstadoPedido.LISTO
+                else -> pedido.state
+            }
+            val pedidoParaEscribir = pedido.copy(state = estadoAEscribir)
+            actualizarPedidoPorMesa(pedidoParaEscribir)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error al actualizar el estado del Pedido", e)
             Result.failure(e)
         }
     }

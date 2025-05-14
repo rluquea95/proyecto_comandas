@@ -14,6 +14,8 @@ import com.example.readytapas.ui.screens.mainmenu.MainMenuScreen
 import androidx.compose.ui.Alignment
 import com.example.readytapas.ui.screens.carta.CartaScreen
 import com.example.readytapas.ui.screens.enpreparacion.EnPreparacionScreen
+import com.example.readytapas.ui.screens.pendientecobro.PendienteCobroScreen
+import com.example.readytapas.ui.screens.platoslistos.PlatosListosScreen
 import com.example.readytapas.ui.screens.tomarpedido.TomarPedidoScreen
 import com.example.readytapas.ui.theme.MarronMedioAcento
 
@@ -36,9 +38,11 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
                 }
             })
         }
+
         composable("mainmenu") {
             MainMenuScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
+
         composable("carta"){
             CartaScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
@@ -52,22 +56,11 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
         }
 
         composable("platosListos") {
-            // Componente vacío para la pantalla "Platos Listos"
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(MarronMedioAcento)
-            ) {
-                Text("Platos Listos", modifier = Modifier.align(Alignment.Center))
-            }
+            PlatosListosScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
+
         composable("pendienteCobro") {
-            // Componente vacío para la pantalla "Pendiente de cobro"
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(MarronMedioAcento)
-            ) {
-                Text("Pendiente de cobro", modifier = Modifier.align(Alignment.Center))
-            }
+            PendienteCobroScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
     }
 }
