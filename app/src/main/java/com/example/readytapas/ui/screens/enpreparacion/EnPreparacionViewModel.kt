@@ -94,7 +94,11 @@ class EnPreparacionViewModel @Inject constructor(
             }
             .flatMap { productoPedido ->
                 productoPedido.unidades.mapIndexedNotNull { idx, unidad ->
-                    if (!unidad.preparado && !unidad.entregado) productoPedido to idx else null
+                    val incluir = when (_uiState.value.vista) {
+                        VistaPreparacion.CAMARERO -> !unidad.preparado && !unidad.entregado
+                        VistaPreparacion.COCINA -> !unidad.preparado
+                    }
+                    if (incluir) productoPedido to idx else null
                 }
             }
     }

@@ -88,14 +88,11 @@ class FirestoreRepository @Inject constructor(
     }
 
     //Actualiza el pedido por mesa
-    suspend fun actualizarPedidoPorMesa(pedido: Pedido): Result<Unit> {
+    private suspend fun actualizarPedidoPorMesa(pedido: Pedido): Result<Unit> {
         return try {
             val documento = firestore.collection("Pedidos")
                 .whereEqualTo("mesa", pedido.mesa.name)
-                .whereEqualTo(
-                    "state",
-                    pedido.state == EstadoPedido.LISTO || pedido.state == EstadoPedido.ENCURSO
-                )
+                .whereIn("state", listOf("ENCURSO", "LISTO"))
                 .get().await()
                 .documents.firstOrNull()
             if (documento != null) {

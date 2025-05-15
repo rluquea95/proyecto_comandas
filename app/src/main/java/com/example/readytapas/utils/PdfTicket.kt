@@ -9,6 +9,8 @@ import com.example.readytapas.data.model.Pedido
 import com.example.readytapas.data.model.Producto
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 object PdfTicket {
     /**
@@ -23,14 +25,18 @@ object PdfTicket {
         val facturasDir = File(context.filesDir, "facturas")
         if (!facturasDir.exists()) facturasDir.mkdirs()
 
+        //Formatear la fecha
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val fechaStr = dateFormat.format(pedido.time.toDate())
+
         // 2) Nombre único para el PDF
         val filename = "factura_${pedido.mesa.name}_${System.currentTimeMillis()}.pdf"
         val file = File(facturasDir, filename)
 
         // Preparamos Paints
-        val paintHeader = Paint().apply {
+        val paintTitle = Paint().apply {
             typeface = Typeface.MONOSPACE
-            textSize = 18f
+            textSize = 22f
             isFakeBoldText = true
             textAlign = Paint.Align.CENTER
         }
@@ -44,6 +50,13 @@ object PdfTicket {
             color = Color.DKGRAY
         }
 
+        val paintTotal = Paint().apply {
+            typeface = Typeface.MONOSPACE
+            textSize = 20f
+            isFakeBoldText = true
+            textAlign = Paint.Align.CENTER
+        }
+
         // Medimos altura de una línea
         val fm = paintBody.fontMetrics
         val lineHeight = (fm.bottom - fm.top) * 1.2f  // factor de interlineado
@@ -51,7 +64,7 @@ object PdfTicket {
         // Padding
         val paddingTop = 40f
         val paddingBottom = 40f
-        val headerLines = 3  // “READY TAPAS”, “Mesa X” y separador
+        val headerLines = 3
         val headerHeight = headerLines * lineHeight
         val footerHeight = 2 * lineHeight  // separador + “TOTAL”
 
@@ -69,12 +82,21 @@ object PdfTicket {
         val page = pdf.startPage(info)
         val canvas = page.canvas
 
-        // Dibujamos
-        var y = paddingTop
         // Header
-        canvas.drawText("READY TAPAS", (pageWidth/2).toFloat(), y, paintHeader)
-        y += lineHeight
-        canvas.drawText("Mesa ${pedido.mesa.name}", (pageWidth/2).toFloat(), y, paintHeader)
+        var y = paddingTop
+        canvas.drawText("READY TAPAS", (pageWidth / 2).toFloat(), y, paintTitle)
+        y += lineHeight * 1.5f
+
+        // Línea con Mesa (izquierda) y Fecha (derecha)
+        val mesaText = "Mesa: ${pedido.mesa.name}"
+        val fechaText = "FECHA: $fechaStr"
+        canvas.drawText(mesaText, 10f, y, paintBody)
+        canvas.drawText(
+            fechaText,
+            pageWidth - 10f - paintBody.measureText(fechaText),
+            y,
+            paintBody
+        )
         y += lineHeight
         canvas.drawLine(0f, y, pageWidth.toFloat(), y, paintSep)
         y += lineHeight
@@ -100,7 +122,7 @@ object PdfTicket {
             "TOTAL: €${"%.2f".format(pedido.total)}",
             (pageWidth/2).toFloat(),
             y,
-            paintHeader
+            paintTotal
         )
 
         // Guardamos
