@@ -75,45 +75,26 @@ class PendienteCobroViewModel @Inject constructor(
 
     /** Marca un pedido como cobrado (CERRADO) y le calcula el total */
     fun cobrarPedido(pedido: Pedido) = viewModelScope.launch {
-        //Calcular el total
-        val total = pedido.carta.sumOf { pp -> pp.producto.price * pp.unidades.size }
 
-        // 2. Crear copia con estado CERRADO y total calculado
-        val actualizado = pedido.copy(
-            state = EstadoPedido.CERRADO,
-            total = total
-        )
+        val total = pedido.carta.sumOf { it.producto.price * it.unidades.size }
+        val pedidoCobrado = pedido.copy(state = EstadoPedido.CERRADO, total = total)
 
-        // 3. Guardar en Firestore
-        firestoreRepository.actualizarPedidoPorMesa(actualizado)
-            .onSuccess {
-                val mesaParaLiberar = Mesa(name = pedido.mesa, occupied = false)
-                firestoreRepository.actualizarMesa(mesaParaLiberar)
-                    .onSuccess {
-                        // 5) Actualizar UI y notificar
-                        _uiState.value = _uiState.value.copy(
-                            message = "Mesa ${pedido.mesa.name} cobrada (€$total) y liberada",
-                            snackbarType = SnackbarType.SUCCESS
-                        )
-                        _cobradoEvent.send(actualizado)
-                        loadPedidosListos()
-                    }
-                    .onFailure {
-                        _uiState.value = _uiState.value.copy(
-                            message = "Pedido cobrado pero no se liberó mesa ${pedido.mesa.name}",
-                            snackbarType = SnackbarType.ERROR
-                        )
-                        loadPedidosListos()
-                    }
-            }
-            .onFailure {
-                _uiState.value = _uiState.value.copy(
-                    message = "Error al cobrar mesa ${pedido.mesa.name}",
-                    snackbarType = SnackbarType.ERROR
-                )
-            }
+        val result = firestoreRepository.cerrarPedidoYLiberarMesa(pedidoCobrado)
+
+        if (result.isSuccess) {
+            _uiState.value = _uiState.value.copy(
+                message = "Mesa ${pedido.mesa.name} cobrada y liberada. Factura generada.",
+                snackbarType = SnackbarType.SUCCESS
+            )
+            _cobradoEvent.send(pedidoCobrado)
+            loadPedidosListos()
+        } else {
+            _uiState.value = _uiState.value.copy(
+                message = "Error al cobrar la mesa ${pedido.mesa.name}",
+                snackbarType = SnackbarType.ERROR
+            )
+        }
     }
-
 
     fun clearMessage() {
         _uiState.value = _uiState.value.copy(

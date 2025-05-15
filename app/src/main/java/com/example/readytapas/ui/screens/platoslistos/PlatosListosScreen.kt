@@ -71,7 +71,7 @@ fun PlatosListosScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MarronMedioAcento,
+                    containerColor = MarronOscuro,
                     contentColor = BlancoHueso
                 ),
                 shape = RoundedCornerShape(12.dp)

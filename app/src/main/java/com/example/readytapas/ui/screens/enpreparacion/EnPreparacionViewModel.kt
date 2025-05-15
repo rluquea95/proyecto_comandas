@@ -43,7 +43,7 @@ class EnPreparacionViewModel @Inject constructor(
     fun toggleExpandido(mesa: String) {
         val vista = _uiState.value.vista
         val nuevosMap = _uiState.value.pedidosExpandidos.toMutableMap()
-        val actuales = nuevosMap[vista]!!.toMutableSet()
+        val actuales = nuevosMap[vista]?.toMutableSet() ?: mutableSetOf()
 
         if (!actuales.add(mesa)) actuales.remove(mesa)
         nuevosMap[vista] = actuales
@@ -63,6 +63,23 @@ class EnPreparacionViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(productosSeleccionados = seleccionados)
     }
 
+    fun getPedidosConPendientes(): List<Pedido> {
+        return _uiState.value.pedidos
+            .filter { pedido ->
+                pedido.carta
+                    .filter {
+                        when (_uiState.value.vista) {
+                            VistaPreparacion.CAMARERO -> it.producto.category == CategoryProducto.BEBIDA
+                            VistaPreparacion.COCINA -> it.producto.category in listOf(
+                                CategoryProducto.PLATO, CategoryProducto.TAPA
+                            )
+                        }
+                    }
+                    .flatMap { it.unidades }
+                    .any { !it.preparado && !it.entregado }
+            }
+    }
+
     fun getProductosPendientesPorMesa(mesa: String): List<Pair<ProductoPedido, Int>> {
         val pedido = _uiState.value.pedidos.find { it.mesa.name == mesa } ?: return emptyList()
 
@@ -76,19 +93,8 @@ class EnPreparacionViewModel @Inject constructor(
                 }
             }
             .flatMap { productoPedido ->
-                when (_uiState.value.vista) {
-                    VistaPreparacion.CAMARERO -> {
-                        // Una línea por unidad
-                        productoPedido.unidades.mapIndexedNotNull { idx, unidad ->
-                            if (!unidad.preparado) productoPedido to idx else null
-                        }
-                    }
-
-                    VistaPreparacion.COCINA -> {
-                        productoPedido.unidades.mapIndexedNotNull { idx, unidad ->
-                            if (!unidad.preparado) productoPedido to idx else null
-                        }
-                    }
+                productoPedido.unidades.mapIndexedNotNull { idx, unidad ->
+                    if (!unidad.preparado && !unidad.entregado) productoPedido to idx else null
                 }
             }
     }
@@ -158,7 +164,6 @@ class EnPreparacionViewModel @Inject constructor(
         }
     }
 }
-
 
 data class EnPreparacionUiState(
     val pedidos: List<Pedido> = emptyList(),

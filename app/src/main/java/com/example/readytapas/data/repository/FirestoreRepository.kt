@@ -92,6 +92,10 @@ class FirestoreRepository @Inject constructor(
         return try {
             val documento = firestore.collection("Pedidos")
                 .whereEqualTo("mesa", pedido.mesa.name)
+                .whereEqualTo(
+                    "state",
+                    pedido.state == EstadoPedido.LISTO || pedido.state == EstadoPedido.ENCURSO
+                )
                 .get().await()
                 .documents.firstOrNull()
             if (documento != null) {
@@ -109,20 +113,36 @@ class FirestoreRepository @Inject constructor(
     //Actualiza el estado del pedido
     suspend fun actualizarEstadoPedido(pedido: Pedido): Result<Unit> {
         return try {
+            if (pedido.state == EstadoPedido.CERRADO) {
+                return Result.success(Unit)
+            }
+
             val todasUnidades = pedido.carta.flatMap { it.unidades }
             val estaListo = todasUnidades.all { it.preparado && it.entregado }
 
-            val estadoAEscribir = when {
-                // Si está CERRADO, se deja igual
-                pedido.state == EstadoPedido.CERRADO -> EstadoPedido.CERRADO
-                // Si está LISTO, se deja igual
-                estaListo -> EstadoPedido.LISTO
-                else -> pedido.state
-            }
+            val estadoAEscribir = if (estaListo) EstadoPedido.LISTO else pedido.state
             val pedidoParaEscribir = pedido.copy(state = estadoAEscribir)
+
             actualizarPedidoPorMesa(pedidoParaEscribir)
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error al actualizar el estado del Pedido", e)
+            Result.failure(e)
+        }
+    }
+
+    //Cerrar Pedido y liberar Mesa
+    suspend fun cerrarPedidoYLiberarMesa(pedido: Pedido): Result<Unit> {
+        return try {
+            // 1. Actualiza el pedido
+            actualizarPedidoPorMesa(pedido).getOrThrow()
+
+            // 2. Libera la mesa
+            val mesaLiberada = Mesa(name = pedido.mesa, occupied = false)
+            actualizarMesa(mesaLiberada).getOrThrow()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error en cerrarPedidoYLiberarMesa", e)
             Result.failure(e)
         }
     }

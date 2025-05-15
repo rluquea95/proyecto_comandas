@@ -39,7 +39,6 @@ fun PendienteCobroScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
 
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -49,7 +48,7 @@ fun PendienteCobroScreen(
     }
 
     // Aquí arranca el manejador de eventos de cobro y PDF
-    GenerarPdfTicketHandler(viewModel, snackbarHostState)
+    GenerarPdfTicketHandler(viewModel)
 
     Scaffold(
         snackbarHost = {
@@ -126,7 +125,7 @@ fun PendienteCobroScreen(
                                 onClick = { viewModel.cobrarPedido(pedido) },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = MarronMedioAcento,
+                                    containerColor = MarronOscuro,
                                     contentColor = BlancoHueso
                                 ),
                                 shape = RoundedCornerShape(8.dp)

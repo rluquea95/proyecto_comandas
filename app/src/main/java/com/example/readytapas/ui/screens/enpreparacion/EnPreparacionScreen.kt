@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.readytapas.data.model.CategoryProducto
@@ -103,7 +104,7 @@ fun EnPreparacionScreen(
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Confirmar preparados")
+                Text("Confirmar entregados", fontSize = 18.sp)
             }
         }
     ) { paddingValues ->
@@ -148,11 +149,10 @@ fun EnPreparacionScreen(
                 }
             }
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                val pedidosFiltrados = state.pedidos.filter { pedido ->
-                    viewModel.getProductosPendientesPorMesa(pedido.mesa.name).isNotEmpty()
-                }
+            // Lista de pedidos
+            val pedidosFiltrados = viewModel.getPedidosConPendientes()
 
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(items = pedidosFiltrados, key = { it.mesa.name }) { pedido ->
                     val mesaName = pedido.mesa.name
                     val expandedForView = state.pedidosExpandidos[state.vista] ?: emptySet()

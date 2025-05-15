@@ -10,8 +10,7 @@ import com.example.readytapas.utils.PdfTicket
 
 @Composable
 fun GenerarPdfTicketHandler(
-    viewModel: PendienteCobroViewModel,
-    snackbarHostState: SnackbarHostState
+    viewModel: PendienteCobroViewModel
 ) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
@@ -29,7 +28,8 @@ fun GenerarPdfTicketHandler(
                         Intent.FLAG_ACTIVITY_NEW_TASK
             }
             context.startActivity(viewIntent)
-            snackbarHostState.showSnackbar("Factura generada y abierta")
+            //borrar el PDF al salir de la aplicacion
+            pdfFile.deleteOnExit()
         }
     }
 }
