@@ -51,7 +51,6 @@ fun TomarPedidoScreen(
     val state by viewModel.uiState.collectAsState()
     val productosFiltrados by viewModel.productosFiltrados.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    var isDialogOpen by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -60,12 +59,47 @@ fun TomarPedidoScreen(
         }
     }
 
+    TomarPedidoContent(
+        state = state,
+        productosFiltrados = productosFiltrados,
+        snackbarHostState = snackbarHostState,
+        onMesaSeleccionada = viewModel::selectMesa,
+        onSearchTextChange = viewModel::updateSearchText,
+        onCategoriaSeleccionada = viewModel::selectCategoria,
+        onProductoSeleccionado = viewModel::addProducto,
+        onAumentar = viewModel::increaseCantidad,
+        onDisminuir = viewModel::decreaseCantidad,
+        onEliminar = viewModel::removeProducto,
+        onConfirmPedido = viewModel::confirmPedido,
+        onLogoutClick = onLogoutClick,
+        onBackClick = { navController.popBackStack() }
+    )
+}
+
+@Composable
+fun TomarPedidoContent(
+    state: TomarPedidoUiState,
+    productosFiltrados: List<Producto>,
+    snackbarHostState: SnackbarHostState,
+    onMesaSeleccionada: (Mesa) -> Unit,
+    onSearchTextChange: (String) -> Unit,
+    onCategoriaSeleccionada: (CategoryProducto?) -> Unit,
+    onProductoSeleccionado: (Producto) -> Unit,
+    onAumentar: (ProductoPedido) -> Unit,
+    onDisminuir: (ProductoPedido) -> Unit,
+    onEliminar: (ProductoPedido) -> Unit,
+    onConfirmPedido: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onBackClick: () -> Unit
+) {
+    var isDialogOpen by remember { mutableStateOf(false) }
+
     Scaffold(
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
                 snackbarType = state.snackbarType,
-                onDismiss = { viewModel.clearMessage() }
+                onDismiss = {}
             )
         },
         topBar = {
@@ -74,12 +108,12 @@ fun TomarPedidoScreen(
                 titleAlignment = TextAlign.Center,
                 onLogoutClick = onLogoutClick,
                 showBackButton = true,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBackClick
             )
         },
         bottomBar = {
             Button(
-                onClick = { viewModel.confirmPedido() },
+                onClick = onConfirmPedido,
                 enabled = state.mesaSeleccionada != null && state.productosPedidos.isNotEmpty(),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -98,11 +132,10 @@ fun TomarPedidoScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-
             MesaDropdown(
                 mesas = state.mesas,
                 mesaSeleccionada = state.mesaSeleccionada,
-                onMesaSeleccionada = viewModel::selectMesa
+                onMesaSeleccionada = onMesaSeleccionada
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -139,124 +172,70 @@ fun TomarPedidoScreen(
                     items(state.productosPedidos) { productoPedido ->
                         ProductoPedidoItem(
                             productoPedido = productoPedido,
-                            onAumentar = { viewModel.increaseCantidad(productoPedido) },
-                            onDisminuir = { viewModel.decreaseCantidad(productoPedido) },
-                            onEliminar = { viewModel.removeProducto(productoPedido) }
+                            onAumentar = { onAumentar(productoPedido) },
+                            onDisminuir = { onDisminuir(productoPedido) },
+                            onEliminar = { onEliminar(productoPedido) }
                         )
                     }
                 }
             }
         }
-    }
 
-    if (isDialogOpen) {
-        AgregarProductoDialog(
-            productos = productosFiltrados,
-            categoriaSeleccionada = state.categoriaSeleccionada,
-            searchText = state.searchText,
-            onSearchTextChange = viewModel::updateSearchText,
-            onCategoriaSeleccionada = viewModel::selectCategoria,
-            onProductoSeleccionado = { producto ->
-                viewModel.addProducto(producto)
-            },
-            onDismiss = { isDialogOpen = false }
-        )
+        if (isDialogOpen) {
+            AgregarProductoDialog(
+                productos = productosFiltrados,
+                categoriaSeleccionada = state.categoriaSeleccionada,
+                searchText = state.searchText,
+                onSearchTextChange = onSearchTextChange,
+                onCategoriaSeleccionada = onCategoriaSeleccionada,
+                onProductoSeleccionado = onProductoSeleccionado,
+                onDismiss = { isDialogOpen = false }
+            )
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun TomarPedidoScreenPreview() {
-    val mesasMock = listOf(
-        Mesa(name = NumeroMesa.MESA_1, occupied = false),
-        Mesa(name = NumeroMesa.MESA_2, occupied = false),
-        Mesa(name = NumeroMesa.BARRA_2, occupied = false)
+fun TomarPedidoContentPreview() {
+    val mesas = listOf(
+        Mesa(name = NumeroMesa.MESA_1),
+        Mesa(name = NumeroMesa.MESA_2)
     )
 
-    val productosMock = listOf(
-        Producto(name = "Tortilla", description = "", category = CategoryProducto.PLATO, price = 8.0, imageUrl = "plato_tortilla"),
-        Producto(name = "Caña", description = "", category = CategoryProducto.BEBIDA, price = 2.0, imageUrl = "bebida_cerveza")
+    val productos = listOf(
+        Producto(name = "Tortilla", price = 8.0, category = CategoryProducto.PLATO),
+        Producto(name = "Cerveza", price = 2.0, category = CategoryProducto.BEBIDA)
     )
 
-    val productosPedidosMock = listOf(
-        ProductoPedido(producto = productosMock[0], unidades = List(2) { EstadoUnidad() }),
-        ProductoPedido(producto = productosMock[1], unidades = List(1) { EstadoUnidad() })
+    val productosPedidos = listOf(
+        ProductoPedido(producto = productos[0], unidades = List(2) { EstadoUnidad() }),
+        ProductoPedido(producto = productos[1], unidades = List(1) { EstadoUnidad() })
     )
 
-    // Modo fake, sin ViewModel
-    TomarPedidoScreenContentPreview(
-        mesas = mesasMock,
-        mesaSeleccionada = mesasMock[0],
-        productosPedidos = productosPedidosMock
+    val mockState = TomarPedidoUiState(
+        mesas = mesas,
+        mesaSeleccionada = mesas.first(),
+        productosPedidos = productosPedidos
     )
-}
 
-@Composable
-fun TomarPedidoScreenContentPreview(
-    mesas: List<Mesa>,
-    mesaSeleccionada: Mesa?,
-    productosPedidos: List<ProductoPedido>
-) {
-    Scaffold(
-        topBar = {
-            TopBarWithMenu(
-                title = "Tomar Pedido",
-                titleAlignment = TextAlign.Center,
-                onLogoutClick = {},
-                showBackButton = true,
-                onBackClick = {}
-            )
-        },
-        bottomBar = {
-            Button(
-                onClick = {},
-                enabled = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text("Confirmar Pedido")
-            }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
+    val snackbarHostState = remember { SnackbarHostState() }
 
-            MesaDropdown(
-                mesas = mesas,
-                mesaSeleccionada = mesaSeleccionada,
-                onMesaSeleccionada = {}
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Pedido actual:",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(productosPedidos) { productoPedido ->
-                    ProductoPedidoItem(
-                        productoPedido = productoPedido,
-                        onAumentar = {},
-                        onDisminuir = {},
-                        onEliminar = {}
-                    )
-                }
-            }
-        }
-    }
+    TomarPedidoContent(
+        state = mockState,
+        productosFiltrados = productos,
+        snackbarHostState = snackbarHostState,
+        onMesaSeleccionada = {},
+        onSearchTextChange = {},
+        onCategoriaSeleccionada = {},
+        onProductoSeleccionado = {},
+        onAumentar = {},
+        onDisminuir = {},
+        onEliminar = {},
+        onConfirmPedido = {},
+        onLogoutClick = {},
+        onBackClick = {}
+    )
 }
 
 

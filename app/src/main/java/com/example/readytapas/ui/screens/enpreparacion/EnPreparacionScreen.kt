@@ -66,7 +66,6 @@ fun EnPreparacionScreen(
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Mostrar mensaje snackbar
     LaunchedEffect(state.message) {
         state.message?.let {
             snackbarHostState.showSnackbar(it)
@@ -74,12 +73,39 @@ fun EnPreparacionScreen(
         }
     }
 
+    EnPreparacionContent(
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onLogoutClick = onLogoutClick,
+        onBackClick = { navController.popBackStack() },
+        onConfirmPreparados = viewModel::confirmPreparados,
+        onChangeVista = viewModel::changeVista,
+        onToggleExpandido = viewModel::toggleExpandido,
+        onToggleSeleccionUnidad = viewModel::toggleSeleccionUnidad,
+        getPedidosConPendientes = viewModel::getPedidosConPendientes,
+        getProductosPendientesPorMesa = viewModel::getProductosPendientesPorMesa
+    )
+}
+
+@Composable
+fun EnPreparacionContent(
+    state: EnPreparacionUiState,
+    snackbarHostState: SnackbarHostState,
+    onLogoutClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onConfirmPreparados: () -> Unit,
+    onChangeVista: (VistaPreparacion) -> Unit,
+    onToggleExpandido: (String) -> Unit,
+    onToggleSeleccionUnidad: (String, String) -> Unit,
+    getPedidosConPendientes: () -> List<Pedido>,
+    getProductosPendientesPorMesa: (String) -> List<Pair<ProductoPedido, Int>>
+) {
     Scaffold(
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
                 snackbarType = state.snackbarType,
-                onDismiss = { viewModel.clearMessage() }
+                onDismiss = {}
             )
         },
         topBar = {
@@ -88,12 +114,12 @@ fun EnPreparacionScreen(
                 titleAlignment = TextAlign.Center,
                 onLogoutClick = onLogoutClick,
                 showBackButton = true,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBackClick
             )
         },
         bottomBar = {
             Button(
-                onClick = viewModel::confirmPreparados,
+                onClick = onConfirmPreparados,
                 enabled = state.productosSeleccionados.any { it.value.isNotEmpty() },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -109,7 +135,7 @@ fun EnPreparacionScreen(
         }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            // Switch Camarero/Cocina
+
             val selectedTabIndex = when (state.vista) {
                 VistaPreparacion.CAMARERO -> 0
                 VistaPreparacion.COCINA -> 1
@@ -131,9 +157,7 @@ fun EnPreparacionScreen(
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = {
-                            viewModel.changeVista(
-                                if (index == 0) VistaPreparacion.CAMARERO else VistaPreparacion.COCINA
-                            )
+                            onChangeVista(if (index == 0) VistaPreparacion.CAMARERO else VistaPreparacion.COCINA)
                         },
                         modifier = Modifier.background(
                             if (selectedTabIndex == index) MarronMedioAcento else BeigeClaro
@@ -149,21 +173,19 @@ fun EnPreparacionScreen(
                 }
             }
 
-            // Lista de pedidos
-            val pedidosFiltrados = viewModel.getPedidosConPendientes()
-
             LazyColumn(modifier = Modifier.fillMaxSize()) {
+                val pedidosFiltrados = getPedidosConPendientes()
+
                 items(items = pedidosFiltrados, key = { it.mesa.name }) { pedido ->
                     val mesaName = pedido.mesa.name
-                    val expandedForView = state.pedidosExpandidos[state.vista] ?: emptySet()
-                    val isExpanded = expandedForView.contains(mesaName)
-                    val productosPendientes = viewModel.getProductosPendientesPorMesa(mesaName)
+                    val isExpanded = state.pedidosExpandidos[state.vista]?.contains(mesaName) == true
+                    val productosPendientes = getProductosPendientesPorMesa(mesaName)
 
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                            .clickable { viewModel.toggleExpandido(mesaName) },
+                            .clickable { onToggleExpandido(mesaName) },
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad),
@@ -181,7 +203,7 @@ fun EnPreparacionScreen(
                                 if (productosPendientes.isEmpty()) {
                                     Text(
                                         "Todos los productos están preparados.",
-                                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                                         color = MarronOscuro
                                     )
                                 } else {
@@ -203,7 +225,7 @@ fun EnPreparacionScreen(
                                             Checkbox(
                                                 checked = seleccionado,
                                                 onCheckedChange = {
-                                                    viewModel.toggleSeleccionUnidad(mesaName, clave)
+                                                    onToggleSeleccionUnidad(mesaName, clave)
                                                 },
                                                 colors = CheckboxDefaults.colors(
                                                     checkedColor = MarronOscuro,
@@ -230,22 +252,13 @@ fun EnPreparacionScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun EnPreparacionScreenPreview() {
-    val mockProducto1 = Producto(name = "Cerveza", category = CategoryProducto.BEBIDA)
-    val mockProducto2 = Producto(name = "Tortilla", category = CategoryProducto.PLATO)
-
+fun EnPreparacionPreview() {
+    val mockProducto = Producto(name = "Caña", category = CategoryProducto.BEBIDA, price = 1.5)
     val mockPedido = Pedido(
         mesa = NumeroMesa.MESA_1,
         carta = listOf(
             ProductoPedido(
-                producto = mockProducto1,
-                unidades = listOf(
-                    EstadoUnidad(preparado = false),
-                    EstadoUnidad(preparado = true)
-                )
-            ),
-            ProductoPedido(
-                producto = mockProducto2,
+                producto = mockProducto,
                 unidades = listOf(
                     EstadoUnidad(preparado = false),
                     EstadoUnidad(preparado = false)
@@ -257,195 +270,35 @@ fun EnPreparacionScreenPreview() {
     val previewState = EnPreparacionUiState(
         pedidos = listOf(mockPedido),
         pedidosExpandidos = mapOf(
-            VistaPreparacion.CAMARERO to emptySet(),
-            VistaPreparacion.COCINA   to setOf("MESA_1")
+            VistaPreparacion.CAMARERO to setOf("MESA_1")
         ),
-        productosSeleccionados = mapOf("MESA_1" to setOf("Caña-0", "Tortilla-1")),
-        vista = VistaPreparacion.COCINA
+        productosSeleccionados = mapOf("MESA_1" to setOf("Caña-0")),
+        vista = VistaPreparacion.CAMARERO
     )
 
-    EnPreparacionScreenMock(state = previewState)
-}
-
-@Composable
-fun EnPreparacionScreenMock(state: EnPreparacionUiState) {
     val snackbarHostState = remember { SnackbarHostState() }
-    Scaffold(
-        snackbarHost = {
-            CustomSnackbarHost(
-                snackbarHostState = snackbarHostState,
-                snackbarType = state.snackbarType,
-                onDismiss = {}
-            )
-        },
-        topBar = {
-            TopBarWithMenu(
-                title = "En Preparación",
-                titleAlignment = TextAlign.Center,
-                onLogoutClick = {},
-                showBackButton = false,
-                onBackClick = {}
-            )
-        },
-        bottomBar = {
-            Button(
-                onClick = {},
-                enabled = state.productosSeleccionados.any { it.value.isNotEmpty() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MarronOscuro,
-                    contentColor = BlancoHueso
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("Confirmar preparados")
-            }
-        }
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
 
-            val selectedTabIndex = when (state.vista) {
-                VistaPreparacion.CAMARERO -> 0
-                VistaPreparacion.COCINA -> 1
-            }
-            val tabs = listOf("CAMARERO", "COCINA")
-
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                containerColor = Color.Transparent,
-                contentColor = MarronOscuro,
-                modifier = Modifier.fillMaxWidth(),
-                indicator = { tabPositions ->
-                    SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        color = MarronOscuro
-                    )
-                }
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    val isSelected = selectedTabIndex == index
-                    val backgroundColor = if (isSelected) MarronOscuro else BeigeClaro
-                    val textColor = if (isSelected) BlancoHueso else MarronOscuro
-
-                    Tab(
-                        selected = isSelected,
-                        onClick = {}
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .background(backgroundColor, RoundedCornerShape(12.dp))
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            Text(
-                                text = title,
-                                color = textColor,
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                            )
-                        }
+    EnPreparacionContent(
+        state = previewState,
+        snackbarHostState = snackbarHostState,
+        onLogoutClick = {},
+        onBackClick = {},
+        onConfirmPreparados = {},
+        onChangeVista = {},
+        onToggleExpandido = {},
+        onToggleSeleccionUnidad = { _, _ -> },
+        getPedidosConPendientes = { previewState.pedidos },
+        getProductosPendientesPorMesa = { mesa ->
+            previewState.pedidos
+                .find { it.mesa.name == mesa }
+                ?.carta
+                ?.flatMapIndexed { i, pp ->
+                    pp.unidades.mapIndexedNotNull { idx, unidad ->
+                        if (!unidad.preparado) pp to idx else null
                     }
-                }
-            }
-
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                // filtramos pedidos con pendientes
-                val pedidosFiltrados = state.pedidos.filter { pedido ->
-                    pedido.carta
-                        .filter {
-                            when (state.vista) {
-                                VistaPreparacion.CAMARERO -> it.producto.category == CategoryProducto.BEBIDA
-                                VistaPreparacion.COCINA   -> it.producto.category in listOf(
-                                    CategoryProducto.PLATO, CategoryProducto.TAPA
-                                )
-                            }
-                        }
-                        .flatMap { pp ->
-                            pp.unidades.mapIndexedNotNull { idx, unidad ->
-                                if (!unidad.preparado) pp to idx else null
-                            }
-                        }
-                        .isNotEmpty()
-                }
-
-                items(items = pedidosFiltrados, key = { it.mesa.name }) { pedido ->
-                    val mesaName = pedido.mesa.name
-                    val expandedForView = state.pedidosExpandidos[state.vista] ?: emptySet()
-                    val isExpanded = expandedForView.contains(mesaName)
-                    // volvemos a calcular pendientes
-                    val productosPendientes = pedido.carta
-                        .filter {
-                            when (state.vista) {
-                                VistaPreparacion.CAMARERO -> it.producto.category == CategoryProducto.BEBIDA
-                                VistaPreparacion.COCINA   -> it.producto.category in listOf(
-                                    CategoryProducto.PLATO, CategoryProducto.TAPA
-                                )
-                            }
-                        }
-                        .flatMap { pp ->
-                            pp.unidades.mapIndexedNotNull { idx, unidad ->
-                                if (!unidad.preparado) pp to idx else null
-                            }
-                        }
-
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .clickable {},
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                        shape     = RoundedCornerShape(12.dp),
-                        colors    = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text  = mesaName,
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                color = MarronOscuro
-                            )
-                            if (isExpanded) {
-                                Spacer(Modifier.height(8.dp))
-                                if (productosPendientes.isEmpty()) {
-                                    Text(
-                                        "Todos los productos están preparados.",
-                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                                        color = MarronOscuro
-                                    )
-                                } else {
-                                    productosPendientes.forEach { (pp, idx) ->
-                                        val clave = "${pp.producto.name}-$idx"
-                                        val sel = state.productosSeleccionados[mesaName]?.contains(clave) == true
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 4.dp)
-                                                .background(BeigeClaro, RoundedCornerShape(8.dp))
-                                                .padding(horizontal = 12.dp, vertical = 8.dp)
-                                        ) {
-                                            Checkbox(
-                                                checked = sel,
-                                                onCheckedChange = {},
-                                                enabled = false,
-                                                colors = CheckboxDefaults.colors(
-                                                    checkedColor   = MarronOscuro,
-                                                    uncheckedColor = Color.Gray,
-                                                    checkmarkColor = BlancoHueso
-                                                )
-                                            )
-                                            Text(
-                                                pp.producto.name,
-                                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                                                color = MarronOscuro
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                } ?: emptyList()
         }
-    }
+    )
 }
+
+

@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +37,7 @@ import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.BeigeClaro
 import com.example.readytapas.ui.theme.MarronOscuro
 import com.example.readytapas.ui.theme.MarronMedioAcento
+import com.example.readytapas.ui.theme.MarronMedioAcentoOpacidad
 
 @Composable
 fun PendienteCobroScreen(
@@ -56,134 +58,25 @@ fun PendienteCobroScreen(
     // Aquí arranca el manejador de eventos de cobro y PDF
     GenerarPdfTicketHandler(viewModel)
 
-    Scaffold(
-        snackbarHost = {
-            CustomSnackbarHost(
-                snackbarHostState = snackbarHostState,
-                snackbarType = state.snackbarType,
-                onDismiss = { viewModel.clearMessage() }
-            )
-        },
-        topBar = {
-            TopBarWithMenu(
-                title = "Pendiente de Cobro",
-                titleAlignment = TextAlign.Center,
-                onLogoutClick = onLogoutClick,
-                showBackButton = true,
-                onBackClick = { navController.popBackStack() }
-            )
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            items(state.pedidos, key = { it.mesa.name }) { pedido ->
-                val mesaName = pedido.mesa.name
-                val isExpanded = mesaName in state.pedidosExpandidos
-                val lineasAgrupadas = viewModel.getLineasAgrupadasPorMesa(pedido)
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable { viewModel.toggleExpandido(mesaName) },
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = BeigeClaro)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = mesaName,
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MarronOscuro
-                        )
-                        if (isExpanded) {
-                            Spacer(Modifier.height(8.dp))
-                            lineasAgrupadas.forEach { (producto, cantidad) ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
-                                        .background(BeigeClaro, RoundedCornerShape(8.dp))
-                                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                                ) {
-                                    Text(
-                                        text = "$cantidad × ${producto.name}",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MarronOscuro
-                                    )
-                                    Spacer(Modifier.weight(1f))
-                                    Text(
-                                        text = "€${"%.2f".format(producto.price * cantidad)}",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MarronOscuro
-                                    )
-                                }
-                            }
-
-                            Spacer(Modifier.height(16.dp))
-
-                            // Botón para cobrar *este* pedido
-                            Button(
-                                onClick = { viewModel.cobrarPedido(pedido) },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MarronOscuro,
-                                    contentColor = BlancoHueso
-                                ),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text("Cobrar mesa", fontSize = 16.sp)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PendienteCobroScreenPreview() {
-    val mockPedido = Pedido(
-        mesa = NumeroMesa.MESA_2,
-        carta = listOf(
-            ProductoPedido(
-                producto = Producto(
-                    name = "Kas de limón",
-                    price = 1.8,
-                    category = CategoryProducto.BEBIDA
-                ),
-                unidades = listOf(EstadoUnidad(preparado = true, entregado = true))
-            ),
-            ProductoPedido(
-                producto = Producto(
-                    name = "Montadito de atún",
-                    price = 3.0,
-                    category = CategoryProducto.TAPA
-                ),
-                unidades = listOf(EstadoUnidad(preparado = true, entregado = true))
-            )
-        ),
-        state = EstadoPedido.LISTO
+    PendienteCobroContent(
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onBackClick = { navController.popBackStack() },
+        onLogoutClick = onLogoutClick,
+        onToggleExpandido = viewModel::toggleExpandido,
+        onCobrarPedido = viewModel::cobrarPedido
     )
-
-    val previewState = PendienteCobroUiState(
-        pedidos = listOf(mockPedido),
-        pedidosExpandidos = setOf("MESA_2")
-    )
-
-    PendienteCobroScreenMock(state = previewState)
 }
 
 @Composable
-fun PendienteCobroScreenMock(state: PendienteCobroUiState) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
+fun PendienteCobroContent(
+    state: PendienteCobroUiState,
+    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onToggleExpandido: (String) -> Unit,
+    onCobrarPedido: (Pedido) -> Unit
+) {
     Scaffold(
         snackbarHost = {
             CustomSnackbarHost(
@@ -196,9 +89,9 @@ fun PendienteCobroScreenMock(state: PendienteCobroUiState) {
             TopBarWithMenu(
                 title = "Pendiente de Cobro",
                 titleAlignment = TextAlign.Center,
-                onLogoutClick = {},
-                showBackButton = false,
-                onBackClick = {}
+                onLogoutClick = onLogoutClick,
+                showBackButton = true,
+                onBackClick = onBackClick
             )
         }
     ) { padding ->
@@ -211,69 +104,111 @@ fun PendienteCobroScreenMock(state: PendienteCobroUiState) {
                 val mesaName = pedido.mesa.name
                 val isExpanded = mesaName in state.pedidosExpandidos
 
-                val lineasAgrupadas = pedido.carta.groupBy { it.producto }
-                    .map { (producto, list) ->
-                        val cantidad = list.sumOf { it.unidades.count { u -> u.preparado && u.entregado } }
-                        producto to cantidad
-                    }.filter { it.second > 0 }
+                val lineasAgrupadas = pedido.carta
+                    .flatMap { it.unidades.map { u -> it.producto } }
+                    .groupingBy { it }
+                    .eachCount()
+                    .map { (producto, cantidad) -> producto to cantidad }
 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .clickable { onToggleExpandido(mesaName) },
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = BeigeClaro)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = mesaName,
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MarronOscuro
-                        )
-                        if (isExpanded) {
-                            Spacer(Modifier.height(8.dp))
-                            lineasAgrupadas.forEach { (producto, cantidad) ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = mesaName,
+                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                color = MarronOscuro
+                            )
+                            if (isExpanded) {
+                                Spacer(Modifier.height(8.dp))
+                                // Fondo tipo ticket
+                                Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
-                                        .background(BeigeClaro, RoundedCornerShape(8.dp))
-                                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                                        .background(
+                                            color = BlancoHueso,
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                        .padding(12.dp)
                                 ) {
-                                    Text(
-                                        text = "$cantidad × ${producto.name}",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MarronOscuro
-                                    )
-                                    Spacer(Modifier.weight(1f))
-                                    Text(
-                                        text = "€${"%.2f".format(producto.price * cantidad)}",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MarronOscuro
-                                    )
+                                    lineasAgrupadas.forEach { (producto, cantidad) ->
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = "$cantidad×  ${producto.name}",
+                                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                                color = MarronMedioAcento
+                                            )
+                                            Spacer(modifier = Modifier.weight(1f))
+                                            Text(
+                                                text = "€${"%.2f".format(producto.price * cantidad)}",
+                                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                                color = MarronOscuro
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Spacer(Modifier.height(16.dp))
+
+                                Button(
+                                    onClick = { onCobrarPedido(pedido) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MarronOscuro,
+                                        contentColor = BlancoHueso
+                                    ),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text("Cobrar mesa", fontSize = 16.sp)
                                 }
                             }
-
-                            Spacer(Modifier.height(16.dp))
-
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.fillMaxWidth(),
-                                enabled = true,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MarronOscuro,
-                                    contentColor = BlancoHueso
-                                ),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text("Cobrar mesa", fontSize = 16.sp)
-                            }
                         }
-                    }
                 }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PendienteCobroContentPreview() {
+    val mockPedido = Pedido(
+        mesa = NumeroMesa.MESA_3,
+        carta = listOf(
+            ProductoPedido(
+                producto = Producto(name = "Coca-Cola", price = 1.5, category = CategoryProducto.BEBIDA),
+                unidades = List(2) { EstadoUnidad(preparado = true, entregado = true) }
+            ),
+            ProductoPedido(
+                producto = Producto(name = "Montadito de jamón", price = 2.0, category = CategoryProducto.TAPA),
+                unidades = List(1) { EstadoUnidad(preparado = true, entregado = true) }
+            )
+        ),
+        state = EstadoPedido.LISTO
+    )
+
+    val mockState = PendienteCobroUiState(
+        pedidos = listOf(mockPedido),
+        pedidosExpandidos = setOf("MESA_3")
+    )
+
+    PendienteCobroContent(
+        state = mockState,
+        snackbarHostState = remember { SnackbarHostState() },
+        onBackClick = {},
+        onLogoutClick = {},
+        onToggleExpandido = {},
+        onCobrarPedido = {}
+    )
 }

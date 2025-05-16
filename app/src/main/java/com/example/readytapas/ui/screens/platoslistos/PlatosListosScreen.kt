@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,7 +36,6 @@ fun PlatosListosScreen(
     onLogoutClick: () -> Unit,
     viewModel: PlatosListosViewModel = hiltViewModel()
 ) {
-    // Ahora sí reconoce uiState y PlatosListosViewModel
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -46,12 +46,35 @@ fun PlatosListosScreen(
         }
     }
 
+    PlatosListosContent(
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onBackClick = { navController.popBackStack() },
+        onLogoutClick = onLogoutClick,
+        onToggleExpandido = viewModel::toggleExpandido,
+        onToggleSeleccionUnidad = viewModel::toggleSeleccionUnidad,
+        onConfirmEntregados = viewModel::confirmEntregados,
+        getPlatosPendientesPorMesa = viewModel::getPlatosPendientesPorMesa
+    )
+}
+
+@Composable
+fun PlatosListosContent(
+    state: PlatosListosUiState,
+    snackbarHostState: SnackbarHostState,
+    onBackClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onToggleExpandido: (String) -> Unit,
+    onToggleSeleccionUnidad: (String, String) -> Unit,
+    onConfirmEntregados: () -> Unit,
+    getPlatosPendientesPorMesa: (String) -> List<Pair<ProductoPedido, Int>>
+) {
     Scaffold(
         snackbarHost = {
             CustomSnackbarHost(
                 snackbarHostState = snackbarHostState,
                 snackbarType = state.snackbarType,
-                onDismiss = { viewModel.clearMessage() }
+                onDismiss = {}
             )
         },
         topBar = {
@@ -60,12 +83,12 @@ fun PlatosListosScreen(
                 titleAlignment = TextAlign.Center,
                 onLogoutClick = onLogoutClick,
                 showBackButton = true,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBackClick
             )
         },
         bottomBar = {
             Button(
-                onClick = viewModel::confirmEntregados,
+                onClick = onConfirmEntregados,
                 enabled = state.productosSeleccionados.any { it.value.isNotEmpty() },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,23 +105,20 @@ fun PlatosListosScreen(
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                val pedidosFiltrados = state.pedidos.filter { pedido ->
-                    viewModel.getPlatosPendientesPorMesa(pedido.mesa.name).isNotEmpty()
+                val pedidosFiltrados = state.pedidos.filter {
+                    getPlatosPendientesPorMesa(it.mesa.name).isNotEmpty()
                 }
 
-                items(
-                    items = pedidosFiltrados,
-                    key = { it.mesa.name }
-                ) { pedido ->
+                items(pedidosFiltrados, key = { it.mesa.name }) { pedido ->
                     val mesaName = pedido.mesa.name
                     val isExpanded = mesaName in state.pedidosExpandidos
-                    val platosPendientes = viewModel.getPlatosPendientesPorMesa(mesaName)
+                    val platosPendientes = getPlatosPendientesPorMesa(mesaName)
 
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                            .clickable { viewModel.toggleExpandido(mesaName) },
+                            .clickable { onToggleExpandido(mesaName) },
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = MarronMedioAcentoOpacidad),
@@ -111,6 +131,7 @@ fun PlatosListosScreen(
                             )
                             if (isExpanded) {
                                 Spacer(Modifier.height(8.dp))
+
                                 if (platosPendientes.isEmpty()) {
                                     Text(
                                         "Todos los platos entregados.",
@@ -120,27 +141,20 @@ fun PlatosListosScreen(
                                 } else {
                                     platosPendientes.forEach { (pp, idx) ->
                                         val clave = "${pp.producto.name}-$idx"
-                                        val seleccionado =
-                                            state.productosSeleccionados[mesaName]?.contains(clave) == true
+                                        val seleccionado = state.productosSeleccionados[mesaName]?.contains(clave) == true
 
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(vertical = 4.dp)
-                                                .background(
-                                                    color = BeigeClaro,
-                                                    shape = RoundedCornerShape(8.dp)
-                                                )
+                                                .background(BeigeClaro, RoundedCornerShape(8.dp))
                                                 .padding(horizontal = 12.dp, vertical = 8.dp)
                                         ) {
                                             Checkbox(
                                                 checked = seleccionado,
                                                 onCheckedChange = {
-                                                    viewModel.toggleSeleccionUnidad(
-                                                        mesaName,
-                                                        clave
-                                                    )
+                                                    onToggleSeleccionUnidad(mesaName, clave)
                                                 },
                                                 colors = CheckboxDefaults.colors(
                                                     checkedColor = MarronOscuro,
@@ -164,3 +178,44 @@ fun PlatosListosScreen(
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewPlatosListosContent() {
+    val mockProducto = Producto(name = "Tortilla", category = CategoryProducto.PLATO)
+    val mockPedido = Pedido(
+        mesa = NumeroMesa.MESA_2,
+        carta = listOf(
+            ProductoPedido(
+                producto = mockProducto,
+                unidades = listOf(
+                    EstadoUnidad(preparado = true, entregado = false),
+                    EstadoUnidad(preparado = true, entregado = false)
+                )
+            )
+        )
+    )
+
+    val mockState = PlatosListosUiState(
+        pedidos = listOf(mockPedido),
+        pedidosExpandidos = setOf("MESA_2"),
+        productosSeleccionados = mapOf("MESA_2" to setOf("Tortilla-0"))
+    )
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    PlatosListosContent(
+        state = mockState,
+        snackbarHostState = snackbarHostState,
+        onBackClick = {},
+        onLogoutClick = {},
+        onToggleExpandido = {},
+        onToggleSeleccionUnidad = { _, _ -> },
+        onConfirmEntregados = {},
+        getPlatosPendientesPorMesa = {
+            listOf(ProductoPedido(producto = mockProducto, unidades = listOf()) to 0)
+        }
+    )
+}
+
+
