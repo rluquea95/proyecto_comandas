@@ -13,6 +13,7 @@ import com.example.readytapas.ui.screens.login.LoginScreen
 import com.example.readytapas.ui.screens.mainmenu.MainMenuScreen
 import androidx.compose.ui.Alignment
 import com.example.readytapas.ui.screens.carta.CartaScreen
+import com.example.readytapas.ui.screens.editarpedido.EditarPedidoScreen
 import com.example.readytapas.ui.screens.enpreparacion.EnPreparacionScreen
 import com.example.readytapas.ui.screens.pendientecobro.PendienteCobroScreen
 import com.example.readytapas.ui.screens.platoslistos.PlatosListosScreen
@@ -41,6 +42,14 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
 
         composable("mainmenu") {
             MainMenuScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
+        }
+
+        composable("tomarPedido") {
+            TomarPedidoScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
+        }
+
+        composable("editarPedido") {
+            EditarPedidoScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
 
         composable("carta"){

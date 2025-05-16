@@ -112,7 +112,7 @@ object PdfTicket {
                 y,
                 paintBody
             )
-            y += lineHeight
+            y += lineHeight * 1.5f
         }
 
         // Footer

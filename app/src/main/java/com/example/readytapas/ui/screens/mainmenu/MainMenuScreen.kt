@@ -3,6 +3,8 @@ package com.example.readytapas.ui.screens.mainmenu
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,8 +25,8 @@ import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.MarronOscuro
 
 
-private val rowVerticalSpacing = 50.dp // Espacio vertical entre las filas
-private val menuItemSpacing = 20.dp // Espacio horizontal entre los elementos del menú
+private val rowVerticalSpacing = 40.dp // Espacio vertical entre las filas
+private val menuItemSpacing = 10.dp // Espacio horizontal entre los elementos del menú
 
 @Composable
 fun MainMenuScreen(
@@ -47,6 +49,7 @@ fun MainMenuScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(innerPadding), // Aplicar el padding definido en Scaffold
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -56,11 +59,10 @@ fun MainMenuScreen(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center, //Los centrará horizontalmente
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 //Icono de tomar pedido
                 MenuItem(
-                    painter = painterResource(id = R.drawable.tomar_notas),
+                    painter = painterResource(id = R.drawable.crear_pedido),
                     text = "Tomar pedido",
                     onClick = {
                         navController.navigate("tomarPedido")
@@ -69,12 +71,12 @@ fun MainMenuScreen(
 
                 Spacer(modifier = Modifier.width(menuItemSpacing))
 
-                //Icono de en preparación
+                //Icono de Editar Pedido
                 MenuItem(
-                    painter = painterResource(id = R.drawable.en_preparacion),
-                    text = "En preparación",
+                    painter = painterResource(id = R.drawable.editar_pedido),
+                    text = "editar pedido",
                     onClick = {
-                        navController.navigate("enPreparacion")
+                        navController.navigate("editarPedido")
                     }
                 )
             }
@@ -84,26 +86,26 @@ fun MainMenuScreen(
             // Fila 2
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.Center
             ) {
+                //Icono de en preparación
+                MenuItem(
+                    painter = painterResource(id = R.drawable.en_preparacion),
+                    text = "En preparación",
+                    onClick = {
+                        navController.navigate("enPreparacion")
+                    }
+                )
+
+                Spacer(modifier = Modifier.width(menuItemSpacing))
+
+
                 //Icono de platos listos
                 MenuItem(
                     painter = painterResource(id = R.drawable.platos_listos),
                     text = "Platos listos",
                     onClick = {
                         navController.navigate("platosListos")
-                    }
-                )
-
-                Spacer(modifier = Modifier.width(menuItemSpacing))
-
-                //Icono de carta
-                MenuItem(
-                    painter = painterResource(id = R.drawable.carta),
-                    text = "Carta",
-                    onClick = {
-                        navController.navigate("carta")
                     }
                 )
             }
@@ -113,15 +115,43 @@ fun MainMenuScreen(
             // Fila 3
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.Center
             ) {
+                //Icono de carta
+                MenuItem(
+                    painter = painterResource(id = R.drawable.carta),
+                    text = "Carta",
+                    onClick = {
+                        navController.navigate("carta")
+                    }
+                )
+
+                Spacer(modifier = Modifier.width(menuItemSpacing))
+
                 //Icono de pendiente de cobro
                 MenuItem(
                     painter = painterResource(id = R.drawable.pendiente_cobro),
                     text = "Pendiente de cobro",
                     onClick = {
                         navController.navigate("pendienteCobro")
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(rowVerticalSpacing))
+
+            // Fila 4
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+
+                //Icono de pedidos cerrados
+                MenuItem(
+                    painter = painterResource(id = R.drawable.historial_pedidos_cerrados),
+                    text = "Historial Pedidos",
+                    onClick = {
+                        navController.navigate("historialPedidos")
                     }
                 )
 
@@ -136,6 +166,8 @@ fun MainMenuScreen(
                     }
                 )
             }
+
+            Spacer(modifier = Modifier.height(rowVerticalSpacing))
         }
     }
 }

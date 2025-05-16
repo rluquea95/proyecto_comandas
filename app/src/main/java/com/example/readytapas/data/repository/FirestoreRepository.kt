@@ -143,4 +143,34 @@ class FirestoreRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    //Eliminar Pedido y liberar Mesa
+    suspend fun eliminarPedidoYLiberarMesa(pedido: Pedido): Result<Unit> {
+        return try {
+            // 1. Buscar el documento del pedido
+            val documento = firestore.collection("Pedidos")
+                .whereEqualTo("mesa", pedido.mesa.name)
+                .whereIn("state", listOf("ENCURSO", "LISTO"))
+                .get()
+                .await()
+                .documents
+                .firstOrNull()
+
+            if (documento != null) {
+                // 2. Eliminar el pedido
+                documento.reference.delete().await()
+
+                // 3. Liberar la mesa
+                val mesaLiberada = Mesa(name = pedido.mesa, occupied = false)
+                actualizarMesa(mesaLiberada).getOrThrow()
+
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("No se encontró el pedido para la mesa ${pedido.mesa.name}"))
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error al eliminar pedido y liberar mesa", e)
+            Result.failure(e)
+        }
+    }
 }
