@@ -52,15 +52,16 @@ class EnPreparacionViewModel @Inject constructor(
     }
 
     fun toggleSeleccionUnidad(mesa: String, clave: String) {
-        val seleccionados = _uiState.value.productosSeleccionados.toMutableMap()
-        val productosMesa = seleccionados[mesa]?.toMutableSet() ?: mutableSetOf()
+        val vista = _uiState.value.vista
+        val seleccionadosPorVista = _uiState.value.productosSeleccionados.toMutableMap()
+        val seleccionadosMesa = seleccionadosPorVista[vista]?.toMutableMap() ?: mutableMapOf()
+        val claves = seleccionadosMesa[mesa]?.toMutableSet() ?: mutableSetOf()
 
-        if (!productosMesa.add(clave)) {
-            productosMesa.remove(clave)
-        }
+        if (!claves.add(clave)) claves.remove(clave)
+        seleccionadosMesa[mesa] = claves
+        seleccionadosPorVista[vista] = seleccionadosMesa
 
-        seleccionados[mesa] = productosMesa
-        _uiState.value = _uiState.value.copy(productosSeleccionados = seleccionados)
+        _uiState.value = _uiState.value.copy(productosSeleccionados = seleccionadosPorVista)
     }
 
     fun getPedidosConPendientes(): List<Pedido> {
@@ -115,15 +116,15 @@ class EnPreparacionViewModel @Inject constructor(
 
     fun confirmPreparados() {
         val pedidosActuales = _uiState.value.pedidos
-        val productosSeleccionados = _uiState.value.productosSeleccionados
         val vistaActual = _uiState.value.vista
+        val productosSeleccionadosVista = _uiState.value.productosSeleccionados[vistaActual] ?: emptyMap()
 
         viewModelScope.launch {
             var huboError = false
 
             pedidosActuales.forEach { pedido ->
                 val mesa = pedido.mesa
-                val seleccionados = productosSeleccionados[mesa.name] ?: emptySet()
+                val seleccionados = productosSeleccionadosVista[mesa.name] ?: emptySet()
                 if (seleccionados.isEmpty()) return@forEach
 
                 // 1) Construimos la lista nueva de ProductoPedido
@@ -175,7 +176,10 @@ data class EnPreparacionUiState(
         VistaPreparacion.CAMARERO to emptySet(),
         VistaPreparacion.COCINA to emptySet()
     ),
-    val productosSeleccionados: Map<String, Set<String>> = emptyMap(), // mesa -> claves seleccionadas
+    val productosSeleccionados: Map<VistaPreparacion, Map<String, Set<String>>> = mapOf(
+        VistaPreparacion.CAMARERO to emptyMap(),
+        VistaPreparacion.COCINA to emptyMap()
+    ),
     val vista: VistaPreparacion = VistaPreparacion.COCINA,
     val message: String? = null,
     val snackbarType: SnackbarType = SnackbarType.INFO

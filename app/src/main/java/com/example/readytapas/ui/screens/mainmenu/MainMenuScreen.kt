@@ -74,7 +74,7 @@ fun MainMenuScreen(
                 //Icono de Editar Pedido
                 MenuItem(
                     painter = painterResource(id = R.drawable.editar_pedido),
-                    text = "editar pedido",
+                    text = "Editar Pedido",
                     onClick = {
                         navController.navigate("editarPedido")
                     }

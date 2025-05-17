@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import com.example.readytapas.ui.screens.carta.CartaScreen
 import com.example.readytapas.ui.screens.editarpedido.EditarPedidoScreen
 import com.example.readytapas.ui.screens.enpreparacion.EnPreparacionScreen
+import com.example.readytapas.ui.screens.historialpedidos.HistorialPedidosScreen
 import com.example.readytapas.ui.screens.pendientecobro.PendienteCobroScreen
 import com.example.readytapas.ui.screens.platoslistos.PlatosListosScreen
 import com.example.readytapas.ui.screens.tomarpedido.TomarPedidoScreen
@@ -52,14 +53,6 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
             EditarPedidoScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
 
-        composable("carta"){
-            CartaScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
-        }
-
-        composable("tomarPedido") {
-            TomarPedidoScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
-        }
-
         composable("enPreparacion") {
             EnPreparacionScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
@@ -68,8 +61,16 @@ fun AppNavHost(navController: NavHostController, isLoggedIn: Boolean, onLogoutCl
             PlatosListosScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
 
+        composable("carta"){
+            CartaScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
+        }
+
         composable("pendienteCobro") {
             PendienteCobroScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
+        }
+
+        composable("historialPedidos") {
+            HistorialPedidosScreen(onLogoutClick = onLogoutClick, navController = navController) // Pasamos el navController
         }
     }
 }

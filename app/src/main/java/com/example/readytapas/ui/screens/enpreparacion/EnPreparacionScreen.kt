@@ -120,7 +120,7 @@ fun EnPreparacionContent(
         bottomBar = {
             Button(
                 onClick = onConfirmPreparados,
-                enabled = state.productosSeleccionados.any { it.value.isNotEmpty() },
+                enabled = state.productosSeleccionados[state.vista]?.any { it.value.isNotEmpty() } == true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -130,7 +130,11 @@ fun EnPreparacionContent(
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Confirmar entregados", fontSize = 18.sp)
+                val botonTexto = when (state.vista) {
+                    VistaPreparacion.CAMARERO -> "Confirmar Entregados"
+                    VistaPreparacion.COCINA -> "Confirmar Preparados"
+                }
+                Text(botonTexto, fontSize = 18.sp)
             }
         }
     ) { paddingValues ->
@@ -209,7 +213,7 @@ fun EnPreparacionContent(
                                 } else {
                                     productosPendientes.forEach { (productoPedido, idx) ->
                                         val clave = "${productoPedido.producto.name}-$idx"
-                                        val seleccionado = state.productosSeleccionados[mesaName]?.contains(clave) == true
+                                        val seleccionado = state.productosSeleccionados[state.vista]?.get(mesaName)?.contains(clave) == true
 
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -272,7 +276,9 @@ fun EnPreparacionPreview() {
         pedidosExpandidos = mapOf(
             VistaPreparacion.CAMARERO to setOf("MESA_1")
         ),
-        productosSeleccionados = mapOf("MESA_1" to setOf("Caña-0")),
+        productosSeleccionados = mapOf(
+            VistaPreparacion.CAMARERO to mapOf("MESA_1" to setOf("Caña-0"))
+        ),
         vista = VistaPreparacion.CAMARERO
     )
 

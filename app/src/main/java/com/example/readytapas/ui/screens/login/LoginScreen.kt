@@ -90,7 +90,7 @@ fun LoginScreenContent(
     var passwordVisible by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Imagen de fodo y capa de color translúcido encima
+        // Imagen de fondo y capa de color translúcido encima
         Image(
             painter = painterResource(id = R.drawable.background_login),
             contentDescription = null,

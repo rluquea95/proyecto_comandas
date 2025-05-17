@@ -63,17 +63,17 @@ object PdfTicket {
 
         // Padding
         val paddingTop = 40f
-        val paddingBottom = 40f
         val headerLines = 3
         val headerHeight = headerLines * lineHeight
-        val footerHeight = 2 * lineHeight  // separador + “TOTAL”
+        val footerHeight = 2.5f * lineHeight  // separador + “TOTAL”
 
         // Altura dinámica
-        val contentHeight = headerHeight +
+        val contentHeight = paddingTop +
+                headerHeight +
                 lineas.size * lineHeight +
                 footerHeight +
-                paddingTop + paddingBottom
-        val pageWidth = 450  // puedes ajustar
+                20f
+        val pageWidth = 450
         val pageHeight = contentHeight.toInt()
 
         // Creamos el documento
@@ -112,12 +112,12 @@ object PdfTicket {
                 y,
                 paintBody
             )
-            y += lineHeight * 1.5f
+            y += lineHeight
         }
 
         // Footer
         canvas.drawLine(0f, y, pageWidth.toFloat(), y, paintSep)
-        y += lineHeight
+        y += lineHeight * 1.5f
         canvas.drawText(
             "TOTAL: €${"%.2f".format(pedido.total)}",
             (pageWidth/2).toFloat(),
