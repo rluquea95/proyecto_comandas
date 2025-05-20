@@ -117,7 +117,7 @@ class FirestoreRepository @Inject constructor(
             val todasUnidades = pedido.carta.flatMap { it.unidades }
             val estaListo = todasUnidades.all { it.preparado && it.entregado }
 
-            val estadoAEscribir = if (estaListo) EstadoPedido.LISTO else pedido.state
+            val estadoAEscribir = if (estaListo) EstadoPedido.LISTO else EstadoPedido.ENCURSO
             val pedidoParaEscribir = pedido.copy(state = estadoAEscribir)
 
             actualizarPedidoPorMesa(pedidoParaEscribir)

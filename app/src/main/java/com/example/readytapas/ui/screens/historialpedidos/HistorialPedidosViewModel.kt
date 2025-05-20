@@ -36,10 +36,13 @@ class HistorialPedidosViewModel @Inject constructor(
         viewModelScope.launch {
             firestoreRepository.getPedidos().onSuccess { pedidos ->
                 val cerrados = pedidos.filter { it.state == EstadoPedido.CERRADO }
-                val groupedByDate = cerrados.groupBy { pedido ->
-                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    sdf.format(pedido.time.toDate())
-                }
+                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+                val groupedByDate = cerrados
+                    .groupBy { pedido -> sdf.format(pedido.time.toDate()) }
+                    .mapValues { (_, pedidosDelDia) ->
+                        pedidosDelDia.sortedByDescending { it.time.toDate() }
+                    }
                 _uiState.value = _uiState.value.copy(
                     pedidosPorFecha = groupedByDate
                 )

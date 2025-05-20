@@ -158,13 +158,35 @@ class EditarPedidoViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val pedidoActualizado = pedidoBase.copy(carta = productos)
+            // Detectar si se han añadido unidades nuevas
+            val haAumentado = productos.any { ppEditado ->
+                val original = pedidoBase.carta.find { it.producto.name == ppEditado.producto.name }
+                val cantidadOriginal = original?.unidades?.size ?: 0
+                ppEditado.unidades.size > cantidadOriginal
+            }
+
+            val nuevoEstado = if (pedidoBase.state == EstadoPedido.LISTO && haAumentado) {
+                EstadoPedido.ENCURSO
+            } else {
+                pedidoBase.state
+            }
+
+            val pedidoActualizado = pedidoBase.copy(
+                carta = productos,
+                state = nuevoEstado
+            )
+
             val result = firestoreRepository.actualizarEstadoPedido(pedidoActualizado)
+
             if (result.isSuccess) {
                 _uiState.value = _uiState.value.copy(
+                    mesaSeleccionada = null,
+                    pedidoOriginal = null,
+                    productosPedidos = emptyList(),
                     message = "Pedido actualizado",
                     snackbarType = SnackbarType.SUCCESS
                 )
+                loadMesasConPedidosActivos() // Refrescar listado
             } else {
                 _uiState.value = _uiState.value.copy(
                     message = "Error al actualizar el pedido",
