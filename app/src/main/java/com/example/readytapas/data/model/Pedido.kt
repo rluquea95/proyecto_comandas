@@ -7,7 +7,8 @@ data class Pedido(
     val carta: List<ProductoPedido> = emptyList(),
     val state: EstadoPedido = EstadoPedido.ENCURSO,
     val time: Timestamp = Timestamp.now(),
-    val total: Double = 0.0
+    val total: Double = 0.0,
+    val lockedBy: String? = null
 )
 
 enum class EstadoPedido {

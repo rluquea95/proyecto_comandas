@@ -9,21 +9,26 @@ import com.example.readytapas.data.model.Mesa
 import com.example.readytapas.data.model.Pedido
 import com.example.readytapas.data.model.Producto
 import com.example.readytapas.data.model.ProductoPedido
+import com.example.readytapas.data.repository.AuthRepository
 import com.example.readytapas.data.repository.FirestoreRepository
 import com.example.readytapas.ui.components.SnackbarType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class EditarPedidoViewModel @Inject constructor(
-    private val firestoreRepository: FirestoreRepository
+    private val firestoreRepository: FirestoreRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EditarPedidoUiState())
@@ -78,7 +83,7 @@ class EditarPedidoViewModel @Inject constructor(
         }
     }
 
-    fun selectMesa(mesa: Mesa) {
+    /*fun selectMesa(mesa: Mesa) {
         val pedido = _uiState.value.pedidosActivos.find { it.mesa == mesa.name }
         if (pedido != null) {
             _uiState.value = _uiState.value.copy(
@@ -87,7 +92,53 @@ class EditarPedidoViewModel @Inject constructor(
                 productosPedidos = pedido.carta
             )
         }
+    }*/
+
+    private var pedidoJob: Job? = null
+
+    fun selectMesa(mesa: Mesa) {
+        val uid = authRepository.currentUser?.uid ?: return
+
+        viewModelScope.launch {
+            // 1) Intentar lock
+            val ok = firestoreRepository.lockPedido(mesa.name.name, uid)
+            if (!ok) {
+                // otro usuario editing
+                _uiState.value = _uiState.value.copy(
+                    pedidoBloqueado = true,
+                    message = "Este pedido ya lo está editando otro usuario",
+                    snackbarType = SnackbarType.ERROR
+                )
+                loadMesasConPedidosActivos()
+                return@launch
+            }
+
+            // 2) reset estado de bloqueo + seleccion
+            _uiState.value = _uiState.value.copy(
+                pedidoBloqueado  = false,
+                mesaSeleccionada = mesa,
+                message = null
+            )
+
+            // 3) cancelar escucha previa
+            pedidoJob?.cancel()
+
+            // 4) arrancar listener en tiempo real
+            pedidoJob = viewModelScope.launch {
+                firestoreRepository
+                    .observePedido(mesa.name.name)
+                    .collectLatest { remoto ->
+                        _uiState.update { estado ->
+                            estado.copy(
+                                pedidoOriginal   = remoto,
+                                productosPedidos = remoto.carta
+                            )
+                        }
+                    }
+            }
+        }
     }
+
 
     fun updateSearchText(text: String) {
         _uiState.value = _uiState.value.copy(searchText = text)
@@ -179,6 +230,10 @@ class EditarPedidoViewModel @Inject constructor(
             val result = firestoreRepository.actualizarEstadoPedido(pedidoActualizado)
 
             if (result.isSuccess) {
+                // Liberar bloqueo
+                val uid = authRepository.currentUser?.uid ?: return@launch
+                firestoreRepository.unlockPedido(pedidoActualizado.mesa.name, uid)
+                // Refrescar listado
                 _uiState.value = _uiState.value.copy(
                     mesaSeleccionada = null,
                     pedidoOriginal = null,
@@ -201,6 +256,10 @@ class EditarPedidoViewModel @Inject constructor(
         viewModelScope.launch {
             val resultado = firestoreRepository.eliminarPedidoYLiberarMesa(pedido)
             if (resultado.isSuccess) {
+                // Liberar bloqueo
+                val uid = authRepository.currentUser?.uid ?: return@launch
+                firestoreRepository.unlockPedido(pedido.mesa.name, uid)
+                // Refrescar listado
                 _uiState.value = _uiState.value.copy(
                     mesaSeleccionada = null,
                     pedidoOriginal = null,
@@ -221,6 +280,15 @@ class EditarPedidoViewModel @Inject constructor(
     fun clearMessage() {
         _uiState.value = _uiState.value.copy(message = null)
     }
+
+    fun clearLockAndCancel() {
+        pedidoJob?.cancel()
+        val mesaName = _uiState.value.mesaSeleccionada?.name?.name ?: return
+        val uid = authRepository.currentUser?.uid ?: return
+        viewModelScope.launch {
+            firestoreRepository.unlockPedido(mesaName, uid)
+        }
+    }
 }
 
 data class EditarPedidoUiState(
@@ -233,6 +301,7 @@ data class EditarPedidoUiState(
     val searchText: String = "",
     val categoriaSeleccionada: CategoryProducto? = null,
     val message: String? = null,
-    val snackbarType: SnackbarType = SnackbarType.INFO
+    val snackbarType: SnackbarType = SnackbarType.INFO,
+    val pedidoBloqueado: Boolean = false
 )
 

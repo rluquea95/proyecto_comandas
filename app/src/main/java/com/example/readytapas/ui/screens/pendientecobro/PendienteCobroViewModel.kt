@@ -14,6 +14,7 @@ import com.example.readytapas.ui.components.SnackbarType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,10 +31,11 @@ class PendienteCobroViewModel @Inject constructor(
     val cobradoEvent = _cobradoEvent.receiveAsFlow()
 
     init {
-        loadPedidosListos()
+        //loadPedidosListos()
+        observePedidosListos()
     }
 
-    private fun loadPedidosListos() {
+    /*private fun loadPedidosListos() {
         viewModelScope.launch {
             firestoreRepository.getPedidos().onSuccess { pedidos ->
                 val listos = pedidos.filter { it.state == EstadoPedido.LISTO }
@@ -46,7 +48,18 @@ class PendienteCobroViewModel @Inject constructor(
                 Log.e("PendienteCobro", "Error al cargar pedidos", it)
             }
         }
+    }*/
+
+    private fun observePedidosListos() {
+        viewModelScope.launch {
+            firestoreRepository.observePedidos()
+                .map { pedidos -> pedidos.filter { it.state == EstadoPedido.LISTO } }
+                .collect { listos ->
+                    _uiState.value = _uiState.value.copy(pedidos = listos)
+                }
+        }
     }
+
 
     fun toggleExpandido(mesa: String) {
         val actuales = _uiState.value.pedidosExpandidos.toMutableSet()
@@ -87,7 +100,7 @@ class PendienteCobroViewModel @Inject constructor(
                 snackbarType = SnackbarType.SUCCESS
             )
             _cobradoEvent.send(pedidoCobrado)
-            loadPedidosListos()
+            //loadPedidosListos()
         } else {
             _uiState.value = _uiState.value.copy(
                 message = "Error al cobrar la mesa ${pedido.mesa.name}",

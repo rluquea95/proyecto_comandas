@@ -190,10 +190,9 @@ class TomarPedidoViewModel @Inject constructor(
                 total = 0.0
             )
 
-            val resultadoPedido = firestoreRepository.crearPedido(pedido)
-            val resultadoMesa = firestoreRepository.actualizarMesa(mesa.copy(occupied = true))
+            val resultado = firestoreRepository.tomarPedidoConControl(pedido)
 
-            if (resultadoPedido.isSuccess && resultadoMesa.isSuccess) {
+            if (resultado.isSuccess) {
                 _uiState.value = _uiState.value.copy(
                     mesaSeleccionada = null,
                     productosPedidos = emptyList(),

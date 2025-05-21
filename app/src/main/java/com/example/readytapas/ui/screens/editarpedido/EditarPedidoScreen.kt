@@ -1,5 +1,6 @@
 package com.example.readytapas.ui.screens.editarpedido
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,6 +52,7 @@ import com.example.readytapas.ui.screens.tomarpedido.TomarPedidoUiState
 import com.example.readytapas.ui.screens.tomarpedido.TomarPedidoViewModel
 import com.example.readytapas.ui.theme.BlancoHueso
 import com.example.readytapas.ui.theme.MarronOscuro
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditarPedidoScreen(
@@ -60,6 +63,7 @@ fun EditarPedidoScreen(
     val state by viewModel.uiState.collectAsState()
     val productosFiltrados by viewModel.productosFiltrados.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -82,7 +86,10 @@ fun EditarPedidoScreen(
         onConfirmCambios = viewModel::confirmEdicion,
         onEliminarPedido = viewModel::eliminarPedido,
         onLogoutClick = onLogoutClick,
-        onBackClick = { navController.popBackStack() }
+        onBackClick = {
+                viewModel.clearLockAndCancel()
+                navController.popBackStack()
+        }
     )
 }
 
@@ -161,16 +168,30 @@ fun EditarPedidoContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            // Si está bloqueado, avisamos al usuario
+            if (state.pedidoBloqueado) {
+                Text(
+                    text = "Este pedido está siendo editado por otro usuario",
+                    color = Color.Red,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0x33FF0000))
+                        .padding(8.dp)
+                )
+            }
+
             MesaDropdown(
                 mesas = state.mesas,
                 mesaSeleccionada = state.mesaSeleccionada,
-                onMesaSeleccionada = onMesaSeleccionada
+                onMesaSeleccionada = onMesaSeleccionada,
+                enabled = true
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
                 onClick = { isDialogOpen = true },
+                enabled = state.mesaSeleccionada != null && !state.pedidoBloqueado,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),

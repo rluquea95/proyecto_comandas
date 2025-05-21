@@ -12,6 +12,7 @@ import com.example.readytapas.ui.components.SnackbarType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,10 +25,11 @@ class PlatosListosViewModel @Inject constructor(
     val uiState: StateFlow<PlatosListosUiState> = _uiState
 
     init {
-        loadPedidos()
+        observePedidosEnCurso()
+        //loadPedidos()
     }
 
-    private fun loadPedidos() {
+    /*private fun loadPedidos() {
         viewModelScope.launch {
             firestoreRepository.getPedidos().onSuccess { pedidos ->
                 val enCurso = pedidos.filter { it.state == EstadoPedido.ENCURSO }
@@ -39,6 +41,16 @@ class PlatosListosViewModel @Inject constructor(
                 )
                 Log.e("PlatosListos", "Error al cargar pedidos", it)
             }
+        }
+    }*/
+
+    private fun observePedidosEnCurso() {
+        viewModelScope.launch {
+            firestoreRepository.observePedidos()
+                .map { pedidos -> pedidos.filter { it.state == EstadoPedido.ENCURSO } }
+                .collect { enCurso ->
+                    _uiState.value = _uiState.value.copy(pedidos = enCurso)
+                }
         }
     }
 
@@ -105,7 +117,7 @@ class PlatosListosViewModel @Inject constructor(
                     snackbarType = SnackbarType.SUCCESS,
                     productosSeleccionados = emptyMap()
                 )
-                loadPedidos()
+                //loadPedidos()
             }
         }
     }
