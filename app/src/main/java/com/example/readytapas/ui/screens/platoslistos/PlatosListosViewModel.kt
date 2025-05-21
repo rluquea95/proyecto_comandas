@@ -26,23 +26,7 @@ class PlatosListosViewModel @Inject constructor(
 
     init {
         observePedidosEnCurso()
-        //loadPedidos()
     }
-
-    /*private fun loadPedidos() {
-        viewModelScope.launch {
-            firestoreRepository.getPedidos().onSuccess { pedidos ->
-                val enCurso = pedidos.filter { it.state == EstadoPedido.ENCURSO }
-                _uiState.value = _uiState.value.copy(pedidos = enCurso)
-            }.onFailure {
-                _uiState.value = _uiState.value.copy(
-                    message = "Error al cargar pedidos",
-                    snackbarType = SnackbarType.ERROR
-                )
-                Log.e("PlatosListos", "Error al cargar pedidos", it)
-            }
-        }
-    }*/
 
     private fun observePedidosEnCurso() {
         viewModelScope.launch {
@@ -117,7 +101,6 @@ class PlatosListosViewModel @Inject constructor(
                     snackbarType = SnackbarType.SUCCESS,
                     productosSeleccionados = emptyMap()
                 )
-                //loadPedidos()
             }
         }
     }

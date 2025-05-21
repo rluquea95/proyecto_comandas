@@ -56,3 +56,22 @@ class FirestoreUploaderMesa(private val context: Context) {
         }
     }
 }
+
+///--------------------------------------------------------------------------------------------------------
+/// Código que permite en la clase MainActivity subir los datos de Productos y Mesas a Firestore
+/// Previamente hay que cambiar las reglas en Firestore para permitir lectura/escritura sin autentificación
+///--------------------------------------------------------------------------------------------------------
+/*
+    //Aquí se instancia FirestoreUploader y se pasa context para poder acceder al JSON que contiene Productos
+    val firestoreUploaderProducto = FirestoreUploaderProducto(this)
+
+    //Llamamos a la función uploadJsonData para subir los datos a Firestore
+    firestoreUploaderProducto.uploadJsonDataProducto()
+
+
+    //Aquí se instancia FirestoreUploader y se pasa context para poder acceder al JSON que contiene Mesas
+    val firestoreUploaderMesa = FirestoreUploaderMesa(this)
+
+    //Llamamos a la función uploadJsonData para subir los datos a Firestore
+    firestoreUploaderMesa.uploadJsonDataMesa()
+*/

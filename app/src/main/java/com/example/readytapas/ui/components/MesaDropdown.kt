@@ -36,8 +36,7 @@ import com.example.readytapas.ui.theme.MarronOscuro
 fun MesaDropdown(
     mesas: List<Mesa>,
     mesaSeleccionada: Mesa?,
-    onMesaSeleccionada: (Mesa) -> Unit,
-    enabled: Boolean = true
+    onMesaSeleccionada: (Mesa) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     // Calcula el índice del primer elemento de barra (BARRA_*)
@@ -94,7 +93,6 @@ fun MesaDropdown(
                             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     },
-                    enabled = enabled,
                     onClick = {
                         onMesaSeleccionada(mesa)
                         expanded = false

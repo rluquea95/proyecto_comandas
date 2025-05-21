@@ -190,7 +190,7 @@ class TomarPedidoViewModel @Inject constructor(
                 total = 0.0
             )
 
-            val resultado = firestoreRepository.tomarPedidoConControl(pedido)
+            val resultado = firestoreRepository.tomarPedido(pedido)
 
             if (resultado.isSuccess) {
                 _uiState.value = _uiState.value.copy(

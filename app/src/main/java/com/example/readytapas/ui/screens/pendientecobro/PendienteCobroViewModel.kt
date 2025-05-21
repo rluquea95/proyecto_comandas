@@ -31,24 +31,8 @@ class PendienteCobroViewModel @Inject constructor(
     val cobradoEvent = _cobradoEvent.receiveAsFlow()
 
     init {
-        //loadPedidosListos()
         observePedidosListos()
     }
-
-    /*private fun loadPedidosListos() {
-        viewModelScope.launch {
-            firestoreRepository.getPedidos().onSuccess { pedidos ->
-                val listos = pedidos.filter { it.state == EstadoPedido.LISTO }
-                _uiState.value = _uiState.value.copy(pedidos = listos)
-            }.onFailure {
-                _uiState.value = _uiState.value.copy(
-                    message = "Error al cargar pedidos pendientes de cobro",
-                    snackbarType = SnackbarType.ERROR
-                )
-                Log.e("PendienteCobro", "Error al cargar pedidos", it)
-            }
-        }
-    }*/
 
     private fun observePedidosListos() {
         viewModelScope.launch {
@@ -67,7 +51,7 @@ class PendienteCobroViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(pedidosExpandidos = actuales)
     }
 
-    /**
+    /*
      * Devuelve una lista de pares (Producto, cantidad)
      * agrupando todas las unidades preparados y entregados.
      */
@@ -86,7 +70,7 @@ class PendienteCobroViewModel @Inject constructor(
             .map { (producto, cantidad) -> producto to cantidad }
     }
 
-    /** Marca un pedido como cobrado (CERRADO) y le calcula el total */
+    // Marca un pedido como cobrado (CERRADO) y le calcula el total
     fun cobrarPedido(pedido: Pedido) = viewModelScope.launch {
 
         val total = pedido.carta.sumOf { it.producto.price * it.unidades.size }

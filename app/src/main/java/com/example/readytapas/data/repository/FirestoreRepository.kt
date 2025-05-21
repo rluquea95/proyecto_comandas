@@ -3,10 +3,8 @@ package com.example.readytapas.data.repository
 import android.util.Log
 import com.example.readytapas.data.model.EstadoPedido
 import com.example.readytapas.data.model.Mesa
-import com.example.readytapas.data.model.NumeroMesa
 import com.example.readytapas.data.model.Pedido
 import com.example.readytapas.data.model.Producto
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -39,39 +37,24 @@ class FirestoreRepository @Inject constructor(
             .mapNotNull { it.toObject(Pedido::class.java) }
     }.onFailure { Log.e("FirestoreRepository", "Error al obtener Pedidos", it) }
 
-    suspend fun crearPedido(pedido: Pedido): Result<Unit> = runCatching {
-        firestore.collection("Pedidos").add(pedido).await()
-        Unit
-    }.onFailure { Log.e("FirestoreRepository", "Error al crear Pedido", it) }
-
-    suspend fun actualizarMesa(mesa: Mesa): Result<Unit> = runCatching {
-        val doc = firestore.collection("Mesas")
-            .whereEqualTo("name", mesa.name.name)
-            .get().await()
-            .documents.firstOrNull()
-            ?: throw IllegalStateException("Mesa ${mesa.name} no encontrada")
-        doc.reference.set(mesa).await()
-        Unit
-    }.onFailure { Log.e("FirestoreRepository", "Error al actualizar Mesa", it) }
-
 
     // ==========================================
     // Operaciones atómicas con control de concurrencia
     // ==========================================
 
     suspend fun actualizarEstadoPedido(pedido: Pedido): Result<Unit> = runCatching {
-        // 1) Si ya está cerrado, no hacemos nada
+        // Si ya está cerrado, no se hace nada
         if (pedido.state == EstadoPedido.CERRADO) return@runCatching Unit
 
-        // 2) Recorremos todas las unidades para ver si ya TODO está preparado y entregado
+        // Recorremos todas las unidades para ver si ya estan todas preparadas y entregadas
         val todasUnidades = pedido.carta.flatMap { it.unidades }
-        val estaListo     = todasUnidades.all { it.preparado && it.entregado }
+        val estaListo = todasUnidades.all { it.preparado && it.entregado }
 
-        // 3) Creamos un nuevo Pedido con el state adecuado
-        val estadoAEscribir     = if (estaListo) EstadoPedido.LISTO else EstadoPedido.ENCURSO
-        val pedidoParaEscribir  = pedido.copy(state = estadoAEscribir)
+        // Creamos un nuevo Pedido con el EstadoPedido correspondiente
+        val estadoAEscribir = if (estaListo) EstadoPedido.LISTO else EstadoPedido.ENCURSO
+        val pedidoParaEscribir = pedido.copy(state = estadoAEscribir)
 
-        // 4) Transacción atómica que actualiza documento
+        // Transacción atómica que actualiza documento
         val pedidoRef = firestore.collection("Pedidos")
             .whereEqualTo("mesa", pedido.mesa.name)
             .whereIn("state", listOf(EstadoPedido.ENCURSO, EstadoPedido.LISTO))
@@ -91,7 +74,7 @@ class FirestoreRepository @Inject constructor(
     }.onFailure { Log.e("FirestoreRepository", "Error al actualizar estado de Pedido", it) }
 
 
-    suspend fun tomarPedidoConControl(pedido: Pedido): Result<Unit> = runCatching {
+    suspend fun tomarPedido(pedido: Pedido): Result<Unit> = runCatching {
         val mesaRef = firestore.collection("Mesas")
             .whereEqualTo("name", pedido.mesa.name)
             .get().await()
@@ -107,8 +90,10 @@ class FirestoreRepository @Inject constructor(
             tx.update(mesaRef, "occupied", true)
             null
         }.await()
+
         Unit
-    }.onFailure { Log.e("FirestoreRepository", "Error en tomarPedidoConControl", it) }
+    }.onFailure { Log.e("FirestoreRepository", "Error en tomarPedido", it) }
+
 
     suspend fun cerrarPedidoYLiberarMesa(pedido: Pedido): Result<Unit> = runCatching {
         val pedidoRef = firestore.collection("Pedidos")
@@ -117,6 +102,7 @@ class FirestoreRepository @Inject constructor(
             .get().await()
             .documents.firstOrNull()?.reference
             ?: throw IllegalStateException("Pedido no encontrado para mesa ${pedido.mesa.name}")
+
         val mesaRef = firestore.collection("Mesas")
             .whereEqualTo("name", pedido.mesa.name)
             .get().await()
@@ -138,6 +124,7 @@ class FirestoreRepository @Inject constructor(
             .get().await()
             .documents.firstOrNull()?.reference
             ?: throw IllegalStateException("Pedido no encontrado para mesa ${pedido.mesa.name}")
+
         val mesaRef = firestore.collection("Mesas")
             .whereEqualTo("name", pedido.mesa.name)
             .get().await()
@@ -171,10 +158,13 @@ class FirestoreRepository @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    /* Controlar la edición de Pedido por usuario*/
-    /* Intenta «bloquear» el pedido para edición. Devuelve true si el bloqueo tuvo éxito. */
+    // ==========================================
+    // Controlar la edición de Pedido por usuario
+    // ==========================================
+
+    //Intenta «bloquear» el pedido para edición. Devuelve true si el bloqueo tuvo éxito
     suspend fun lockPedido(mesaName: String, uid: String): Boolean = runCatching {
-        // 1) Localiza el documento
+        // Localiza el documento
         val ref = firestore.collection("Pedidos")
             .whereEqualTo("mesa", mesaName)
             .whereIn("state", listOf(EstadoPedido.ENCURSO, EstadoPedido.LISTO))
@@ -182,7 +172,7 @@ class FirestoreRepository @Inject constructor(
             .documents.firstOrNull()?.reference
             ?: throw IllegalStateException("Pedido no encontrado para mesa $mesaName")
 
-        // 2) Transacción: solo bloquea si no está ya bloqueado (o está bloqueado por ti)
+        // Transacción: solo bloquea si no está ya bloqueado (o está bloqueado por ti)
         firestore.runTransaction<Void> { tx ->
             val snap = tx.get(ref)
             val bloqueado = snap.getString("lockedBy")
@@ -199,7 +189,7 @@ class FirestoreRepository @Inject constructor(
     }.getOrDefault(false)
 
 
-    /* Libera el bloqueo */
+    //Libera el bloqueo
     suspend fun unlockPedido(mesaName: String, uid: String): Result<Unit> = runCatching {
         val ref = firestore.collection("Pedidos")
             .whereEqualTo("mesa", mesaName)
@@ -215,8 +205,8 @@ class FirestoreRepository @Inject constructor(
             }
             null
         }
-            .await()    // Ignoramos el Void! que devuelve
-        Unit        // devolvemos Unit
+            .await()
+        Unit
 
     }.onFailure { Log.e("FirestoreRepository", "fallo al desbloquear Pedido", it) }
 
@@ -239,7 +229,6 @@ class FirestoreRepository @Inject constructor(
                 ?.toObject(Pedido::class.java)
             if (pedido != null) trySend(pedido).isSuccess
         }
-
         awaitClose { registration.remove() }
     }
 }

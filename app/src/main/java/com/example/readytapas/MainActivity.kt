@@ -12,20 +12,6 @@ import com.example.readytapas.uploaddata.FirestoreUploaderProducto
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-/*
-                //Aquí se instancia FirestoreUploader y se pasa context para poder acceder al JSON que contiene Productos
-                val firestoreUploaderProducto = FirestoreUploaderProducto(this)
-
-                //Llamamos a la función uploadJsonData para subir los datos a Firestore
-                firestoreUploaderProducto.uploadJsonDataProducto()
-
-
-                //Aquí se instancia FirestoreUploader y se pasa context para poder acceder al JSON que contiene Mesas
-                val firestoreUploaderMesa = FirestoreUploaderMesa(this)
-
-                //Llamamos a la función uploadJsonData para subir los datos a Firestore
-                firestoreUploaderMesa.uploadJsonDataMesa()
-            */
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -42,17 +28,12 @@ class MainActivity : ComponentActivity() {
 
                 // Función de logout que cierra la sesión utilizando AuthRepository
                 val onLogoutClick: () -> Unit = {
-                    authRepository.logout() // Llamamos a la función logout() del AuthRepository
-                    navController.navigate("login") {
-                        popUpTo("mainmenu") {
-                            inclusive = true
-                        } // Elimina la pantalla principal de la pila de navegación
-                    }
+                    authRepository.logout()
                 }
 
                 AppNavHost(
                     navController = navController,
-                    isLoggedIn = authRepository.currentUser != null,
+                    authRepository = authRepository,
                     onLogoutClick = onLogoutClick // Pasamos la función de logout a AppNavHost
                 )
             }

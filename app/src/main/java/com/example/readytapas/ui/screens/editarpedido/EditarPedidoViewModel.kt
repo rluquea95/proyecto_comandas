@@ -83,17 +83,6 @@ class EditarPedidoViewModel @Inject constructor(
         }
     }
 
-    /*fun selectMesa(mesa: Mesa) {
-        val pedido = _uiState.value.pedidosActivos.find { it.mesa == mesa.name }
-        if (pedido != null) {
-            _uiState.value = _uiState.value.copy(
-                mesaSeleccionada = mesa,
-                pedidoOriginal = pedido,
-                productosPedidos = pedido.carta
-            )
-        }
-    }*/
-
     private var pedidoJob: Job? = null
 
     fun selectMesa(mesa: Mesa) {

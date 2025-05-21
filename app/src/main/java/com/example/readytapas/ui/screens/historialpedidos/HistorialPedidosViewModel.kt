@@ -14,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Locale
 import javax.inject.Inject
 
@@ -29,22 +30,29 @@ class HistorialPedidosViewModel @Inject constructor(
     val pdfEvent = _pdfEvent.receiveAsFlow()
 
     init {
-        loadPedidosCerrados()
+        observePedidosCerrados()
     }
 
-    private fun loadPedidosCerrados() {
+    private fun observePedidosCerrados() {
         viewModelScope.launch {
             firestoreRepository.getPedidos().onSuccess { pedidos ->
                 val cerrados = pedidos.filter { it.state == EstadoPedido.CERRADO }
                 val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-                val groupedByDate = cerrados
+                // Ordena los pedidos dentro de una fecha
+                val grouped = cerrados
                     .groupBy { pedido -> sdf.format(pedido.time.toDate()) }
                     .mapValues { (_, pedidosDelDia) ->
                         pedidosDelDia.sortedByDescending { it.time.toDate() }
                     }
+
+                // Ordenar las fechas en que se muestran los pedidos
+                val sortedByDateDesc: Map<String, List<Pedido>> = grouped
+                    .toSortedMap(compareByDescending { dateString ->
+                        LocalDate.parse(dateString)  // java.time.LocalDate
+                    })
                 _uiState.value = _uiState.value.copy(
-                    pedidosPorFecha = groupedByDate
+                    pedidosPorFecha = sortedByDateDesc
                 )
             }.onFailure {
                 _uiState.value = _uiState.value.copy(

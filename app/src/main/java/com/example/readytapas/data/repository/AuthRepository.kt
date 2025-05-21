@@ -1,8 +1,11 @@
 package com.example.readytapas.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -36,5 +39,16 @@ class AuthRepository @Inject constructor(
     //Llama a la función predefinida de cerrar sesión de Firebase
     fun logout() {
         firebaseAuth.signOut()
+    }
+
+
+    //Un Flow que emite el usuario actual de FirebaseAuth cada vez que cambia.
+    val authState = callbackFlow {
+        val listener = FirebaseAuth.AuthStateListener { auth ->
+            trySend(auth.currentUser).isSuccess
+        }
+        firebaseAuth.addAuthStateListener(listener)
+        // Al cancelar el Flow, quita el listener
+        awaitClose { firebaseAuth.removeAuthStateListener(listener) }
     }
 }

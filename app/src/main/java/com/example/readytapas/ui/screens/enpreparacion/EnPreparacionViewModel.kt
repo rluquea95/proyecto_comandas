@@ -23,7 +23,6 @@ class EnPreparacionViewModel @Inject constructor(
     val uiState: StateFlow<EnPreparacionUiState> = _uiState
 
     init {
-        //loadPedidos()
         observePedidosEnCurso()
     }
 
@@ -35,21 +34,6 @@ class EnPreparacionViewModel @Inject constructor(
             }
         }
     }
-
-    /*private fun loadPedidos() {
-        viewModelScope.launch {
-            firestoreRepository.getPedidos().onSuccess { pedidos ->
-                val pedidosEnCurso = pedidos.filter { it.state == EstadoPedido.ENCURSO }
-                _uiState.value = _uiState.value.copy(pedidos = pedidosEnCurso)
-            }.onFailure {
-                _uiState.value = _uiState.value.copy(
-                    message = "Error al cargar pedidos",
-                    snackbarType = SnackbarType.ERROR
-                )
-                Log.e("EnPreparacion", "Error al cargar pedidos", it)
-            }
-        }
-    }*/
 
     fun toggleExpandido(mesa: String) {
         val vista = _uiState.value.vista
@@ -175,7 +159,6 @@ class EnPreparacionViewModel @Inject constructor(
                     snackbarType = SnackbarType.SUCCESS,
                     productosSeleccionados = emptyMap()
                 )
-                //loadPedidos()
             }
         }
     }

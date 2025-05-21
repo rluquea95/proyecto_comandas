@@ -63,7 +63,6 @@ fun EditarPedidoScreen(
     val state by viewModel.uiState.collectAsState()
     val productosFiltrados by viewModel.productosFiltrados.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(state.message) {
         state.message?.let {
@@ -184,7 +183,6 @@ fun EditarPedidoContent(
                 mesas = state.mesas,
                 mesaSeleccionada = state.mesaSeleccionada,
                 onMesaSeleccionada = onMesaSeleccionada,
-                enabled = true
             )
 
             Spacer(modifier = Modifier.height(8.dp))
