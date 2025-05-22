@@ -60,7 +60,7 @@ fun SearchBar(
 fun SearchBarPreview() {
     var searchText by remember { mutableStateOf("") }
 
-    Surface(color = BeigeClaro) { // Fondo igual que tu app
+    Surface(color = BeigeClaro) {
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()

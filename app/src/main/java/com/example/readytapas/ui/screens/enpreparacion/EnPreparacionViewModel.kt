@@ -122,11 +122,11 @@ class EnPreparacionViewModel @Inject constructor(
                 val seleccionados = productosSeleccionadosVista[mesa.name] ?: emptySet()
                 if (seleccionados.isEmpty()) return@forEach
 
-                // 1) Construimos la lista nueva de ProductoPedido
+                //Construimos la lista nueva de ProductoPedido
                 val nuevaCarta = pedido.carta.map { pp ->
                     val esBebida = pp.producto.category == CategoryProducto.BEBIDA
 
-                    // Mapeamos cada unidad: si está marcada, la pasamos a preparadas (y entregada si es camarero+bebida)
+                    //Mapeamos cada unidad: si está marcada, la pasamos a preparadas (y entregada si es camarero+bebida)
                     val nuevasUnidades = pp.unidades.mapIndexed { idx, unidad ->
                         val clave = "${pp.producto.name}-$idx"
                         if (clave in seleccionados) {
@@ -139,10 +139,10 @@ class EnPreparacionViewModel @Inject constructor(
                     pp.copy(unidades = nuevasUnidades)
                 }
 
-                // 2) Creamos el pedido actualizado
+                //Creamos el pedido actualizado
                 val pedidoActualizado = pedido.copy(carta = nuevaCarta)
 
-                // 3) Pedimos al repositorio que lo grabe y, si toca, marque state=LISTO
+                //Pedimos al repositorio que lo grabe y, si toca, marque state=LISTO
                 val result = firestoreRepository.actualizarEstadoPedido(pedidoActualizado)
                 if (result.isFailure) {
                     huboError = true

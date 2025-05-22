@@ -89,7 +89,7 @@ class EditarPedidoViewModel @Inject constructor(
         val uid = authRepository.currentUser?.uid ?: return
 
         viewModelScope.launch {
-            // 1) Intentar lock
+            //Intentar lock
             val ok = firestoreRepository.lockPedido(mesa.name.name, uid)
             if (!ok) {
                 // otro usuario editing
@@ -102,17 +102,17 @@ class EditarPedidoViewModel @Inject constructor(
                 return@launch
             }
 
-            // 2) reset estado de bloqueo + seleccion
+            //reset estado de bloqueo + seleccion
             _uiState.value = _uiState.value.copy(
                 pedidoBloqueado  = false,
                 mesaSeleccionada = mesa,
                 message = null
             )
 
-            // 3) cancelar escucha previa
+            //cancelar escucha previa
             pedidoJob?.cancel()
 
-            // 4) arrancar listener en tiempo real
+            //arrancar listener en tiempo real
             pedidoJob = viewModelScope.launch {
                 firestoreRepository
                     .observePedido(mesa.name.name)

@@ -84,7 +84,6 @@ class PendienteCobroViewModel @Inject constructor(
                 snackbarType = SnackbarType.SUCCESS
             )
             _cobradoEvent.send(pedidoCobrado)
-            //loadPedidosListos()
         } else {
             _uiState.value = _uiState.value.copy(
                 message = "Error al cobrar la mesa ${pedido.mesa.name}",

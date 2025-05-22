@@ -52,7 +52,7 @@ class PlatosListosViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(productosSeleccionados = seleccionados)
     }
 
-    /* Los platos/tapas con preparado=true y entregado=false */
+    //Los platos/tapas con preparado=true y entregado=false
     fun getPlatosPendientesPorMesa(mesa: String): List<Pair<ProductoPedido, Int>> {
         val pedido = _uiState.value.pedidos.find { it.mesa.name == mesa } ?: return emptyList()
         return pedido.carta

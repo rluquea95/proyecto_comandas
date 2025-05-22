@@ -109,13 +109,6 @@ fun PendienteCobroContent(
                 val mesaName = pedido.mesa.name
                 val isExpanded = mesaName in state.pedidosExpandidos
                 val lineasAgrupadas = getLineasAgrupadas(pedido)
-
-                /*val lineasAgrupadas = pedido.carta
-                    .flatMap { it.unidades.map { u -> it.producto } }
-                    .groupingBy { it }
-                    .eachCount()
-                    .map { (producto, cantidad) -> producto to cantidad }*/
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
