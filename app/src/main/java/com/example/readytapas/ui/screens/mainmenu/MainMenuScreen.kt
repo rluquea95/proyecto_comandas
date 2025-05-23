@@ -161,9 +161,7 @@ fun MainMenuScreen(
                 MenuItem(
                     painter = painterResource(id = R.drawable.reservas),
                     text = "Reserva",
-                    onClick = {
-                        navController.navigate("reservas")
-                    }
+                    onClick = {/* Enlazará a la pantalla Reservas */}
                 )
             }
 

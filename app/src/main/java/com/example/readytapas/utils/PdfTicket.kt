@@ -22,7 +22,7 @@ object PdfTicket {
         pedido: Pedido,
         lineas: List<Pair<Producto, Int>>
     ): File {
-        val facturasDir = File(context.filesDir, "facturas")
+        val facturasDir = File(context.cacheDir, "facturas")
         if (!facturasDir.exists()) facturasDir.mkdirs()
 
         //Formatear la fecha
