@@ -10,7 +10,6 @@
 <img src="https://github.com/user-attachments/assets/a7bc8c5f-7f3c-42a9-80ca-0bb4d26d49a3" width="500" /> 
 
 <br/>
-<br/>
 
 #### 2. Ejecutamos el emulador, dejamos que cargue toda la configuración verificamos que el dispositivo <br/> tiene conexión a Internet y actualizamos todos los servicios desde Google Play, así nos aseguramos <br/> de que todos los servicios de Google están actualizados y no hay problema.
 <img src="https://github.com/user-attachments/assets/f88d565d-86c3-4bb9-a252-bebd3e88a691" width="400" />
@@ -20,16 +19,18 @@
 
 -----
 
-## :one: Clonación del proyecto y replicación del mismo
+## 🅰️ Clonación del proyecto y replicación del mismo
 
-### 1. Podemos clonar el [repositorio](https://github.com/rluquea95/proyecto_comandas) desde GitHub 
+## :one: Registrarse en Firebase Firestore y crear un proyecto
+
+### Opción 1: Podemos clonar el [repositorio](https://github.com/rluquea95/proyecto_comandas) desde GitHub 
 
 <img src="https://github.com/user-attachments/assets/25da5171-2d5c-4edd-80b1-3d1ee03bd449" width="500" />
 
 <br/>
 <br/>
 
-### 2. Importar el proyecto enviado en el zip
+### Opción 2: Importar el proyecto enviado en el zip
 <br/>
 <br/>
 
@@ -136,7 +137,11 @@ class MainActivity : ComponentActivity() {
 
 ## :one::two: Comprobamos que el proyecto tiene todas las dependencias instaladas y ejecutamos la aplicación en el emulador. Simplemente abrimos la aplicación ReadyTapas e iniciamos sesión con el usuario que se haya registrado
 
-## :two: Ejecución del apk
+-----
+<br/>
+<br/>
+
+## 🅱️ Ejecución del apk
 
 #### 3. Una vez el emulador está operativo, simplemente arrastramos el archivo apk.debug
 <img src="https://github.com/user-attachments/assets/8caefea5-2339-439c-b88a-0422f332a237" width="200" />
