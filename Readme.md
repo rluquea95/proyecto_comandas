@@ -97,16 +97,48 @@ class MainActivity : ComponentActivity() {
 <br/>
 
 ## :nine: Una vez, se realiza la carga inicial, habilitamos Firestore Authentication mediante correo electrónico y vamos añadiendo los usuarios que queremos que puedan <br/> interactuar en la base de datos.
-# La clase Main se debe comentar (o copiar el codigo aparte) y sustituirlo por esto:
 ![image](https://github.com/user-attachments/assets/11c1455d-2e31-4219-83b1-008e037a806b)
 
 <br/>
 <br/>
 
 ## :one::zero: Por último cambiamos las reglas de Firestore, para que solo permita el acceso a usuarios autentificados
+![Captura de pantalla 2025-05-25 165405](https://github.com/user-attachments/assets/3a67741b-0f49-4e6a-a54f-0e8f622c81fa)
 
 <br/>
 <br/>
+
+## Por último modificamos la clase MainActivity para que vuelva a tener el código original y que la aplicación funcione con normalidad (en caso de haber comentado alguna clase por problemas para <br/> hacer la carga inicial de las colecciones, las volvemos a descomentar)
+```kotlin
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var authRepository: AuthRepository
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            ReadyTapasTheme {
+
+                val navController = rememberNavController()
+
+                // Función de logout que cierra la sesión utilizando AuthRepository
+                val onLogoutClick: () -> Unit = {
+                    authRepository.logout()
+                }
+
+                AppNavHost(
+                    navController = navController,
+                    authRepository = authRepository,
+                    onLogoutClick = onLogoutClick // Pasamos la función de logout a AppNavHost
+                )
+            }
+        }
+    }
+}
+```
+
 
 #### 3. Una vez el emulador está operativo, simplemente arrastramos el archivo apk.debug
 <img src="https://github.com/user-attachments/assets/8caefea5-2339-439c-b88a-0422f332a237" width="200" />
