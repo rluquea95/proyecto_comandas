@@ -22,18 +22,91 @@
 
 ## :one: Clonación del proyecto y replicación del mismo.
 
-#### 1. Ejecutamos Android Studio y creamos un emulador con las siguientes especificaciones:
-<img src="https://github.com/user-attachments/assets/9a95a490-a26e-4925-97d3-bde80eda3e1c" width="500" />
-<img src="https://github.com/user-attachments/assets/653ce1e7-9be6-4b10-92c6-810a9c1fed20" width="500" />
-<img src="https://github.com/user-attachments/assets/a7bc8c5f-7f3c-42a9-80ca-0bb4d26d49a3" width="500" />
+### 1. Podemos clonar el [repositorio](https://github.com/rluquea95/proyecto_comandas) desde GitHub 
+
+<img src="https://github.com/user-attachments/assets/25da5171-2d5c-4edd-80b1-3d1ee03bd449" width="500" />
 
 <br/>
 <br/>
 
+### 2. Importar el proyecto enviado en el zip
+<br/>
+<br/>
 
-## :two: Pueba de aplicación con el ejecutable apk.debug 
+## :two: Registrarse en Firebase Firestore y crear un proyecto
 
+<img src="https://github.com/user-attachments/assets/6c0f7fb6-970f-4378-a8d3-d8f573c886ee" width="500" />
+<br/>
+<br/>
 
+## :three: Asegurarnos de que las reglas por primera vez permiten el acceso sin autenticación <br> (de forma predeterminada, Google lo configura así durante un periodo de 30 días)
+```php
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    allow read, write: if request.auth != null;
+  }
+}
+```
+<br/>
+<br/>
+
+## :four: Registrar la aplicación para usarla con Firebase
+![image](https://github.com/user-attachments/assets/8bc49cf0-a38e-402d-8d04-d2009d663168)
+<br/>
+<br/>
+
+## :five: Descargamos el json y lo arrastramos hasta la ruta app
+![image](https://github.com/user-attachments/assets/77f035da-91e9-40a8-ad90-5eb45979d02c)
+<br/>
+<br/>
+
+## :six: Verificamos tener todas las dependencias en build.gradle.kts (project y app) <br/> En principio todas las dependencias ya están en el proyecto, pero recomiendo verificar que se disponen de todas
+![image](https://github.com/user-attachments/assets/274861aa-a4c2-4204-b99d-218fd72d8f6d)
+<br/>
+<br/>
+
+## :seven: Verificar que el proyecto se actualiza correctamente y todas las dependencias se añaden sin problema y carga el archivo JSON
+<br/>
+<br/>
+
+## 8️⃣ En este caso, la carga inicial de las colecciones Carta y Producto, puede que de <br/> conflictos ya que el proyecto cuenta con más clases y código que cuando se implementó la carga, por lo tanto, si hay algun conflicto recomiendo comentar las clases implicadas.<br/>
+# La clase Main se debe comentar (o copiar el codigo aparte) y sustituirlo por esto:
+```kotlin
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+            //Aquí se instancia FirestoreUploader y se pasa context para poder acceder al JSON que contiene Mesas
+            val firestoreUploaderMesa = FirestoreUploaderMesa(this)
+
+            //Llamamos a la función uploadJsonData para subir los datos a Firestore
+            firestoreUploaderMesa.uploadJsonDataMesa()
+        setContent {
+
+                //Aquí se instancia FirestoreUploader y se pasa context para poder acceder al JSON que contiene Productos
+                val firestoreUploaderProducto = FirestoreUploaderProducto(this)
+
+                //Llamamos a la función uploadJsonData para subir los datos a Firestore
+                firestoreUploaderProducto.uploadJsonDataProducto()
+       }
+    }
+}
+```
+<br/>
+<br/>
+
+## :nine: Una vez, se realiza la carga inicial, habilitamos Firestore Authentication mediante correo electrónico y vamos añadiendo los usuarios que queremos que puedan <br/> interactuar en la base de datos.
+# La clase Main se debe comentar (o copiar el codigo aparte) y sustituirlo por esto:
+![image](https://github.com/user-attachments/assets/11c1455d-2e31-4219-83b1-008e037a806b)
+
+<br/>
+<br/>
+
+## :one::zero: Por último cambiamos las reglas de Firestore, para que solo permita el acceso a usuarios autentificados
+
+<br/>
+<br/>
 
 #### 3. Una vez el emulador está operativo, simplemente arrastramos el archivo apk.debug
 <img src="https://github.com/user-attachments/assets/8caefea5-2339-439c-b88a-0422f332a237" width="200" />
