@@ -5,9 +5,9 @@
 ### Estos pasos son comunes en ambas opciones, ya que necesitamos tener configurado un emulador con Android.
 
 #### 1. Ejecutamos Android Studio y creamos un emulador con las siguientes especificaciones:
-<img src="https://github.com/user-attachments/assets/9a95a490-a26e-4925-97d3-bde80eda3e1c" width="500" />
-<img src="https://github.com/user-attachments/assets/653ce1e7-9be6-4b10-92c6-810a9c1fed20" width="500" />
-<img src="https://github.com/user-attachments/assets/a7bc8c5f-7f3c-42a9-80ca-0bb4d26d49a3" width="500" />
+<img src="https://github.com/user-attachments/assets/9a95a490-a26e-4925-97d3-bde80eda3e1c" width="500" /> <br/>
+<img src="https://github.com/user-attachments/assets/653ce1e7-9be6-4b10-92c6-810a9c1fed20" width="500" /> <br/>
+<img src="https://github.com/user-attachments/assets/a7bc8c5f-7f3c-42a9-80ca-0bb4d26d49a3" width="500" /> 
 
 <br/>
 <br/>
@@ -20,7 +20,7 @@
 
 -----
 
-## :one: Clonación del proyecto y replicación del mismo.
+## :one: Clonación del proyecto y replicación del mismo
 
 ### 1. Podemos clonar el [repositorio](https://github.com/rluquea95/proyecto_comandas) desde GitHub 
 
@@ -40,16 +40,8 @@
 <br/>
 
 ## :three: Asegurarnos de que las reglas por primera vez permiten el acceso sin autenticación <br> (de forma predeterminada, Google lo configura así durante un periodo de 30 días)
-```php
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    allow read, write: if request.auth != null;
-  }
-}
-```
-<br/>
-<br/>
+![Captura de pantalla 2025-05-25 164545](https://github.com/user-attachments/assets/43fa7857-b891-4002-8474-eaf39f5872eb)
+
 
 ## :four: Registrar la aplicación para usarla con Firebase
 ![image](https://github.com/user-attachments/assets/8bc49cf0-a38e-402d-8d04-d2009d663168)
@@ -71,7 +63,7 @@ service cloud.firestore {
 <br/>
 
 ## 8️⃣ En este caso, la carga inicial de las colecciones Carta y Producto, puede que de <br/> conflictos ya que el proyecto cuenta con más clases y código que cuando se implementó la carga, por lo tanto, si hay algun conflicto recomiendo comentar las clases implicadas.<br/>
-# La clase Main se debe comentar (o copiar el codigo aparte) y sustituirlo por esto:
+### La clase Main se debe comentar (o copiar el codigo aparte) y sustituirlo por esto:
 ```kotlin
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +100,7 @@ class MainActivity : ComponentActivity() {
 <br/>
 <br/>
 
-## Por último modificamos la clase MainActivity para que vuelva a tener el código original y que la aplicación funcione con normalidad (en caso de haber comentado alguna clase por problemas para <br/> hacer la carga inicial de las colecciones, las volvemos a descomentar)
+## :one::one: Modificamos la clase MainActivity para que vuelva a tener el código original y que la aplicación funcione con normalidad (en caso de haber comentado alguna clase por problemas para hacer la carga inicial de las colecciones, las volvemos a descomentar)
 ```kotlin
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -139,10 +131,15 @@ class MainActivity : ComponentActivity() {
 }
 ```
 
+<br/>
+<br/>
+
+## :one::two: Comprobamos que el proyecto tiene todas las dependencias instaladas y ejecutamos la aplicación en el emulador. Simplemente abrimos la aplicación ReadyTapas e iniciamos sesión con el usuario que se haya registrado
+
+## :two: Ejecución del apk
 
 #### 3. Una vez el emulador está operativo, simplemente arrastramos el archivo apk.debug
 <img src="https://github.com/user-attachments/assets/8caefea5-2339-439c-b88a-0422f332a237" width="200" />
-
 <br/>
 <br/>
 
